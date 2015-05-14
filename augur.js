@@ -87,20 +87,16 @@ var Augur = (function (augur) {
 
     // contract error codes
     augur.ERRORS = {
-        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": -1,
-        "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe": -2,
-        "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd": -3,
-        "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc": -4,
         closeMarket: {
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "market has no cash"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe": {
+            "-2": {
                 code: -2,
                 message: "0 outcome"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd": {
+            "-3": {
                 code: -3,
                 message: "outcome indeterminable"
             }
@@ -110,31 +106,31 @@ var Augur = (function (augur) {
                 code: 0,
                 message: "not enough money to pay fees or event already exists"
             },
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "we're either already past that date, branch doesn't exist, or description is bad"
             }
         },
         createMarket: {
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "bad input or parent doesn't exist"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe": {
+            "-2": {
                 code: -2,
                 message: "too many events"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd": {
+            "-3": {
                 code: -3,
                 message: "too many outcomes"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc": {
+            "-4": {
                 code: -4,
                 message: "not enough money or market already exists"
             }
         },
         dispatch: {
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "quorum not met"
             }
@@ -144,29 +140,29 @@ var Augur = (function (augur) {
                 code: 0,
                 message: "not enough reputation"
             },
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "Your reputation account was just created! Earn some reputation before you can send to others"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe": {
+            "-2": {
                 code: -2,
                 message: "Receiving address doesn't exist"
             }
         },
         buyShares: {
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+            "-1": {
                 code: -1,
                 message: "invalid outcome or trading closed"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe": {
+            "-2": {
                 code: -2,
                 message: "entered a negative number of shares"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd": {
+            "-3": {
                 code: -3,
                 message: "not enough money"
             },
-            "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc": {
+            "-4": {
                 code: -4,
                 message: "bad nonce/hash"
             }
@@ -202,7 +198,7 @@ var Augur = (function (augur) {
         createEvent: "0xcae6d5912033d66650894e2ae8c2f7502eaba15c",
         createMarket: "0x0568c631465eca542affb4bd3c72d1d2ee222c06",
         closeMarket: "0xb0e93253a008ce80f4c26152da3869225c716ce3",
-        dispatch: "0x6c2af20ef783f0f16bc0eb499462b888e57c9fbf",
+        dispatch: "0x662f95de5a6c500de0b35b73f4b48d740d267482",
 
         // Consensus
         statistics: "0x0cb1277671d162b2f5c81e9435744f63768398d0",
@@ -542,10 +538,6 @@ var Augur = (function (augur) {
         var results, len;
         if (response !== undefined) {
             response = JSON.parse(response);
-            if (response.result && augur.ERRORS[response.result]) {
-                // log("contract returned error code: " + augur.ERRORS[response.result]);
-                // log(response);
-            }
             if (response.error) {
                 console.error(
                     "[" + response.error.code + "]",
@@ -572,10 +564,7 @@ var Augur = (function (augur) {
                 len = response.length;
                 results = new Array(len);
                 for (var i = 0; i < len; ++i) {
-                    if (response.result && augur.ERRORS[response.result]) {
-                        log("contract returned error code: " + augur.ERRORS[response.result]);
-                        results[i] = augur.ERRORS[response[i].result];
-                    } else if (response.error) {
+                    if (response.error) {
                         console.error(
                             "[" + response.error.code + "]",
                             response.error.message
@@ -1304,7 +1293,7 @@ var Augur = (function (augur) {
                     periodLength = augur.bignum(periodLength);
                     augur.blockNumber(function (blockNum) {
                         blockNum = augur.bignum(blockNum);
-                        onSent(blockNum.dividedBy(periodLength).sub(1));
+                        onSent(blockNum.dividedBy(periodLength).floor().sub(1));
                     });
                 }
             });
@@ -1312,7 +1301,7 @@ var Augur = (function (augur) {
             periodLength = augur.invoke(augur.tx.getPeriodLength);
             if (periodLength) {
                 blockNum = augur.bignum(augur.blockNumber());
-                return blockNum.dividedBy(augur.bignum(periodLength)).sub(1);
+                return blockNum.dividedBy(augur.bignum(periodLength)).floor().sub(1);
             }
         }
     };
@@ -2393,8 +2382,11 @@ var Augur = (function (augur) {
         if (onSent) {
             augur.invoke(augur.tx.dispatch, function (step) {
                 if (step) {
+                    log("step");
+                    log(typeof step);
+                    log(step);
                     if (augur.ERRORS.dispatch[step]) {
-                        if (onFailed) onFailed(step);
+                        if (onFailed) onFailed(augur.ERRORS.dispatch[step]);
                     } else {
                         step = { step: step };
                         augur.tx.dispatch.send = true;
