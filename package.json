@@ -10,7 +10,6 @@
   "dependencies": {
     "bignumber.js": "^2.0.7",
     "js-sha3": "^0.2.0",
-    "nock": "^2.0.1",
     "xhr2": "^0.1.2"
   },
   "browser": {
@@ -35,7 +34,8 @@
     "istanbul": "^0.3.14",
     "lodash": "^3.8.0",
     "mocha": "^2.2.4",
-    "mocha-lcov-reporter": "0.0.2"
+    "mocha-lcov-reporter": "0.0.2",
+    "nock": "^2.0.1"
   },
   "optionalDependencies": {
     "http-sync": "^0.1.1",
