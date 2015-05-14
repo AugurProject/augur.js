@@ -2386,37 +2386,41 @@ var Augur = (function (augur) {
                     log(typeof step);
                     log(step);
                     if (augur.ERRORS.dispatch[step]) {
-                        if (onFailed) onFailed(augur.ERRORS.dispatch[step]);
+                        step = {
+                            error: step,
+                            message: augur.ERRORS.dispatch[step].message
+                        };
+                        if (onFailed) onFailed(step);
                     } else {
                         step = { step: step };
-                        augur.tx.dispatch.send = true;
-                        delete augur.tx.dispatch.returns;
-                        augur.invoke(augur.tx.dispatch, function (txhash) {
-                            if (txhash) {
-                                step.txHash = txhash;
-                                if (onSent) onSent(step);
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getTx(txhash, function (tx) {
-                                            pings++;
-                                            if (tx && tx.blockHash && parseInt(tx.blockHash !== 0)) {
-                                                tx.step = step.step;
-                                                tx.txHash = tx.hash;
-                                                delete tx.hash;
-                                                onSuccess(tx);
-                                            } else {
-                                                if (pings < augur.PINGMAX) {
-                                                    setTimeout(pingTx, 12000);
-                                                }
-                                            }
-                                        });
-                                    };
-                                    pingTx();
-                                }
-                            }
-                        });
                     }
+                    augur.tx.dispatch.send = true;
+                    delete augur.tx.dispatch.returns;
+                    augur.invoke(augur.tx.dispatch, function (txhash) {
+                        if (txhash) {
+                            step.txHash = txhash;
+                            if (onSent) onSent(step);
+                            if (onSuccess) {
+                                pings = 0;
+                                pingTx = function () {
+                                    augur.getTx(txhash, function (tx) {
+                                        pings++;
+                                        if (tx && tx.blockHash && parseInt(tx.blockHash !== 0)) {
+                                            tx.step = step.step;
+                                            tx.txHash = tx.hash;
+                                            delete tx.hash;
+                                            onSuccess(tx);
+                                        } else {
+                                            if (pings < augur.PINGMAX) {
+                                                setTimeout(pingTx, 12000);
+                                            }
+                                        }
+                                    });
+                                };
+                                pingTx();
+                            }
+                        }
+                    });
                 }
             });
         } else {

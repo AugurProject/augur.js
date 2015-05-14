@@ -1108,7 +1108,7 @@ describe("Augur API", function () {
                     },
                     onFailed: function (r) {
                         log("dispatch failed:");
-                        test(r); done();
+                        test(r);
                     }
                 };
                 Augur.dispatch(dispatchObj);
