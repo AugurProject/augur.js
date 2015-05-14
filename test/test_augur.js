@@ -3,7 +3,8 @@
  * augur.js unit tests
  * @author Jack Peterson (jack@tinybike.net)
  */
-
+// var nock = require('nock');
+// nock.recorder.rec();
 "use strict";
 
 var BigNumber = require("bignumber.js");

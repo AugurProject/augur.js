@@ -449,7 +449,7 @@ var Augur = (function (augur) {
 
     function parse_array(string, returns, stride, init) {
         var elements, array, position;
-        if (string.length > 66) {
+        if (string.length >= 66) {
             stride = stride || 64;
             elements = (string.length - 2) / stride;
             array = new Array(elements);
