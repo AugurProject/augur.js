@@ -87,87 +87,43 @@ var Augur = (function (augur) {
 
     // contract error codes
     augur.ERRORS = {
+        "0x": "could not communicate with contract",
+        getSimulatedBuy: {
+            "-2": "cost updating error (did you enter a valid quantity?)"
+        },
         closeMarket: {
-            "-1": {
-                code: -1,
-                message: "market has no cash"
-            },
-            "-2": {
-                code: -2,
-                message: "0 outcome"
-            },
-            "-3": {
-                code: -3,
-                message: "outcome indeterminable"
-            }
+            "-1": "market has no cash",
+            "-2": "0 outcome",
+            "-3": "outcome indeterminable"
         },
         createEvent: {
-            "0x0": {
-                code: 0,
-                message: "not enough money to pay fees or event already exists"
-            },
-            "-1": {
-                code: -1,
-                message: "we're either already past that date, branch doesn't exist, or description is bad"
-            }
+            "0": "not enough money to pay fees or event already exists",
+            "-1": "we're either already past that date, branch doesn't "+
+                "exist, or description is bad"
         },
         createMarket: {
-            "-1": {
-                code: -1,
-                message: "bad input or parent doesn't exist"
-            },
-            "-2": {
-                code: -2,
-                message: "too many events"
-            },
-            "-3": {
-                code: -3,
-                message: "too many outcomes"
-            },
-            "-4": {
-                code: -4,
-                message: "not enough money or market already exists"
-            }
+            "-1": "bad input or parent doesn't exist",
+            "-2": "too many events",
+            "-3": "too many outcomes",
+            "-4": "not enough money or market already exists"
         },
         dispatch: {
-            "-1": {
-                code: -1,
-                message: "quorum not met"
-            }
+            "-1": "quorum not met"
         },
         sendReputation: {
-            "0x0": {
-                code: 0,
-                message: "not enough reputation"
-            },
-            "-1": {
-                code: -1,
-                message: "Your reputation account was just created! Earn some reputation before you can send to others"
-            },
-            "-2": {
-                code: -2,
-                message: "Receiving address doesn't exist"
-            }
+            "0": "not enough reputation",
+            "-1": "Your reputation account was just created! Earn some "+
+                "reputation before you can send to others",
+            "-2": "Receiving address doesn't exist"
         },
         buyShares: {
-            "-1": {
-                code: -1,
-                message: "invalid outcome or trading closed"
-            },
-            "-2": {
-                code: -2,
-                message: "entered a negative number of shares"
-            },
-            "-3": {
-                code: -3,
-                message: "not enough money"
-            },
-            "-4": {
-                code: -4,
-                message: "bad nonce/hash"
-            }
+            "-1": "invalid outcome or trading closed",
+            "-2": "entered a negative number of shares",
+            "-3": "not enough money",
+            "-4": "bad nonce/hash"
         }
     };
+    augur.ERRORS.getSimulatedSell = augur.ERRORS.getSimulatedBuy;
     augur.ERRORS.sellShares = augur.ERRORS.buyShares;
 
     /**********************
@@ -184,13 +140,13 @@ var Augur = (function (augur) {
         expiringEvents: "0x61d90fd4c1c3502646153003ec4d5c177de0fb58",
         fxpFunctions: "0xdaf26192091449d14c03026f79272e410fce0908",
         markets: "0x2303f6b69e1d7662320819af027d88a9e350ebfb",
-        reporting: "0xd1f7f020f24abca582366ec80ce2fef6c3c22233",
+        reporting: "0xead0c9a9bd9546f476337a79e3d9bc8875241e61",
         whitelist: "0x21dbe4a05a9174e96e6c6bc1e05a7096338cb0d6",
 
         // Functions
         checkQuorum: "0xe9aaab4aff0cf06e62d2442ae0f68660882e5a67",
         buyAndSellShares: "0xb8555091be5c8b8fc77449bb203717959079c29a",
-        createBranch: "0x5c955b31ac72c83ffd7562aed4e2100b2ba09a3b",
+        createBranch: "0x3e14c676cd6cca63893e32a6117d42ac10cd28c1",
         p2pWagers: "0x7c2bbb3045fd8b39d28f4b4a5682dbec9a710771",
         sendReputation: "0x049487d32b727be98a4c8b58c4eab6521791f288",
         transferShares: "0x78da82256f5775df22eee51096d27666772b592d",
@@ -214,6 +170,12 @@ var Augur = (function (augur) {
         redeem_adjust: "0x562cc65e8d901f03bbeb6d83011bbd48ad1d377e",
         redeem_resolve: "0xa9b43b17ed17106f075960f9b9af38c330df9471",
         redeem_payout: "0xe995724195e58489f75c2e12247ce28bf50a5245"
+    };
+
+    augur.branches = {
+        demo: "0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5",
+        alpha: "0x490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646",
+        dev: "0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991"
     };
 
     function log(msg) {
@@ -274,7 +236,7 @@ var Augur = (function (augur) {
             } else if (n.constructor === BigNumber) {
                 bn = n;
             }
-            if (bn.gt(augur.MAXNUM)) {
+            if (bn && bn.gt(augur.MAXNUM)) {
                 bn = bn.sub(augur.MAXBITS);
             }
             if (compact) {
@@ -304,7 +266,7 @@ var Augur = (function (augur) {
                 } else {
                     fixed = augur.bignum(n).mul(augur.ONE).round();
                 }
-                if (fixed.gt(augur.MAXNUM)) {
+                if (fixed && fixed.gt(augur.MAXNUM)) {
                     fixed = fixed.sub(augur.MAXBITS);
                 }
                 if (encode) {
@@ -429,6 +391,7 @@ var Augur = (function (augur) {
             var var_args = '';
             if (arg) {
                 if (base === "string") {
+                // if (base === "bytes") {
                     len_args = zeropad(encode_int(arg.length));
                     var_args = augur.encode_hex(arg);
                 }
@@ -459,7 +422,8 @@ var Augur = (function (augur) {
         for (var i = 0, len = signature.length; i < len; ++i) {
             switch (signature[i]) {
                 case 's':
-                    summary += "string"; // change to bytes?
+                    summary += "string";
+                    // summary += "bytes";
                     break;
                 case 'i':
                     summary += "int256";
@@ -484,26 +448,32 @@ var Augur = (function (augur) {
      ********************************/
 
     function parse_array(string, returns, stride, init) {
-        stride = stride || 64;
-        var elements = (string.length - 2) / stride;
-        var array = new Array(elements);
-        var position = init || 2;
-        for (var i = 0; i < elements; ++i) {
-            array[i] = augur.prefix_hex(string.slice(position, position + stride));
-            if (returns === "hash[]" && augur.BigNumberOnly) {
-                array[i] = augur.bignum(array[i]);
-            } else {
-                if (returns === "number[]") {
-                    if (augur.BigNumberOnly) {
-                        array[i] = augur.unfix(array[i]);
-                    } else {
-                        array[i] = augur.unfix(array[i], "string");
+        var elements, array, position;
+        if (string.length > 66) {
+            stride = stride || 64;
+            elements = (string.length - 2) / stride;
+            array = new Array(elements);
+            position = init || 2;
+            for (var i = 0; i < elements; ++i) {
+                array[i] = augur.prefix_hex(string.slice(position, position + stride));
+                if (returns === "hash[]" && augur.BigNumberOnly) {
+                    array[i] = augur.bignum(array[i]);
+                } else {
+                    if (returns === "number[]") {
+                        if (augur.BigNumberOnly) {
+                            array[i] = augur.unfix(array[i]);
+                        } else {
+                            array[i] = augur.unfix(array[i], "string");
+                        }
                     }
                 }
+                position += stride;
             }
-            position += stride;
+            return array.slice(1);
+        } else {
+            // expected array, got scalar error code?
+            return string;
         }
-        return array.slice(1);
     }
     function format_result(returns, result) {
         returns = returns.toLowerCase();
@@ -536,56 +506,69 @@ var Augur = (function (augur) {
 
     function parse(response, returns, callback) {
         var results, len;
-        if (response !== undefined) {
-            response = JSON.parse(response);
-            if (response.error) {
-                console.error(
-                    "[" + response.error.code + "]",
-                    response.error.message
-                );
-            } else if (response.result !== undefined) {
-                if (returns) {
-                    response.result = format_result(returns, response.result);
-                } else {
-                    if (response.result && response.result.length > 2 && response.result.slice(0,2) === "0x") {
-                        response.result = remove_leading_zeros(response.result);
-                        response.result = augur.prefix_hex(response.result);
+        try {
+            if (response !== undefined) {
+                response = JSON.parse(response);
+                if (response.error) {
+                    response = {
+                        error: response.error.code,
+                        message: response.error.message
+                    };
+                    if (callback) {
+                        callback(response);
+                    } else {
+                        return response;
                     }
-                }
-                // if (augur.BigNumberOnly) {
-                //     response.result = augur.bignum(response.result);
-                // }
-                if (callback) {
-                    callback(response.result);
-                } else {
-                    return response.result;
-                }
-            } else if (response.constructor === Array && response.length) {
-                len = response.length;
-                results = new Array(len);
-                for (var i = 0; i < len; ++i) {
-                    if (response.error) {
-                        console.error(
-                            "[" + response.error.code + "]",
-                            response.error.message
-                        );
-                    } else if (response[i].result !== undefined) {
-                        if (returns[i]) {
-                            results[i] = format_result(returns[i], response[i].result);
+                } else if (response.result !== undefined) {
+                    if (returns) {
+                        response.result = format_result(returns, response.result);
+                    } else {
+                        if (response.result && response.result.length > 2 && response.result.slice(0,2) === "0x") {
+                            response.result = remove_leading_zeros(response.result);
+                            response.result = augur.prefix_hex(response.result);
                         }
                     }
+                    // if (augur.BigNumberOnly) {
+                    //     response.result = augur.bignum(response.result);
+                    // }
+                    if (callback) {
+                        callback(response.result);
+                    } else {
+                        return response.result;
+                    }
+                } else if (response.constructor === Array && response.length) {
+                    len = response.length;
+                    results = new Array(len);
+                    for (var i = 0; i < len; ++i) {
+                        if (response.error) {
+                            console.error(
+                                "[" + response.error.code + "]",
+                                response.error.message
+                            );
+                        } else if (response[i].result !== undefined) {
+                            if (returns[i]) {
+                                results[i] = format_result(returns[i], response[i].result);
+                            }
+                        }
+                    }
+                    if (callback) {
+                        callback(results);
+                    } else {
+                        return results;
+                    }
+                } else { // no result or error field :(
+                    if (callback) {
+                        callback(response);
+                    } else {
+                        return response;
+                    }
                 }
-                if (callback) {
-                    callback(results);
-                } else {
-                    return results;
-                }
-            } else { // no result or error field :(
-                if (callback) {
-                    callback(response);
-                } else {
-                    return response;
-                }
+            }
+        } catch (e) {
+            if (callback) {
+                callback(e);
+            } else {
+                return e;
             }
         }
     }
@@ -890,20 +873,6 @@ var Augur = (function (augur) {
             }
             if (tx.to) tx.to = augur.prefix_hex(tx.to);
             if (tx.from) tx.from = augur.prefix_hex(tx.from);
-            // if (tx.to && tx.to.constructor === BigNumber) {
-            //     if (tx.to.s === -1) {
-            //         tx.to = "-0x" + tx.to.toString(16).slice(1);
-            //     } else {
-            //         tx.to = "0x" + tx.to.toString(16);
-            //     }
-            // }
-            // if (tx.from && tx.from.constructor === BigNumber) {
-            //     if (tx.from.s === -1) {
-            //         tx.from = "-0x" + tx.from.toString(16).slice(1);
-            //     } else {
-            //         tx.from = "0x" + tx.from.toString(16);
-            //     }
-            // }
             data_abi = this.abi_data(tx);
             if (data_abi) {
                 packaged = {
@@ -980,6 +949,44 @@ var Augur = (function (augur) {
             return this.invoke(txlist, f);
         }
     };
+    function fire(itx, onSent) {
+        var tx = augur.clone(itx);
+        if (onSent) {
+            augur.invoke(tx, function (res) {
+                onSent(error_codes(tx, res));
+            });
+        } else {
+            return error_codes(tx, augur.invoke(tx, onSent));
+        }        
+    }
+    function error_codes(tx, response) {
+        if (response.constructor === Array) {
+            for (var i = 0, len = response.length; i < len; ++i) {
+                response[i] = error_codes(tx.method, response[i]);
+            }
+        } else {
+            if (augur.ERRORS[response]) {
+                response = {
+                    error: response,
+                    message: augur.ERRORS[response]
+                };
+            } else {
+                if (tx.returns !== "string" || (response.constructor === String && response.slice(0,2) === "0x")) {
+                    var response_number = augur.bignum(response);
+                    if (response_number) {
+                        response_number = augur.bignum(response).toFixed();
+                        if (augur.ERRORS[tx.method] && augur.ERRORS[tx.method][response_number]) {
+                            response = {
+                                error: response_number,
+                                message: augur.ERRORS[tx.method][response_number]
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        return response;
+    }
 
     /***********************
      * Augur API functions *
@@ -1012,17 +1019,19 @@ var Augur = (function (augur) {
     };
     augur.getCashBalance = function (account, onSent) {
         // account: ethereum address (hexstring)
-        if (account) augur.tx.getCashBalance.params = account;
-        return augur.invoke(augur.tx.getCashBalance, onSent);
+        var tx = augur.clone(augur.tx.getCashBalance);
+        if (account) tx.params = account;
+        return fire(tx, onSent);
     };
     augur.sendCash = function (receiver, value, onSent) {
         // receiver: sha256
         // value: number -> fixed-point
-        augur.tx.sendCash.params = [receiver, augur.fix(value)];
-        return augur.invoke(augur.tx.sendCash, onSent);
+        var tx = augur.clone(augur.tx.sendCash);
+        tx.params = [receiver, augur.fix(value)];
+        return fire(tx, onSent);
     };
     augur.cashFaucet = function (onSent) {
-        return augur.invoke(augur.tx.cashFaucet, onSent);
+        return fire(augur.tx.cashFaucet, onSent);
     };
 
     // info.se
@@ -1048,18 +1057,21 @@ var Augur = (function (augur) {
     };
     augur.getCreator = function (id, onSent) {
         // id: sha256 hash id
-        augur.tx.getCreator.params = id;
-        return augur.invoke(augur.tx.getCreator, onSent);
+        var tx = augur.clone(augur.tx.getCreator);
+        tx.params = id;
+        return fire(tx, onSent);
     };
     augur.getCreationFee = function (id, onSent) {
         // id: sha256 hash id
-        augur.tx.getCreationFee.params = id;
-        return augur.invoke(augur.tx.getCreationFee, onSent);
+        var tx = augur.clone(augur.tx.getCreationFee);
+        tx.params = id;
+        return fire(tx, onSent);
     };
     augur.getDescription = function (item, onSent) {
         // item: sha256 hash id
-        augur.tx.getDescription.params = item;
-        return augur.invoke(augur.tx.getDescription, onSent);
+        var tx = augur.clone(augur.tx.getDescription);
+        tx.params = item;
+        return fire(tx, onSent);
     };
 
     // branches.se
@@ -1124,45 +1136,52 @@ var Augur = (function (augur) {
         signature: "i"
     };
     augur.getBranches = function (onSent) {
-        return augur.invoke(augur.tx.getBranches, onSent);
+        return fire(augur.tx.getBranches, onSent);
     };
     augur.getMarkets = function (branch, onSent) {
         // branch: sha256 hash id
-        augur.tx.getMarkets.params = branch;
-        return augur.invoke(augur.tx.getMarkets, onSent);
+        var tx = augur.clone(augur.tx.getMarkets);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getPeriodLength = function (branch, onSent) {
         // branch: sha256 hash id
-        augur.tx.getPeriodLength.params = branch;
-        return augur.invoke(augur.tx.getPeriodLength, onSent);
+        var tx = augur.clone(augur.tx.getPeriodLength);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getVotePeriod = function (branch, onSent) {
         // branch: sha256 hash id
-        augur.tx.getVotePeriod.params = branch;
-        return augur.invoke(augur.tx.getVotePeriod, onSent);
+        var tx = augur.clone(augur.tx.getVotePeriod);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getStep = function (branch, onSent) {
         // branch: sha256
-        augur.tx.getStep.params = branch;
-        return augur.invoke(augur.tx.getStep, onSent);
+        var tx = augur.clone(augur.tx.getStep);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getNumMarkets = function (branch, onSent) {
         // branch: sha256
-        augur.tx.getNumMarkets.params = branch;
-        return augur.invoke(augur.tx.getNumMarkets, onSent);
+        var tx = augur.clone(augur.tx.getNumMarkets);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getMinTradingFee = function (branch, onSent) {
         // branch: sha256
-        augur.tx.getMinTradingFee.params = branch;
-        return augur.invoke(augur.tx.getMinTradingFee, onSent);
+        var tx = augur.clone(augur.tx.getMinTradingFee);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.getNumBranches = function (onSent) {
-        return augur.invoke(augur.tx.getNumBranches, onSent);
+        return fire(augur.tx.getNumBranches, onSent);
     };
     augur.getBranch = function (branchNumber, onSent) {
         // branchNumber: integer
-        augur.tx.getBranch.params = branchNumber;
-        return augur.invoke(augur.tx.getBranch, onSent);
+        var tx = augur.clone(augur.tx.getBranch);
+        tx.params = branchNumber;
+        return fire(tx, onSent);
     };
 
     // events.se
@@ -1180,7 +1199,7 @@ var Augur = (function (augur) {
             augur.invoke(augur.tx.getEventInfo, function (eventInfo) {
                 if (eventInfo && eventInfo.length) {
                     var info = {
-                        branch: augur.bignum(eventInfo[0]).toFixed(),
+                        branch: eventInfo[0],
                         expirationDate: augur.bignum(eventInfo[1]).toFixed(),
                         outcome: augur.bignum(eventInfo[2]).toFixed(),
                         minValue: augur.bignum(eventInfo[3]).toFixed(),
@@ -1197,7 +1216,7 @@ var Augur = (function (augur) {
             var eventInfo = augur.invoke(augur.tx.getEventInfo);
             if (eventInfo && eventInfo.length) {
                 var info = {
-                    branch: augur.bignum(eventInfo[0]).toFixed(),
+                    branch: eventInfo[0],
                     expirationDate: augur.bignum(eventInfo[1]).toFixed(),
                     outcome: augur.bignum(eventInfo[2]).toFixed(),
                     minValue: augur.bignum(eventInfo[3]).toFixed(),
@@ -1253,36 +1272,41 @@ var Augur = (function (augur) {
         returns: "number"
     };
     augur.getEventBranch = function (branchNumber, onSent) {
-        // branchNumber: integer branch index (?)
-        augur.tx.getEventBranch.params = branchNumber;
-        return augur.invoke(augur.tx.getEventBranch, onSent);
+        // branchNumber: integer
+        var tx = augur.clone(augur.tx.getEventBranch);
+        tx.params = branchNumber;
+        return fire(tx, onSent);
     };
     augur.getExpiration = function (event, onSent) {
         // event: sha256
-        augur.tx.getExpiration.params = event;
-        return augur.invoke(augur.tx.getExpiration, onSent);
+        var tx = augur.clone(augur.tx.getExpiration);
+        tx.params = event;
+        return fire(tx, onSent);
     };
     augur.getOutcome = function (event, onSent) {
         // event: sha256
-        augur.tx.getOutcome.params = event;
-        return augur.invoke(augur.tx.getOutcome, onSent);
+        var tx = augur.clone(augur.tx.getOutcome);
+        tx.params = event;
+        return fire(tx, onSent);
     };
     augur.getMinValue = function (event, onSent) {
         // event: sha256
-        augur.tx.getMinValue.params = event;
-        return augur.invoke(augur.tx.getMinValue, onSent);
+        var tx = augur.clone(augur.tx.getMinValue);
+        tx.params = event;
+        return fire(tx, onSent);
     };
     augur.getMaxValue = function (event, onSent) {
         // event: sha256
-        augur.tx.getMaxValue.params = event;
-        return augur.invoke(augur.tx.getMaxValue, onSent);
+        var tx = augur.clone(augur.tx.getMaxValue);
+        tx.params = event;
+        return fire(tx, onSent);
     };
     augur.getNumOutcomes = function (event, onSent) {
         // event: sha256
-        augur.tx.getNumOutcomes.params = event;
-        return augur.invoke(augur.tx.getNumOutcomes, onSent);
+        var tx = augur.clone(augur.tx.getNumOutcomes);
+        tx.params = event;
+        return fire(tx, onSent);
     };
-
     augur.getCurrentVotePeriod = function (branch, onSent) {
         // branch: sha256
         var periodLength, blockNum;
@@ -1476,8 +1500,9 @@ var Augur = (function (augur) {
     augur.getEvents = function (branch, votePeriod, onSent) {
         // branch: sha256 hash id
         // votePeriod: integer
-        augur.tx.getEvents.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getEvents, onSent);
+        var tx = augur.clone(augur.tx.getEvents);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getEventsRange = function (branch, vpStart, vpEnd, onSent) {
         // branch: sha256
@@ -1501,140 +1526,163 @@ var Augur = (function (augur) {
     augur.getNumberEvents = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getNumberEvents.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getNumberEvents, onSent);
+        var tx = augur.clone(augur.tx.getNumberEvents);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getEvent = function (branch, votePeriod, eventIndex, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getEvent.params = [branch, votePeriod, eventIndex];
-        return augur.invoke(augur.tx.getEvent, onSent);
+        var tx = augur.clone(augur.tx.getEvent);
+        tx.params = [branch, votePeriod, eventIndex];
+        return fire(tx, onSent);
     };
     augur.getTotalRepReported = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getTotalRepReported.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getTotalRepReported, onSent);
+        var tx = augur.clone(augur.tx.getTotalRepReported);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getReporterBallot = function (branch, votePeriod, reporterID, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getReporterBallot.params = [branch, votePeriod, reporterID];
-        return augur.invoke(augur.tx.getReporterBallot, onSent);
+        var tx = augur.clone(augur.tx.getReporterBallot);
+        tx.params = [branch, votePeriod, reporterID];
+        return fire(tx, onSent);
     };
     augur.getReport = function (branch, votePeriod, reporter, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getReport.params = [branch, votePeriod, reporter];
-        return augur.invoke(augur.tx.getReport, onSent);
+        var tx = augur.clone(augur.tx.getReports);
+        tx.params = [branch, votePeriod, reporter];
+        return fire(tx, onSent);
     };
     augur.getReportHash = function (branch, votePeriod, reporter, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getReportHash.params = [branch, votePeriod, reporter];
-        return augur.invoke(augur.tx.getReportHash, onSent);
+        var tx = augur.clone(augur.tx.getReportHash);
+        tx.params = [branch, votePeriod, reporter];
+        return fire(tx, onSent);
     };
     augur.getVSize = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getVSize.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getVSize, onSent);
+        var tx = augur.clone(augur.tx.getVSize);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getReportsFilled = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getReportsFilled.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getReportsFilled, onSent);
+        var tx = augur.clone(augur.tx.getReportsFilled);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getReportsMask = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getReportsMask.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getReportsMask, onSent);
+        var tx = augur.clone(augur.tx.getReportsMask);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getWeightedCenteredData = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getWeightedCenteredData.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getWeightedCenteredData, onSent);
+        var tx = augur.clone(augur.tx.getWeightedCenteredData);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getCovarianceMatrixRow = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getCovarianceMatrixRow.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getCovarianceMatrixRow, onSent);
+        var tx = augur.clone(augur.tx.getCovarianceMatrixRow);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getDeflated = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getDeflated.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getDeflated, onSent);
+        var tx = augur.clone(augur.tx.getDeflated);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getLoadingVector = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getLoadingVector.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getLoadingVector, onSent);
+        var tx = augur.clone(augur.tx.getLoadingVector);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getLatent = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getLatent.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getLatent, onSent);
+        var tx = augur.clone(augur.tx.getLatent);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getScores = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getScores.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getScores, onSent);
+        var tx = augur.clone(augur.tx.getScores);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getSetOne = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getSetOne.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getSetOne, onSent);
+        var tx = augur.clone(augur.tx.getSetOne);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getSetTwo = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getSetTwo.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getSetTwo, onSent);
+        var tx = augur.clone(augur.tx.getSetTwo);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.returnOld = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.returnOld.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.returnOld, onSent);
+        var tx = augur.clone(augur.tx.returnOld);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getNewOne = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getNewOne.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getNewOne, onSent);
+        var tx = augur.clone(augur.tx.getNewOne);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getNewTwo = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getNewTwo.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getNewTwo, onSent);
+        var tx = augur.clone(augur.tx.getNewTwo);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getAdjPrinComp = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getAdjPrinComp.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getAdjPrinComp, onSent);
+        var tx = augur.clone(augur.tx.getAdjPrinComp);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getSmoothRep = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getSmoothRep.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getSmoothRep, onSent);
+        var tx = augur.clone(augur.tx.getSmoothRep);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
     augur.getOutcomesFinal = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.getOutcomesFinal.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.getOutcomesFinal, onSent);
+        var tx = augur.clone(augur.tx.getOutcomesFinal);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
 
     augur.tx.makeBallot = {
@@ -1647,8 +1695,9 @@ var Augur = (function (augur) {
     augur.makeBallot = function (branch, votePeriod, onSent) {
         // branch: sha256
         // votePeriod: integer
-        augur.tx.makeBallot.params = [branch, votePeriod];
-        return augur.invoke(augur.tx.makeBallot, onSent);
+        var tx = augur.clone(augur.tx.makeBallot);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
     };
 
     // markets.se
@@ -1669,16 +1718,18 @@ var Augur = (function (augur) {
     augur.getSimulatedBuy = function (market, outcome, amount, onSent) {
         // market: sha256 hash id
         // outcome: integer (1 or 2 for binary events)
-        // amount: base 10 number -> base 2^64 number
-        augur.tx.getSimulatedBuy.params = [market, outcome, augur.fix(amount)];
-        return augur.invoke(augur.tx.getSimulatedBuy, onSent);
+        // amount: number -> fixed-point
+        var tx = augur.clone(augur.tx.getSimulatedBuy);
+        tx.params = [market, outcome, augur.fix(amount)];
+        return fire(tx, onSent);
     };
     augur.getSimulatedSell = function (market, outcome, amount, onSent) {
         // market: sha256 hash id
         // outcome: integer (1 or 2 for binary events)
         // amount: number -> fixed-point
-        augur.tx.getSimulatedSell.params = [market, outcome, augur.fix(amount)];
-        return augur.invoke(augur.tx.getSimulatedSell, onSent);
+        var tx = augur.clone(augur.tx.getSimulatedSell);
+        tx.params = [market, outcome, augur.fix(amount)];
+        return fire(tx, onSent);
     };
 
     augur.tx.lsLmsr = {
@@ -1690,8 +1741,9 @@ var Augur = (function (augur) {
     };
     augur.lsLmsr = function (market, onSent) {
         // market: sha256
-        augur.tx.lsLmsr.params = market;
-        return augur.invoke(augur.tx.lsLmsr, onSent);
+        var tx = augur.clone(augur.tx.lsLmsr);
+        tx.params = market;
+        return fire(tx, onSent);
     };
 
     augur.filters = {}; // key: marketId => {filterId: hexstring, polling: bool}
@@ -1763,13 +1815,15 @@ var Augur = (function (augur) {
     };
     augur.getMarketEvents = function (market, onSent) {
         // market: sha256 hash id
-        augur.tx.getMarketEvents.params = market;
-        return augur.invoke(augur.tx.getMarketEvents, onSent);
+        var tx = augur.clone(augur.tx.getMarketEvents);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getNumEvents = function (market, onSent) {
         // market: sha256 hash id
-        augur.tx.getNumEvents.params = market;
-        return augur.invoke(augur.tx.getNumEvents, onSent);
+        var tx = augur.clone(augur.tx.getNumEvents);
+        tx.params = market;
+        return fire(tx, onSent);
     };
 
     augur.tx.getBranchID = {
@@ -1822,39 +1876,46 @@ var Augur = (function (augur) {
     };
     augur.getBranchID = function (branch, onSent) {
         // branch: sha256 hash id
-        augur.tx.getBranchID.params = branch;
-        return augur.invoke(augur.tx.getBranchID, onSent);
+        var tx = augur.clone(augur.tx.getBranchID);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     // Get the current number of participants in this market
     augur.getCurrentParticipantNumber = function (market, onSent) {
         // market: sha256 hash id
-        augur.tx.getCurrentParticipantNumber.params = market;
-        return augur.invoke(augur.tx.getCurrentParticipantNumber, onSent);
+        var tx = augur.clone(augur.tx.getCurrentParticipantNumber);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getMarketNumOutcomes = function (market, onSent) {
         // market: sha256 hash id
-        augur.tx.getMarketNumOutcomes.params = market;
-        return augur.invoke(augur.tx.getMarketNumOutcomes, onSent);
+        var tx = augur.clone(augur.tx.getMarketNumOutcomes);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getParticipantSharesPurchased = function (market, participationNumber, outcome, onSent) {
         // market: sha256 hash id
-        augur.tx.getParticipantSharesPurchased.params = [market, participationNumber, outcome];
-        return augur.invoke(augur.tx.getParticipantSharesPurchased, onSent);
+        var tx = augur.clone(augur.tx.getParticipantSharesPurchased);
+        tx.params = [market, participationNumber, outcome];
+        return fire(tx, onSent);
     };
     augur.getSharesPurchased = function (market, outcome, onSent) {
         // market: sha256 hash id
-        augur.tx.getSharesPurchased.params = [market, outcome];
-        return augur.invoke(augur.tx.getSharesPurchased, onSent);
+        var tx = augur.clone(augur.tx.getSharesPurchased);
+        tx.params = [market, outcome];
+        return fire(tx, onSent);
     };
     augur.getWinningOutcomes = function (market, onSent) {
         // market: sha256 hash id
-        augur.tx.getWinningOutcomes.params = market;
-        return augur.invoke(augur.tx.getWinningOutcomes, onSent);
+        var tx = augur.clone(augur.tx.getWinningOutcomes);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.price = function (market, outcome, onSent) {
         // market: sha256 hash id
-        augur.tx.price.params = [market, outcome];
-        return augur.invoke(augur.tx.price, onSent);
+        var tx = augur.clone(augur.tx.price);
+        tx.params = [market, outcome];
+        return fire(tx, onSent);
     };
 
     augur.tx.getParticipantNumber = {
@@ -1874,14 +1935,16 @@ var Augur = (function (augur) {
     augur.getParticipantNumber = function (market, address, onSent) {
         // market: sha256
         // address: ethereum account
-        augur.tx.getParticipantNumber.params = [market, address];
-        return augur.invoke(augur.tx.getParticipantNumber, onSent);
+        var tx = augur.clone(augur.tx.getParticipantNumber);
+        tx.params = [market, address];
+        return fire(tx, onSent);
     };
     // Get the address for the specified participant number (array index) 
     augur.getParticipantID = function (market, participantNumber, onSent) {
         // market: sha256
-        augur.tx.getParticipantID.params = [market, participantNumber];
-        return augur.invoke(augur.tx.getParticipantID, onSent);
+        var tx = augur.clone(augur.tx.getParticipantID);
+        tx.params = [market, participantNumber];
+        return fire(tx, onSent);
     };
 
     augur.tx.getAlpha = {
@@ -1914,23 +1977,27 @@ var Augur = (function (augur) {
     };
     augur.getAlpha = function (market, onSent) {
         // market: sha256
-        augur.tx.getAlpha.params = market;
-        return augur.invoke(augur.tx.getAlpha, onSent);
+        var tx = augur.clone(augur.tx.getAlpha);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getCumScale = function (market, onSent) {
         // market: sha256
-        augur.tx.getCumScale.params = market;
-        return augur.invoke(augur.tx.getCumScale, onSent);
+        var tx = augur.clone(augur.tx.getCumScale);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getTradingPeriod = function (market, onSent) {
         // market: sha256
-        augur.tx.getTradingPeriod.params = market;
-        return augur.invoke(augur.tx.getTradingPeriod, onSent);
+        var tx = augur.clone(augur.tx.getTradingPeriod);
+        tx.params = market;
+        return fire(tx, onSent);
     };
     augur.getTradingFee = function (market, onSent) {
         // market: sha256
-        augur.tx.getTradingFee.params = market;
-        return augur.invoke(augur.tx.getTradingFee, onSent);
+        var tx = augur.clone(augur.tx.getTradingFee);
+        tx.params = market;
+        return fire(tx, onSent);
     };
 
     // reporting.se
@@ -1978,37 +2045,43 @@ var Augur = (function (augur) {
     augur.getRepBalance = function (branch, account, onSent) {
         // branch: sha256 hash id
         // account: ethereum address (hexstring)
-        augur.tx.getRepBalance.params = [branch, account];
-        return augur.invoke(augur.tx.getRepBalance, onSent);
+        var tx = augur.clone(augur.tx.getRepBalance);
+        tx.params = [branch, account];
+        return fire(tx, onSent);
     };
     augur.getRepByIndex = function (branch, repIndex, onSent) {
         // branch: sha256
         // repIndex: integer
-        augur.tx.getRepByIndex.params = [branch, repIndex];
-        return augur.invoke(augur.tx.getRepByIndex, onSent);
+        var tx = augur.clone(augur.tx.getRepByIndex);
+        tx.params = [branch, repIndex];
+        return fire(tx, onSent);
     };
     augur.getReporterID = function (branch, index, onSent) {
         // branch: sha256
         // index: integer
-        augur.tx.getReporterID.params = [branch, index];
-        return augur.invoke(augur.tx.getReporterID, onSent);
+        var tx = augur.clone(augur.tx.getReporterID);
+        tx.params = [branch, index];
+        return fire(tx, onSent);
     };
     // reputation of a single address over all branches
     augur.getReputation = function (address, onSent) {
         // address: ethereum account
-        augur.tx.getReputation.params = address;
-        return augur.invoke(augur.tx.getReputation, onSent);
+        var tx = augur.clone(augur.tx.getReputation);
+        tx.params = address;
+        return fire(tx, onSent);
     };
     augur.getNumberReporters = function (branch, onSent) {
         // branch: sha256
-        augur.tx.getNumberReporters.params = branch;
-        return augur.invoke(augur.tx.getNumberReporters, onSent);
+        var tx = augur.clone(augur.tx.getNumberReporters);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.repIDToIndex = function (branch, repID, onSent) {
         // branch: sha256
         // repID: ethereum account
-        augur.tx.repIDToIndex.params = [branch, repID];
-        return augur.invoke(augur.tx.repIDToIndex, onSent);
+        var tx = augur.clone(augur.tx.repIDToIndex);
+        tx.params = [branch, repID];
+        return fire(tx, onSent);
     };
 
     augur.tx.hashReport = {
@@ -2021,18 +2094,23 @@ var Augur = (function (augur) {
         from: augur.coinbase,
         to: augur.contracts.reporting,
         method: "faucet",
+        signature: "i",
         send: true
     };
     augur.hashReport = function (ballot, salt, onSent) {
         // ballot: number[]
         // salt: integer
         if (ballot.constructor === Array) {
-            augur.tx.hashReport.params = [ballot, salt];
-            return augur.invoke(augur.tx.hashReport, onSent);
+            var tx = augur.clone(augur.tx.hashReport);
+            tx.params = [ballot, salt];
+            return fire(tx, onSent);
         }
     };
-    augur.reputationFaucet = function (onSent) { // should this take a branch parameter?
-        return augur.invoke(augur.tx.reputationFaucet, onSent);
+    augur.reputationFaucet = function (branch, onSent) {
+        // branch: sha256
+        var tx = augur.clone(augur.tx.reputationFaucet);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
 
     // checkQuorum.se
@@ -2045,8 +2123,9 @@ var Augur = (function (augur) {
     };
     augur.checkQuorum = function (branch, onSent) {
         // branch: sha256
-        augur.tx.checkQuorum.params = branch;
-        return augur.invoke(augur.tx.checkQuorum, onSent);
+        var tx = augur.clone(augur.tx.checkQuorum);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
 
     // buy&sellShares.se
@@ -2073,8 +2152,9 @@ var Augur = (function (augur) {
     };
     augur.getNonce = function (id, onSent) {
         // id: sha256 hash id
-        augur.tx.getNonce.params = id;
-        return augur.invoke(augur.tx.getNonce, onSent);
+        var tx = augur.clone(augur.tx.getNonce);
+        tx.params = id;
+        return fire(tx, onSent);
     };
     augur.buyShares = function (branch, market, outcome, amount, nonce, onSent, onSuccess, onFailed) {
         if (branch.constructor === Object && branch.branchId) {
@@ -2091,29 +2171,41 @@ var Augur = (function (augur) {
         }
         if (onSent) {
             augur.getNonce(market, function (nonce) {
-                augur.tx.buyShares.params = [branch, market, outcome, augur.fix(amount), nonce];
+                augur.tx.buyShares.params = [
+                    branch,
+                    market,
+                    outcome,
+                    augur.fix(amount),
+                    nonce
+                ];
                 augur.tx.buyShares.send = false;
                 augur.invoke(augur.tx.buyShares, function (res) {
-                    if (augur.ERRORS.buyShares[res]) {
-                        var contract_error = "error " + augur.ERRORS.buyShares[res].code.toString() + ": " + augur.ERRORS.buyShares[res].message;
-                        if (onFailed) onFailed(contract_error);
+                    var res_number = augur.bignum(res).toFixed();
+                    if (augur.ERRORS.buyShares[res_number]) {
+                        if (onFailed) onFailed({
+                            error: res_number,
+                            message: augur.ERRORS.buyShares[res_number]
+                        });
                     }
-                    if (res && parseInt(res) > 0) {
+                    if (res && augur.bignum(res).toNumber() > 0) {
                         augur.tx.buyShares.send = true;
                         augur.invoke(augur.tx.buyShares, function (txhash) {
+                            var pings, pingTx;
                             if (txhash) {
                                 if (onSent) onSent({ txHash: txhash });
                                 if (onSuccess) {
-                                    var pings = 0;
-                                    var pingTx = function () {
+                                    pings = 0;
+                                    pingTx = function () {
                                         augur.getTx(txhash, function (tx) {
                                             pings++;
-                                            if (tx && tx.blockHash && parseInt(tx.blockHash !== 0)) {
+                                            if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
                                                 tx.txHash = tx.hash;
                                                 delete tx.hash;
                                                 onSuccess(tx);
                                             } else {
-                                                if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
+                                                if (pings < augur.PINGMAX) {
+                                                    setTimeout(pingTx, 12000);
+                                                }
                                             }
                                         });
                                     };
@@ -2126,7 +2218,13 @@ var Augur = (function (augur) {
             });
         } else {
             nonce = augur.getNonce(market);
-            augur.tx.buyShares.params = [branch, market, outcome, augur.fix(amount), nonce];
+            augur.tx.buyShares.params = [
+                branch,
+                market,
+                outcome,
+                augur.fix(amount),
+                nonce
+            ];
             return augur.invoke(augur.tx.buyShares);
         }
     };
@@ -2148,26 +2246,32 @@ var Augur = (function (augur) {
                 augur.tx.sellShares.params = [branch, market, outcome, augur.fix(amount), nonce];
                 augur.tx.sellShares.send = false;
                 augur.invoke(augur.tx.sellShares, function (res) {
-                    if (augur.ERRORS.sellShares[res]) {
-                        var contract_error = "error " + augur.ERRORS.sellShares[res].code.toString() + ": " + augur.ERRORS.sellShares[res].message;
-                        if (onFailed) onFailed(contract_error);
+                    var res_number = augur.bignum(res).toFixed();
+                    if (augur.ERRORS.sellShares[res_number]) {
+                        if (onFailed) onFailed({
+                            error: res_number,
+                            message: augur.ERRORS.sellShares[res_number]
+                        });
                     }
-                    if (res && parseInt(res) > 0) {
+                    if (res && augur.bignum(res).toNumber() > 0) {
                         augur.tx.sellShares.send = true;
                         augur.invoke(augur.tx.sellShares, function (txhash) {
+                            var pings, pingTx;
                             if (txhash) {
                                 if (onSent) onSent({ txHash: txhash });
                                 if (onSuccess) {
-                                    var pings = 0;
-                                    var pingTx = function () {
+                                    pings = 0;
+                                    pingTx = function () {
                                         augur.getTx(txhash, function (tx) {
                                             pings++;
-                                            if (tx && tx.blockHash && parseInt(tx.blockHash !== 0)) {
+                                            if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
                                                 tx.txHash = tx.hash;
                                                 delete tx.hash;
                                                 onSuccess(tx);
                                             } else {
-                                                if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
+                                                if (pings < augur.PINGMAX) {
+                                                    setTimeout(pingTx, 12000);
+                                                }
                                             }
                                         });
                                     };
@@ -2180,7 +2284,13 @@ var Augur = (function (augur) {
             });
         } else {
             nonce = augur.getNonce(market);
-            augur.tx.sellShares.params = [branch, market, outcome, augur.fix(amount), nonce];
+            augur.tx.sellShares.params = [
+                branch,
+                market,
+                outcome,
+                augur.fix(amount),
+                nonce
+            ];
             return augur.invoke(augur.tx.sellShares);
         }
     };
@@ -2201,8 +2311,9 @@ var Augur = (function (augur) {
         // branch: sha256
         // receiver: sha256
         // value: number -> fixed-point
-        augur.tx.sendReputation.params = [branch, receiver, augur.fix(value)];
-        return augur.invoke(augur.tx.sendReputation, onSent);
+        var tx = augur.clone(augur.tx.sendReputation);
+        tx.params = [branch, receiver, augur.fix(value)];
+        return fire(tx, onSent);
     };
 
     // transferShares.se
@@ -2230,43 +2341,59 @@ var Augur = (function (augur) {
             if (branch.onFailed) onFailed = branch.onFailed;       // function({id, txhash})
             branch = branch.branchId;         // sha256 hash
         }
-        augur.tx.createEvent.params = [branch, description, expDate, minValue, maxValue, numOutcomes];
+        augur.tx.createEvent.params = [
+            branch,
+            description,
+            expDate,
+            minValue,
+            maxValue,
+            numOutcomes
+        ];
         augur.tx.createEvent.send = false;
         augur.invoke(augur.tx.createEvent, function (eventID) {
+            var eventID_number, event;
             if (eventID) {
-                var event = { id: eventID };
-                if (augur.ERRORS.createEvent[eventID]) {
-                    event.error = "error " + augur.ERRORS.createEvent[eventID].code.toString() + ": " + augur.ERRORS.createEvent[eventID].message;
-                    if (onFailed) onFailed(event);
+                if (eventID.error) {
+                    if (onFailed) onFailed(eventID);
                 } else {
-                    augur.tx.createEvent.send = true;
-                    augur.invoke(augur.tx.createEvent, function (txhash) {
-                        if (txhash) {
-                            event.txHash = txhash;
-                            if (onSent) onSent(event);
-                            if (onSuccess) {
-                                var pings = 0;
-                                var pingTx = function () {
-                                    augur.getEventInfo(eventID, function (eventInfo) {
-                                        pings++;
-                                        if (eventInfo && eventInfo !== "0x" && eventInfo.branch && eventInfo.branch !== 0 && eventInfo.branch !== "0") {
-                                            event.branch = eventInfo.branch;
-                                            event.expirationDate = eventInfo.expirationDate;
-                                            event.outcome = eventInfo.outcome;
-                                            event.minValue = eventInfo.minValue;
-                                            event.maxValue = eventInfo.maxValue;
-                                            event.numOutcomes = eventInfo.numOutcomes;
-                                            event.description = eventInfo.description;
-                                            onSuccess(event);
-                                        } else {
-                                            if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
-                                        }
-                                    });
-                                };
-                                pingTx();
+                    eventID_number = augur.bignum(eventID).toFixed();
+                    if (augur.ERRORS.createEvent[eventID_number]) {
+                        if (onFailed) onFailed({
+                            error: eventID_number,
+                            message: augur.ERRORS.createEvent[eventID_number]
+                        });
+                    } else {
+                        event = { id: eventID };
+                        augur.tx.createEvent.send = true;
+                        augur.invoke(augur.tx.createEvent, function (txhash) {
+                            var pings, pingTx;
+                            if (txhash) {
+                                event.txHash = txhash;
+                                if (onSent) onSent(event);
+                                if (onSuccess) {
+                                    pings = 0;
+                                    pingTx = function () {
+                                        augur.getEventInfo(eventID, function (eventInfo) {
+                                            pings++;
+                                            if (eventInfo && eventInfo !== "0x" && eventInfo.expirationDate && eventInfo.expirationDate !== 0 && eventInfo.expirationDate !== "0") {
+                                                event.branch = eventInfo.branch;
+                                                event.expirationDate = eventInfo.expirationDate;
+                                                event.outcome = eventInfo.outcome;
+                                                event.minValue = eventInfo.minValue;
+                                                event.maxValue = eventInfo.maxValue;
+                                                event.numOutcomes = eventInfo.numOutcomes;
+                                                event.description = eventInfo.description;
+                                                onSuccess(event);
+                                            } else {
+                                                if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
+                                            }
+                                        });
+                                    };
+                                    pingTx();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -2303,41 +2430,54 @@ var Augur = (function (augur) {
         ];
         augur.tx.createMarket.send = false;
         augur.invoke(augur.tx.createMarket, function (marketID) {
+            var marketID_number, market;
             if (marketID) {
-                var market = { id: marketID };
-                if (augur.ERRORS.createMarket[marketID]) {
-                    market.error = "error " + augur.ERRORS.createMarket[marketID].code.toString() + ": " + augur.ERRORS.createMarket[marketID].message;
-                    if (onFailed) onFailed(market);
+                if (marketID.error) {
+                    if (onFailed) onFailed(marketID);
                 } else {
-                    augur.tx.createMarket.send = true;
-                    augur.invoke(augur.tx.createMarket, function (txhash) {
-                        if (txhash) {
-                            market.txHash = txhash;
-                            if (onSent) onSent(market);
-                            if (onSuccess) {
-                                var pings = 0;
-                                var pingTx = function () {
-                                    augur.getMarketInfo(marketID, function (marketInfo) {
-                                        pings++;
-                                        if (marketInfo && marketInfo !== "0x" && marketInfo.numOutcomes && marketInfo.numOutcomes !== 0 && marketInfo.numOutcomes !== "0") {
-                                            market.numOutcomes = marketInfo.numOutcomes;
-                                            market.currentParticipant = marketInfo.currentParticipant;
-                                            market.alpha = marketInfo.alpha;
-                                            market.cumulativeScale = marketInfo.cumulativeScale;
-                                            market.numOutcomes = marketInfo.numOutcomes;
-                                            market.tradingPeriod = marketInfo.tradingPeriod;
-                                            market.tradingFee = marketInfo.tradingFee;
-                                            market.description = marketInfo.description;
-                                            onSuccess(market);
-                                        } else {
-                                            if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
-                                        }
-                                    });
-                                };
-                                pingTx();
+                    log(marketID);
+                    marketID_number = augur.bignum(marketID);
+                    if (marketID_number) {
+                        marketID_number = marketID_number.toFixed();
+                    }
+                    if (marketID_number && augur.ERRORS.createEvent[marketID_number]) {
+                        if (onFailed) onFailed({
+                            error: marketID_number,
+                            message: augur.ERRORS.createMarket[marketID_number]
+                        });
+                    } else {
+                        market = { id: marketID };
+                        augur.tx.createMarket.send = true;
+                        augur.invoke(augur.tx.createMarket, function (txhash) {
+                            var pings, pingTx;
+                            if (txhash) {
+                                market.txHash = txhash;
+                                if (onSent) onSent(market);
+                                if (onSuccess) {
+                                    pings = 0;
+                                    pingTx = function () {
+                                        augur.getMarketInfo(marketID, function (marketInfo) {
+                                            pings++;
+                                            if (marketInfo && marketInfo !== "0x" && marketInfo.numOutcomes && marketInfo.numOutcomes !== 0 && marketInfo.numOutcomes !== "0") {
+                                                market.numOutcomes = marketInfo.numOutcomes;
+                                                market.currentParticipant = marketInfo.currentParticipant;
+                                                market.alpha = marketInfo.alpha;
+                                                market.cumulativeScale = marketInfo.cumulativeScale;
+                                                market.numOutcomes = marketInfo.numOutcomes;
+                                                market.tradingPeriod = marketInfo.tradingPeriod;
+                                                market.tradingFee = marketInfo.tradingFee;
+                                                market.description = marketInfo.description;
+                                                onSuccess(market);
+                                            } else {
+                                                if (pings < augur.PINGMAX) setTimeout(pingTx, 12000);
+                                            }
+                                        });
+                                    };
+                                    pingTx();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -2355,8 +2495,9 @@ var Augur = (function (augur) {
     augur.closeMarket = function (branch, market, onSent) {
         // branch: sha256
         // market: sha256
-        augur.tx.closeMarket.params = [branch, market];
-        return augur.invoke(augur.tx.closeMarket, onSent);
+        var tx = augur.clone(augur.tx.closeMarket);
+        tx.params = [branch, market];
+        return fire(tx, onSent);
     };
 
     // dispatch.se
@@ -2382,13 +2523,10 @@ var Augur = (function (augur) {
         if (onSent) {
             augur.invoke(augur.tx.dispatch, function (step) {
                 if (step) {
-                    log("step");
-                    log(typeof step);
-                    log(step);
                     if (augur.ERRORS.dispatch[step]) {
                         step = {
                             error: step,
-                            message: augur.ERRORS.dispatch[step].message
+                            message: augur.ERRORS.dispatch[step]
                         };
                         if (onFailed) onFailed(step);
                     } else {

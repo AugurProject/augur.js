@@ -18,7 +18,7 @@ constants.accounts = {
     joey: "0x1c11aa45c792e202e9ffdc2f12f99d0d209bef70",
     chris: "0x9b7e6cd69f45d93336606b0f70dac77b5b6e9fb0",
     scott: "0x6fc0a64e2dce367e35417bfd1568fa35af9f3e4b",
-    jay: "0x6a56cf7a57405800b18e3e0940628c190cfa73bc"
+    jay: "0xa381f37f23cb99ca036997008403ba1366fd8259" // bassguitarman
 };
 constants.whisper = {
     jack: "0x04ba344c755678c805a966f9ff425872e297220c3a25a7cc3f0400313fa29d387d83b899f046fd18b4cfab845d4c8a78f6ab14a5bbd823219577091c33d766012b",

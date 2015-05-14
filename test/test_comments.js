@@ -21,39 +21,38 @@ function test_comments() {
     log(comments);
     
     log("\nAugur.initComments:");
-    var filter = Augur.initComments(market);
-    log(filter);
+    if (Augur.initComments(market)) {
+        var pkg = {
+            marketId: market,
+            message: Math.random().toString(36).substring(4),
+            author: Augur.coinbase
+        };
+        log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
+        var updated_comments = Augur.addMarketComment(pkg);
 
-    var pkg = {
-        marketId: market,
-        message: Math.random().toString(36).substring(4),
-        author: Augur.coinbase
-    };
-    log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
-    var updated_comments = Augur.addMarketComment(pkg);
+        pkg.message = Math.random().toString(36).substring(4);
+        log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
+        updated_comments = Augur.addMarketComment(pkg);
+        log(updated_comments.length.toString() + " comments found");
+        log(updated_comments);
 
-    pkg.message = Math.random().toString(36).substring(4);
-    log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
-    updated_comments = Augur.addMarketComment(pkg);
-    log(updated_comments.length.toString() + " comments found");
-    log(updated_comments);
+        log("\nAugur.getMarketComments:");
+        comments = Augur.getMarketComments(market);
+        log(comments);
 
-    log("\nAugur.getMarketComments:");
-    comments = Augur.getMarketComments(market);
-    log(comments);
+        pkg.message = Math.random().toString(36).substring(4);
+        log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
+        updated_comments = Augur.addMarketComment(pkg);
+        log(updated_comments.length.toString() + " comments found");
+        log(updated_comments);
 
-    pkg.message = Math.random().toString(36).substring(4);
-    log("\nAugur.addMarketComment(" + JSON.stringify(pkg, null, 2) + "):");
-    updated_comments = Augur.addMarketComment(pkg);
-    log(updated_comments.length.toString() + " comments found");
-    log(updated_comments);
+        log("\nReset comments");
+        log(Augur.resetComments(market));
 
-    log("\nReset comments");
-    log(Augur.resetComments(market));
-
-    // crashes geth (!)
-    // log("\nUninstalling filter " + filter);
-    // log(Augur.uninstallFilter(filter));
+        // crashes geth (!)
+        // log("\nUninstalling filter " + filter);
+        // log(Augur.uninstallFilter(filter));
+    }
 }
 
 function interlocutor() {
