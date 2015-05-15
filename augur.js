@@ -949,16 +949,10 @@ var Augur = (function (augur) {
             return this.invoke(txlist, f);
         }
     };
-    function fire(itx, onSent) {
-        var tx = augur.clone(itx);
-        if (onSent) {
-            augur.invoke(tx, function (res) {
-                onSent(error_codes(tx, res));
-            });
-        } else {
-            return error_codes(tx, augur.invoke(tx, onSent));
-        }        
-    }
+
+
+
+    // Error handling and propagation
     function error_codes(tx, response) {
         if (response.constructor === Array) {
             for (var i = 0, len = response.length; i < len; ++i) {
@@ -986,6 +980,48 @@ var Augur = (function (augur) {
             }
         }
         return response;
+    }
+    function strategy(target, callback) {
+        if (callback) {
+            callback(target);
+        } else {
+            return target;
+        }
+    }
+    function fire(itx, onSent) {
+        var num_params_expected, num_params_received, tx;
+        if (itx.signature && itx.signature.length) {
+            if (itx.params) {
+                if (itx.params.constructor === Array) {
+                    num_params_received = itx.params.length;
+                } else if (itx.params.constructor === Object) {
+                    return strategy({
+                        error: "-9000",
+                        message: "cannot send object parameter to contract"
+                    }, onSent);
+                } else if (itx.params) {
+                    num_params_received = 1;
+                } 
+            } else {
+                num_params_received = 0;
+            }
+            num_params_expected = itx.signature.length;
+            if (num_params_received !== num_params_expected) {
+                return strategy({
+                    error: "-1010101",
+                    message: "expected " + num_params_expected.toString()+
+                        " parameters, got " + num_params_received.toString()
+                }, onSent);
+            }
+        }
+        var tx = augur.clone(itx);
+        if (onSent) {
+            augur.invoke(tx, function (res) {
+                onSent(error_codes(tx, res));
+            });
+        } else {
+            return error_codes(tx, augur.invoke(tx, onSent));
+        }        
     }
 
     /***********************
