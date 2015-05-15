@@ -856,7 +856,7 @@ var Augur = (function (augur) {
             if (tx.params) {
                 if (tx.params.constructor === Array) {
                     for (var i = 0, len = tx.params.length; i < len; ++i) {
-                        if (tx.params[i].constructor === BigNumber) {
+                        if (tx.params[i] && tx.params[i].constructor === BigNumber) {
                             tx.params[i] = tx.params[i].toFixed();
                         }
                     }
