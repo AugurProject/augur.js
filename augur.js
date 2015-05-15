@@ -1014,7 +1014,7 @@ var Augur = (function (augur) {
                 }, onSent);
             }
         }
-        var tx = augur.clone(itx);
+        tx = augur.clone(itx);
         if (onSent) {
             augur.invoke(tx, function (res) {
                 onSent(error_codes(tx, res));
