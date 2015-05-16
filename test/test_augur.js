@@ -815,7 +815,7 @@ describe("Augur API", function () {
         describe("hashReport([ballot], " + salt + ") ", function () {
             var test = function (r) {
                 // TODO double-check this
-                assert.equal(r, "0xa5ea8e72fa70be0521a240201dedd1376599a9a935be4977d798522bcfbc29de");
+                assert.equal(r, "0x7e2d63d1ba8dfda2b2764e6be7a616fc9b7195d84f40736f76fb769b8f819331");
             };
             it("sync", function () {
                 test(Augur.hashReport(ballot, salt));
@@ -951,6 +951,99 @@ describe("Augur API", function () {
     // transferShares.se
 
     // makeReports.se
+    describe("makeReports.se", function () {
+        describe("report", function () {
+            it("complete call-send-confirm callback sequence", function (done) {
+                this.timeout(120000);
+                var report = {
+                    branchId: branch_id,
+                    report: [1, 2, 1, 1],
+                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
+                    salt: salt,
+                    onSent: function (res) {
+                        // log("sent: " + JSON.stringify(res));
+                    },
+                    onSuccess: function (res) {
+                        // log("success: " + JSON.stringify(res));
+                        done();
+                    },
+                    onFailed: function (res) {
+                        log("failed: " + JSON.stringify(res));
+                        done();
+                    }
+                };
+                Augur.report(report);
+            });
+        });
+        describe("submitReportHash", function () {
+            it("complete call-send-confirm callback sequence", function (done) {
+                this.timeout(120000);
+                var reportHashObj = {
+                    branchId: branch_id,
+                    reportHash: Augur.hash('[1,2,1,1]'),
+                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
+                    onSent: function (res) {
+                        // log("sent: " + JSON.stringify(res, null, 2));
+                    },
+                    onSuccess: function (res) {
+                        // log("success: " + JSON.stringify(res, null, 2));
+                        done();
+                    },
+                    onFailed: function (res) {
+                        log("failed: " + JSON.stringify(res, null, 2));
+                        done();
+                    }
+                };
+                Augur.submitReportHash(reportHashObj);
+            });
+        });
+        describe("checkReportValidity", function () {
+            it("complete call-send-confirm callback sequence", function (done) {
+                this.timeout(120000);
+                var checkReportObj = {
+                    branchId: branch_id,
+                    report: [1, 2, 1, 1],
+                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
+                    onSent: function (res) {
+                        // log("sent: " + JSON.stringify(res, null, 2));
+                    },
+                    onSuccess: function (res) {
+                        // log("success: " + JSON.stringify(res, null, 2));
+                        done();
+                    },
+                    onFailed: function (res) {
+                        log("failed: " + JSON.stringify(res, null, 2));
+                        done();
+                    }
+                };
+                Augur.checkReportValidity(checkReportObj);
+            });
+        });
+        describe("slashRep", function () {
+            it("complete call-send-confirm callback sequence", function (done) {
+                this.timeout(120000);
+                var slashRepObj = {
+                    branchId: branch_id,
+                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
+                    salt: salt,
+                    report: [1, 2, 1, 1],
+                    reporter: constants.accounts.jack,
+                    onSent: function (res) {
+                        // log("sent: " + JSON.stringify(res, null, 2));
+                    },
+                    onSuccess: function (res) {
+                        // log("success: " + JSON.stringify(res, null, 2));
+                        done();
+                    },
+                    onFailed: function (res) {
+                        log("failed: " + JSON.stringify(res, null, 2));
+                        done();
+                    }
+                };
+                Augur.slashRep(slashRepObj);
+            });
+        });
+    });
 
     // createEvent.se
     describe("createEvent.se", function () {
@@ -970,7 +1063,6 @@ describe("Augur API", function () {
                     numOutcomes: numOutcomes,
                     onSent: function (r) {
                         log("sent: " + JSON.stringify(r, null, 2));
-                        done();
                     },
                     onSuccess: function (r) {
                         log("success: " + JSON.stringify(r, null, 2));
@@ -1029,8 +1121,8 @@ describe("Augur API", function () {
                         done();
                     }
                 };
-                // Augur.createMarket(marketObj);
-                done();
+                Augur.createMarket(marketObj);
+                // done();
             });
         });
     });

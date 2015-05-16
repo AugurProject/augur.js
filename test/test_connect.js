@@ -45,6 +45,10 @@ describe("Connection", function () {
         assert(Augur.connect({ port: 8545 }));
         assert(Augur.coinbase);
     });
+    it("should connect successfully to { host: 'localhost:8545' }", function () {
+        assert(Augur.connect({ host: 'localhost:8545' }));
+        assert(Augur.coinbase);
+    });
     it("should connect successfully to '127.0.0.1:8545'", function () {
         assert(Augur.connect('127.0.0.1:8545'));
         assert(Augur.coinbase);

@@ -58,8 +58,6 @@ describe("Ethereum JSON-RPC", function () {
     });
     describe("shh_version", function () {
         it("should be version 2", function () {
-            log(Augur.RPC);
-            log(Augur.shh("version"));
             assert.equal(Augur.shh("version"), "2");
         });
     });

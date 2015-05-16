@@ -29,7 +29,8 @@ constants.whisper = {
 constants.examples = {
     ten: "0x3caf506cf3d5bb16ba2c8f89a6591c5160d69cf3",
     mul2: "0x5204f18c652d1c31c6a5968cb65e011915285a50",
-    multiplier: "0x8a7529b95f769cd0197cd7022cab5f4ef0874b31"
+    multiplier: "0x8a7529b95f769cd0197cd7022cab5f4ef0874b31",
+    arraydouble: "0x86c62f40cd49b3a42fad6104f38b3f68aa9871f8"
 };
 
 if (MODULAR) module.exports = constants;
