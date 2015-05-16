@@ -5,12 +5,6 @@
 
 "use strict";
 
-var rpc = {
-    protocol: "http",
-    host: "localhost",
-    port: 8545
-};
-
 var MODULAR = (typeof(module) !== 'undefined');
 var NODE_JS = MODULAR && process && !process.browser;
 if (MODULAR) {
@@ -57,7 +51,12 @@ var Augur = (function (augur) {
 
     BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
-    augur.RPC = rpc;
+    // default RPC settings
+    augur.RPC = {
+        protocol: "http",
+        host: "localhost",
+        port: 8545
+    };
 
     // default gas: 3M
     augur.default_gas = "0x2dc6c0";
@@ -680,6 +679,58 @@ var Augur = (function (augur) {
         }
         return augur.data;
     }
+
+    /*******************************
+     * Ethereum network connection *
+     *******************************/
+
+    augur.connect = function (rpcinfo) {
+        var rpc;
+        if (rpcinfo) {
+            if (rpcinfo.constructor === Object) {
+                if (rpcinfo.protocol) augur.RPC.protocol = rpcinfo.protocol;
+                if (rpcinfo.host) augur.RPC.host = rpcinfo.host;
+                if (rpcinfo.port) augur.RPC.post = rpcinfo.port;
+            } else if (rpcinfo.constructor === String) {
+                try {
+                    rpc = rpcinfo.split("://");
+                    console.assert(rpc.length === 2);
+                    augur.RPC.protocol = rpc[0];
+                    rpc = rpc[1].split(':');
+                    if (rpc.length === 2) {
+                        augur.RPC.host = rpc[0];
+                        augur.RPC.port = rpc[1];
+                    } else {
+                        augur.RPC.host = rpc;
+                    }
+                } catch (e) {
+                    try {
+                        rpc = rpcinfo.split(':');
+                        if (rpc.length === 2) {
+                            augur.RPC.host = rpc[0];
+                            augur.RPC.port = rpc[1];
+                        } else {
+                            augur.RPC.host = rpc;
+                        }
+                    } catch (exc) {
+                        return false;
+                    }
+                }
+            }
+        } else {
+            augur.RPC = {
+                protocol: "http",
+                host: "localhost",
+                port: 8545
+            };
+        }
+        try {
+            augur.coinbase = json_rpc(postdata("coinbase"));
+            return true;
+        } catch (exc) {
+            return false;
+        }
+    };
     augur.setCoinbase = function (repeat) {
         try {
             augur.coinbase = json_rpc(postdata("coinbase"));
@@ -691,7 +742,6 @@ var Augur = (function (augur) {
             }
         }
     };
-    augur.setCoinbase(1);
 
     /******************************
      * Ethereum JSON-RPC bindings *

@@ -12,6 +12,8 @@ var assert = require("assert");
 var Augur = require("../augur");
 var constants = require("./constants");
 
+Augur.connect();
+
 var log = console.log;
 
 function array_equal(a, b) {
@@ -968,6 +970,7 @@ describe("Augur API", function () {
                     numOutcomes: numOutcomes,
                     onSent: function (r) {
                         log("sent: " + JSON.stringify(r, null, 2));
+                        done();
                     },
                     onSuccess: function (r) {
                         log("success: " + JSON.stringify(r, null, 2));

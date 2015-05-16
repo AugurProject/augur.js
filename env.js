@@ -6,8 +6,5 @@ GLOBAL.crypto = require('crypto');
 GLOBAL._ = require('lodash');
 GLOBAL.Augur = require('./augur');
 GLOBAL.constants = require('./test/constants');
-GLOBAL.rpc = {
-    protocol: "http",
-    host: "localhost",
-    port: 8545
-};
+
+Augur.connect();

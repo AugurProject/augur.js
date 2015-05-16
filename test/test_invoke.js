@@ -11,6 +11,8 @@ var assert = require("assert");
 var Augur = require("../augur");
 var constants = require("./constants");
 
+Augur.connect();
+
 function array_equal(a, b) {
     if (a === b) return true;
     if (a === null || b === null) return false;

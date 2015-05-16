@@ -7,6 +7,9 @@
 "use strict";
 
 var Augur = require("../augur");
+
+Augur.connect();
+
 var log = console.log;
 
 function test_comments() {

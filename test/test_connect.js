@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+/**
+ * augur.js unit tests
+ * @author Jack Peterson (jack@tinybike.net)
+ */
+
+"use strict";
+
+var assert = require("assert");
+var Augur = require("../augur");
+var constants = require("./constants");
+
+Augur.connect();
+
+describe("Connection", function () {
+    it("should connect successfully to 'http://localhost:8545'", function () {
+        assert(Augur.connect("http://localhost:8545"));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'http://localhost'", function () {
+        assert(Augur.connect("http://localhost"));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'localhost:8545'", function () {
+        assert(Augur.connect("localhost:8545"));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'localhost'", function () {
+        assert(Augur.connect("localhost"));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to { host: 'localhost', port: 8545, protocol: 'http' }", function () {
+        assert(Augur.connect({ host: 'localhost', port: 8545, protocol: 'http' }));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to { host: 'localhost', port: 8545 }", function () {
+        assert(Augur.connect({ host: 'localhost', port: 8545 }));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to { host: 'localhost' }", function () {
+        assert(Augur.connect({ host: 'localhost' }));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to { port: 8545 }", function () {
+        assert(Augur.connect({ port: 8545 }));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to '127.0.0.1:8545'", function () {
+        assert(Augur.connect('127.0.0.1:8545'));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to '127.0.0.1'", function () {
+        assert(Augur.connect('127.0.0.1'));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'http://127.0.0.1:8545'", function () {
+        assert(Augur.connect('http://127.0.0.1:8545'));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'http://127.0.0.1'", function () {
+        assert(Augur.connect('http://127.0.0.1'));
+        assert(Augur.coinbase);
+    });
+    it("should connect successfully to 'http://www.poc9.com:8545'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('http://www.poc9.com:8545'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully to 'http://poc9.com'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('http://poc9.com'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully to 'poc9.com:8545'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('poc9.com:8545'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully to 'www.poc9.com:8545'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('www.poc9.com:8545'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully to 'www.poc9.com'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('www.poc9.com'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully to 'poc9.com'", function () {
+        this.timeout(10000);
+        assert(Augur.connect('poc9.com'));
+        assert.equal(Augur.coinbase, constants.accounts.loopy)
+    });
+    it("should connect successfully with no parameters and reset the RPC settings", function () {
+        this.timeout(10000);
+        assert(Augur.connect());
+        assert(Augur.coinbase);
+        assert.equal(Augur.RPC.protocol, "http");
+        assert.equal(Augur.RPC.host, "localhost");
+        assert.equal(Augur.RPC.port, 8545);
+    });
+});
