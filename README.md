@@ -24,6 +24,12 @@ After installing, to use it with Node, just require it:
 ```javascript
 var Augur = require('augur.js');
 ```
+By default, augur.js expects a local Ethereum node listening on port 8545.  To change this, just edit the RPC property:
+```javascript
+Augur.RPC = { protocol: "http", host: "poc9.com", port: 8545 };
+```
+After changing the RPC property, if you also want to use the new host's coinbase account, just run ```Augur.setCoinbase()```.
+
 To use augur.js from the browser, just include [augur.min.js](https://github.com/AugurProject/augur.js/blob/master/augur.min.js).  (This minified file includes the [bignumber.js](https://github.com/MikeMcl/bignumber.js) and [js-sha3](https://github.com/emn178/js-sha3) libraries.)
 
 ## How to pass numbers to Augur

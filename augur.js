@@ -57,7 +57,7 @@ var Augur = (function (augur) {
 
     BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
-    var rpc_url = rpc.protocol + "://" + rpc.host + ":" + rpc.port.toString();
+    augur.RPC = rpc;
 
     // default gas: 3M
     augur.default_gas = "0x2dc6c0";
@@ -95,6 +95,18 @@ var Augur = (function (augur) {
             "-1": "market has no cash",
             "-2": "0 outcome",
             "-3": "outcome indeterminable"
+        },
+        report: {
+            "-2": ""
+        },
+        submitReportHash: {
+            "-2": ""
+        },
+        checkReportValidity: {
+            "-2": ""
+        },
+        slashRep: {
+            "-2": ""
         },
         createEvent: {
             "0": "not enough money to pay fees or event already exists",
@@ -586,7 +598,11 @@ var Augur = (function (augur) {
         return returns;
     }
     function json_rpc(command, callback) {
-        var num_commands, returns, req = null;
+        var protocol, host, port, rpc_url, num_commands, returns, req = null;
+        protocol = augur.RPC.protocol || "http";
+        host = augur.RPC.host || "localhost";
+        port = augur.RPC.port || "8545";
+        rpc_url = protocol + "://" + host + ":" + port;
         if (command.constructor === Array) {
             num_commands = command.length;
             returns = new Array(num_commands);
@@ -611,10 +627,10 @@ var Augur = (function (augur) {
                 req.send(command);
             } else {
                 req = httpsync.request({
-                    protocol: rpc.protocol,
-                    host: rpc.host,
+                    protocol: protocol,
+                    host: host,
                     path: '/',
-                    port: rpc.port,
+                    port: port,
                     method: 'POST'
                 });
                 req.write(command);
@@ -664,18 +680,18 @@ var Augur = (function (augur) {
         }
         return augur.data;
     }
-    augur.getCoinbase = function (repeat) {
+    augur.setCoinbase = function (repeat) {
         try {
             augur.coinbase = json_rpc(postdata("coinbase"));
         } catch (e) {
             var delay = 5000 * repeat;
             log("connection error, retrying in " + parseInt(delay / 1000).toString() + " seconds");
-            if (repeat) {
-                setTimeout(function () { augur.getCoinbase(repeat + 1); }, delay);
+            if (repeat && repeat < 3) {
+                setTimeout(function () { augur.setCoinbase(repeat + 1); }, delay);
             }
         }
     };
-    augur.getCoinbase(1);
+    augur.setCoinbase(1);
 
     /******************************
      * Ethereum JSON-RPC bindings *
@@ -2355,6 +2371,114 @@ var Augur = (function (augur) {
     // transferShares.se
 
     // makeReports.se
+    augur.tx.report = {
+        from: augur.coinbase,
+        to: augur.contracts.makeReports,
+        method: "report",
+        signature: "iaii",
+        send: true
+    };
+    augur.tx.submitReportHash = {
+        from: augur.coinbase,
+        to: augur.contracts.makeReports,
+        method: "submitReportHash",
+        signature: "iii",
+        send: true
+    };
+    augur.tx.checkReportValidity = {
+        from: augur.coinbase,
+        to: augur.contracts.makeReports,
+        method: "checkReportValidity",
+        signature: "iai"
+    };
+    augur.tx.submitReportHash = {
+        from: augur.coinbase,
+        to: augur.contracts.makeReports,
+        method: "submitReportHash",
+        signature: "iii",
+        send: true
+    };
+    augur.tx.slashRep = {
+        from: augur.coinbase,
+        to: augur.contracts.makeReports,
+        method: "slashRep",
+        signature: "iiiai",
+        send: true
+    };
+    augur.report = function (branch, report, votePeriod, salt, onSent, onSuccess, onFailed) {
+        if (branch.constructor === Object && branch.branchId) {
+            report = branch.report;
+            votePeriod = branch.votePeriod;
+            salt = branch.salt;
+            if (branch.onSent) onSent = branch.onSent;
+            if (branch.onSuccess) onSuccess = branch.onSuccess;
+            if (branch.onFailed) onFailed = branch.onFailed;
+            branch = branch.branchId;
+        }
+        augur.tx.report.params = [branch, report, votePeriod, salt];
+        augur.tx.report.send = false;
+        augur.tx.report.returns = "number";
+        augur.invoke(augur.tx.report, function (res) {
+            var res_number;
+            if (res) {
+                augur.tx.report.send = true;
+                delete augur.tx.report.returns;
+                res_number = augur.bignum(res);
+                if (res_number) {
+                    res_number = res_number.toFixed();
+                }
+                if (res_number && augur.ERRORS.report[res_number]) {
+                    if (onFailed) onFailed({
+                        error: res_number,
+                        message: augur.ERRORS.report[res_number]
+                    });
+                } else {
+                    augur.invoke(augur.tx.report, function (txhash) {
+                        if (txhash) {
+                            onSent(txhash);
+                        }
+                    });
+                }
+            }
+        });
+    };
+    augur.submitReportHash = function (branch, reportHash, votePeriod, onSent, onSuccess, onFailed) {
+        if (branch.constructor === Object && branch.branchId) {
+            reportHash = branch.reportHash;
+            votePeriod = branch.votePeriod;
+            if (branch.onSent) onSent = branch.onSent;
+            if (branch.onSuccess) onSuccess = branch.onSuccess;
+            if (branch.onFailed) onFailed = branch.onFailed;
+            branch = branch.branchId;
+        }
+        augur.tx.report.params = [branch, reportHash, votePeriod];
+        augur.tx.report.send = false;
+    };
+    augur.checkReportValidity = function (branch, report, votePeriod, onSent, onSuccess, onFailed) {
+        if (branch.constructor === Object && branch.branchId) {
+            report = branch.report;
+            votePeriod = branch.votePeriod;
+            if (branch.onSent) onSent = branch.onSent;
+            if (branch.onSuccess) onSuccess = branch.onSuccess;
+            if (branch.onFailed) onFailed = branch.onFailed;
+            branch = branch.branchId;
+        }
+        augur.tx.report.params = [branch, report, votePeriod];
+        augur.tx.report.send = false;
+    };
+    augur.slashRep = function (branch, votePeriod, salt, report, reporter, onSent, onSuccess, onFailed) {
+        if (branch.constructor === Object && branch.branchId) {
+            votePeriod = branch.votePeriod;
+            salt = branch.salt;
+            report = branch.report;
+            if (branch.onSent) onSent = branch.onSent;
+            if (branch.onSuccess) onSuccess = branch.onSuccess;
+            if (branch.onFailed) onFailed = branch.onFailed;
+            branch = branch.branchId;
+        }
+        augur.tx.report.params = [branch, votePeriod, salt, report];
+        augur.tx.report.send = false;
+    };
 
     // createEvent.se
     augur.tx.createEvent = {
@@ -2471,12 +2595,11 @@ var Augur = (function (augur) {
                 if (marketID.error) {
                     if (onFailed) onFailed(marketID);
                 } else {
-                    log(marketID);
                     marketID_number = augur.bignum(marketID);
                     if (marketID_number) {
                         marketID_number = marketID_number.toFixed();
                     }
-                    if (marketID_number && augur.ERRORS.createEvent[marketID_number]) {
+                    if (marketID_number && augur.ERRORS.createMarket[marketID_number]) {
                         if (onFailed) onFailed({
                             error: marketID_number,
                             message: augur.ERRORS.createMarket[marketID_number]
