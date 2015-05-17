@@ -131,7 +131,8 @@ var Augur = (function (augur) {
 
         // Data and API
         cash: "0xf1d413688a330839177173ce98c86529d0da6e5c",
-        info: "0x910b359bb5b2c2857c1d3b7f207a08f3f25c4a8b",
+        // info: "0x910b359bb5b2c2857c1d3b7f207a08f3f25c4a8b",
+        info: "0xbc30f07070198b4cc5981563cece6ea38226a08e", // modified setInfo length calculation
         branches: "0x13dc5836cd5638d0b81a1ba8377a7852d41b5bbe",
         events: "0xb71464588fc19165cbdd1e6e8150c40df544467b",
         expiringEvents: "0x61d90fd4c1c3502646153003ec4d5c177de0fb58",
@@ -148,8 +149,10 @@ var Augur = (function (augur) {
         sendReputation: "0x049487d32b727be98a4c8b58c4eab6521791f288",
         transferShares: "0x78da82256f5775df22eee51096d27666772b592d",
         makeReports: "0x32bfb5724874b209193aa0fca45b1f337b27e9b5",
-        createEvent: "0xcae6d5912033d66650894e2ae8c2f7502eaba15c",
-        createMarket: "0x0568c631465eca542affb4bd3c72d1d2ee222c06",
+        // createEvent: "0xcae6d5912033d66650894e2ae8c2f7502eaba15c",
+        createEvent: "0xbdb874db54d8874ac255c731e5fd14c64a21228f", // modified setInfo length calculation
+        // createMarket: "0x0568c631465eca542affb4bd3c72d1d2ee222c06",
+        createMarket: "0x5624355f867c4d6008a613525cb321d7f450178e", // modified setInfo length calculation
         closeMarket: "0xb0e93253a008ce80f4c26152da3869225c716ce3",
         dispatch: "0x662f95de5a6c500de0b35b73f4b48d740d267482",
 
@@ -886,7 +889,7 @@ var Augur = (function (augur) {
                             statics += pad_left(encode_int(stat));
                         }
                     }
-                } else if (types[i] === "bytes") {
+                } else if (types[i] === "bytes" || types[i] === "string") {
                     // offset (in 32-byte chunks)
                     stat = 32*num_params + 0.5*dynamics.length;
                     stat = augur.bignum(stat).mod(augur.MAXBITS).toFixed();

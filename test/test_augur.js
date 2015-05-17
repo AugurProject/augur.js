@@ -1095,6 +1095,22 @@ describe("Augur API", function () {
                 var tradingFee = "0.03";
                 var events = ["0x8b00006e013dd548df3fd8dac2162d8fcd292d4acefaf1f2ad6e85b5f4241a9c"];
                 var numOutcomes = "2";
+
+                // cmtx = {
+                //     from: Augur.coinbase,
+                //     to: "0x5624355f867c4d6008a613525cb321d7f450178e",
+                //     method: "createMarket",
+                //     signature: "isiiia",
+                //     params: [
+                //         "0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991",
+                //         "lolmarket",
+                //         "0x205bc01a36e2eb2",
+                //         "0x13880000000000000000",
+                //         "0x7ae147ae147ae14",
+                //         ["0xaf0f8e104ec67738d8ecb7db7233bc58210817a9172be45b5399cafdd9ad1736"]
+                //     ]
+                // };
+
                 var marketObj = {
                     branchId: branch_id,
                     description: market_description,
