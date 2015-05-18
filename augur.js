@@ -483,7 +483,14 @@ var Augur = (function (augur) {
                 }
                 position += stride;
             }
-            return array.slice(2);
+            if (array.length) {
+                if (parseInt(array[0]) === array.length - 1) {
+                    return array.slice(1);
+                } else if (parseInt(array[1]) === array.length - 2) {
+                    return array.slice(2);
+                }
+            }
+            return array;
         } else {
             // expected array, got scalar error code
             return string;
@@ -2953,14 +2960,14 @@ var Augur = (function (augur) {
 
         // make sure there's only one filter per market
         if (augur.filters[market] && augur.filters[market].filterId) {
-            log("existing filter found");
+            // log("existing filter found");
             augur.pollFilter(market, augur.filters[market].filterId);
         } else {
 
             // create filter for this market
             filter = augur.commentFilter(market);
             if (filter && filter !== "0x") {
-                log("creating new filter");
+                // log("creating new filter");
                 augur.filters[market] = {
                     filterId: filter,
                     polling: false
