@@ -5,6 +5,7 @@
  */
 // var nock = require('nock');
 // nock.recorder.rec();
+
 "use strict";
 
 var BigNumber = require("bignumber.js");
@@ -88,7 +89,7 @@ describe("Augur API", function () {
     var participant_id = constants.accounts.jack;
     var participant_number = "1";
     var outcome = Augur.NO.toString();
-    var event_id = "0x1253ae7a83d5cbd1b583db494bbef15ae57fa8cefc1dbea78887b111625d60bb";
+    var event_id = "0x0919ce53f2c2c2a5422c2aacafdede55a3795ce4f6e4a4034e37e44bc054d13b";
     var market_id = "0xd8fb9d0b319667d10be2c26a5a8fb431fef22f3510697b81dda9801cf5494cf3";
     var market_id2 = "0xcc1003282a0f980c362d9e9e3a5a14cc4c04ee0ecced124755e1a6611e3d07d8";
     var event_description = "[augur.js] " + Math.random().toString(36).substring(4);
@@ -172,14 +173,14 @@ describe("Augur API", function () {
 
     // info.se
     describe("info.se", function () {
-        describe("getCreator(" + event_id + ") [event] -> " + constants.accounts.scott, function () {
+        describe("getCreator(" + event_id + ") [event] -> " + constants.accounts.jack, function () {
             it("sync", function () {
                 var res = Augur.getCreator(event_id);
-                assert.equal(res, constants.accounts.scott);
+                assert.equal(res, constants.accounts.jack);
             });
             it("async", function (done) {
                 Augur.getCreator(event_id, function (r) {
-                    assert.equal(r, constants.accounts.scott);
+                    assert.equal(r, constants.accounts.jack);
                     done();
                 });
             });
@@ -187,11 +188,11 @@ describe("Augur API", function () {
         describe("getCreator(" + market_id + ") [market] -> ", function () {
             it("sync", function () {
                 var res = Augur.getCreator(market_id);
-                assert.equal(res, constants.accounts.scott);
+                assert.equal(res, constants.accounts.jack);
             });
             it("async", function (done) {
                 Augur.getCreator(market_id, function (r) {
-                    assert.equal(r, constants.accounts.scott);
+                    assert.equal(r, constants.accounts.jack);
                     done();
                 });
             });
@@ -223,11 +224,11 @@ describe("Augur API", function () {
         describe("getDescription(" + event_id + ")", function () {
             it("sync", function () {
                 var res = Augur.getDescription(event_id);
-                assert.equal(res, "will tomorrow come?");
+                assert.equal(res, "[augur.js] dbk7kieqjxxbt9");
             });
             it("async", function (done) {
                 Augur.getDescription(event_id, function (r) {
-                    assert.equal(r, "will tomorrow come?");
+                    assert.equal(r, "[augur.js] dbk7kieqjxxbt9");
                     done();
                 });
             });
@@ -366,11 +367,10 @@ describe("Augur API", function () {
             var test = function (res) {
                 on_root_branch(res);
                 assert.equal(res.expirationDate, "329557");
-                assert.equal(res.description, "will tomorrow come?");
+                assert.equal(res.description, "[augur.js] dbk7kieqjxxbt9");
             };
             it("sync", function () {
                 test(Augur.getEventInfo(event_id));
-                
             });
             it("async", function (done) {
                 Augur.getEventInfo(event_id, function (r) {
@@ -498,13 +498,13 @@ describe("Augur API", function () {
             it("should have 2 outcomes", function () {
                 assert.equal("2", marketInfo.numOutcomes);
             });
-            it("should have description 'will tomorrow come?'", function () {
-                assert.equal("will tomorrow come?", marketInfo.description);
+            it("should have description '[augur.js] dbk7kieqjxxbt9'", function () {
+                assert.equal("[augur.js] dbk7kieqjxxbt9", marketInfo.description);
             });
         });
         describe("getMarketInfo(" + market_id + ")", function () {
             var test = function (r) {
-                assert.equal(r.description, "will tomorrow come?");
+                assert.equal(r.description, "[augur.js] dbk7kieqjxxbt9");
             };
             it("sync", function () {
                 test(Augur.getMarketInfo(market_id));
@@ -1093,24 +1093,8 @@ describe("Augur API", function () {
                 var alpha = "0.0079";
                 var initialLiquidity = "5000";
                 var tradingFee = "0.03";
-                var events = ["0x8b00006e013dd548df3fd8dac2162d8fcd292d4acefaf1f2ad6e85b5f4241a9c"];
+                var events = ["0x0919ce53f2c2c2a5422c2aacafdede55a3795ce4f6e4a4034e37e44bc054d13b"];
                 var numOutcomes = "2";
-
-                // cmtx = {
-                //     from: Augur.coinbase,
-                //     to: "0x5624355f867c4d6008a613525cb321d7f450178e",
-                //     method: "createMarket",
-                //     signature: "isiiia",
-                //     params: [
-                //         "0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991",
-                //         "lolmarket",
-                //         "0x205bc01a36e2eb2",
-                //         "0x13880000000000000000",
-                //         "0x7ae147ae147ae14",
-                //         ["0xaf0f8e104ec67738d8ecb7db7233bc58210817a9172be45b5399cafdd9ad1736"]
-                //     ]
-                // };
-
                 var marketObj = {
                     branchId: branch_id,
                     description: market_description,

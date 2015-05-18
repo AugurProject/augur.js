@@ -63,7 +63,7 @@ var Augur = (function (augur) {
 
     // contract error codes
     augur.ERRORS = {
-        "0x": "could not communicate with contract",
+        "0x": "no response or bad input",
         getSimulatedBuy: {
             "-2": "cost updating error (did you enter a valid quantity?)"
         },
@@ -131,30 +131,31 @@ var Augur = (function (augur) {
 
         // Data and API
         cash: "0xf1d413688a330839177173ce98c86529d0da6e5c",
-        // info: "0x910b359bb5b2c2857c1d3b7f207a08f3f25c4a8b",
-        info: "0xbc30f07070198b4cc5981563cece6ea38226a08e", // modified setInfo length calculation
+        info: "0x3530bfdc65394687732d9c2becd6a3108271231b", // same as original but it works (???)
         branches: "0x13dc5836cd5638d0b81a1ba8377a7852d41b5bbe",
         events: "0xb71464588fc19165cbdd1e6e8150c40df544467b",
         expiringEvents: "0x61d90fd4c1c3502646153003ec4d5c177de0fb58",
         fxpFunctions: "0xdaf26192091449d14c03026f79272e410fce0908",
-        markets: "0x2303f6b69e1d7662320819af027d88a9e350ebfb",
+        markets: "0x3be9601854135c88bc085510a3abb7ea9c13e6cf", // new markets addr
         reporting: "0xead0c9a9bd9546f476337a79e3d9bc8875241e61",
         whitelist: "0x21dbe4a05a9174e96e6c6bc1e05a7096338cb0d6",
 
         // Functions
         checkQuorum: "0xe9aaab4aff0cf06e62d2442ae0f68660882e5a67",
-        buyAndSellShares: "0xb8555091be5c8b8fc77449bb203717959079c29a",
-        createBranch: "0x3e14c676cd6cca63893e32a6117d42ac10cd28c1",
+        buyAndSellShares: "0x2bc958557105fcc3f1609b6bdfc1c9881643bb02", // new info + markets addr
+        createBranch: "0xf8d9a15f0063ed327b2cc0fc81b429a8ec018c60", // new info addr
         p2pWagers: "0x7c2bbb3045fd8b39d28f4b4a5682dbec9a710771",
         sendReputation: "0x049487d32b727be98a4c8b58c4eab6521791f288",
-        transferShares: "0x78da82256f5775df22eee51096d27666772b592d",
-        makeReports: "0x32bfb5724874b209193aa0fca45b1f337b27e9b5",
-        // createEvent: "0xcae6d5912033d66650894e2ae8c2f7502eaba15c",
-        createEvent: "0xbdb874db54d8874ac255c731e5fd14c64a21228f", // modified setInfo length calculation
-        // createMarket: "0x0568c631465eca542affb4bd3c72d1d2ee222c06",
-        createMarket: "0x5624355f867c4d6008a613525cb321d7f450178e", // modified setInfo length calculation
-        closeMarket: "0xb0e93253a008ce80f4c26152da3869225c716ce3",
-        dispatch: "0x662f95de5a6c500de0b35b73f4b48d740d267482",
+        transferShares: "0x0b7857e3f41f780aeed909f046009bb15d06ed8f", // new info + markets addr
+        makeReports: "0x0753cfca6d4f2be91c4bff14c4652db7d1f3322f", // new info addr
+        createEvent: "0xda062002b4cf172716e26b0dd4ef148b555a7087", // new info addr
+        createMarket: "0x32361732443f0cfd3ba47f76edafb4d6bd4e9262", // new info + markets addr
+        closeMarket: "0x048938301770ccb1f5c09660b475203e37985e35", // new info + markets addr
+        closeMarketOne: "0xa32259f70ac4ad4af6dc10d27ccbeeb2f975fe9e", // new markets addr
+        closeMarketTwo: "0xad98ee4873b54bad528c07b578cbac5c7ac8a5cc", // new markets addr
+        closeMarketFour: "0x7eae331a9ff722fdefd33c0fe312e0f8b8993d7a", // new markets addr
+        closeMarketEight: "0x6cc2a70dec07f24b7bfe9ce9c29fe7e14e575171", // new markets addr
+        dispatch: "0x3975c208cbab80321c14c845217fbf5a748e6d06", // new info addr
 
         // Consensus
         statistics: "0x0cb1277671d162b2f5c81e9435744f63768398d0",
@@ -169,7 +170,7 @@ var Augur = (function (augur) {
         redeem_score: "0xcd2f28fe067ea3cdc3b55f1a1e62cb347118b04c",
         redeem_adjust: "0x562cc65e8d901f03bbeb6d83011bbd48ad1d377e",
         redeem_resolve: "0xa9b43b17ed17106f075960f9b9af38c330df9471",
-        redeem_payout: "0xe995724195e58489f75c2e12247ce28bf50a5245"
+        redeem_payout: "0x3975b52c75eb13ef6de3a5385afe6a1e5849812e" // new info addr
     };
 
     // Branch IDs
@@ -371,6 +372,13 @@ var Augur = (function (augur) {
         }
         return hex;
     }
+    function remove_trailing_zeros(h) {
+        var hex = h.toString();
+        while (hex.slice(-2) === "00") {
+            hex = hex.slice(0,-2);
+        }
+        return hex;
+    }
     augur.encode_hex = function (str) {
         var hexbyte, hex = '';
         for (var i = 0, len = str.length; i < len; ++i) {
@@ -383,6 +391,11 @@ var Augur = (function (augur) {
     augur.decode_hex = function (h, strip) {
         var hex = h.toString();
         var str = '';
+        // first 32 bytes = new ABI offset
+        if (strip) {
+            if (h.slice(0,2) === "0x") h = h.slice(2);
+            h = h.slice(64);
+        }
         hex = remove_leading_zeros(h);
         // remove leading byte(s) = string length
         if (strip) {
@@ -396,6 +409,7 @@ var Augur = (function (augur) {
             } else {
                 hex = hex.slice(2);
             }
+            hex = remove_trailing_zeros(hex);
         }
         for (var i = 0, l = hex.length; i < l; i += 2) {
             str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
@@ -417,13 +431,12 @@ var Augur = (function (augur) {
         }
         return output;
     }
-    function get_prefix(funcname, signature) {
+    augur.get_prefix = function(funcname, signature) {
         signature = signature || "";
         var summary = funcname + "(";
         for (var i = 0, len = signature.length; i < len; ++i) {
             switch (signature[i]) {
                 case 's':
-                    // summary += "string";
                     summary += "bytes";
                     break;
                 case 'i':
@@ -442,7 +455,7 @@ var Augur = (function (augur) {
             prefix = prefix.slice(1);
         }
         return "0x" + prefix;
-    }
+    };
 
     /********************************
      * Parse Ethereum response JSON *
@@ -470,7 +483,7 @@ var Augur = (function (augur) {
                 }
                 position += stride;
             }
-            return array.slice(1);
+            return array.slice(2);
         } else {
             // expected array, got scalar error code
             return string;
@@ -842,12 +855,12 @@ var Augur = (function (augur) {
     };
 
     // hex-encode a function's ABI data and return it
-    augur.abi_data = function (tx) {
+    augur.abi_data = augur.encode_abi = function (tx) {
         tx.signature = tx.signature || "";
         var stat, statics = '';
         var dynamic, dynamics = '';
         var num_params = tx.signature.length;
-        var data_abi = get_prefix(tx.method, tx.signature);
+        var data_abi = augur.get_prefix(tx.method, tx.signature);
         var types = [];
         for (var i = 0, len = tx.signature.length; i < len; ++i) {
             if (tx.signature[i] === 's') {
@@ -963,7 +976,7 @@ var Augur = (function (augur) {
             }
             if (tx.to) tx.to = augur.prefix_hex(tx.to);
             if (tx.from) tx.from = augur.prefix_hex(tx.from);
-            data_abi = this.abi_data(tx);
+            data_abi = this.encode_abi(tx);
             if (data_abi) {
                 packaged = {
                     from: tx.from || augur.coinbase,
@@ -1018,7 +1031,7 @@ var Augur = (function (augur) {
                 }
                 if (tx.from) tx.from = this.prefix_hex(tx.from);
                 tx.to = this.prefix_hex(tx.to);
-                data_abi = this.abi_data(tx);
+                data_abi = this.encode_abi(tx);
                 if (data_abi) {
                     packaged = {
                         from: tx.from || augur.coinbase,
