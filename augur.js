@@ -148,7 +148,7 @@ var Augur = (function (augur) {
         sendReputation: "0x049487d32b727be98a4c8b58c4eab6521791f288",
         transferShares: "0x0b7857e3f41f780aeed909f046009bb15d06ed8f", // new info + markets addr
         makeReports: "0x0753cfca6d4f2be91c4bff14c4652db7d1f3322f", // new info addr
-        createEvent: "0xda062002b4cf172716e26b0dd4ef148b555a7087", // new info addr
+        createEvent: "0x80b2ff84b80a5936bb8a705f778efd290aea4954", // new info addr
         createMarket: "0x32361732443f0cfd3ba47f76edafb4d6bd4e9262", // new info + markets addr
         closeMarket: "0x048938301770ccb1f5c09660b475203e37985e35", // new info + markets addr
         closeMarketOne: "0xa32259f70ac4ad4af6dc10d27ccbeeb2f975fe9e", // new markets addr
@@ -247,7 +247,7 @@ var Augur = (function (augur) {
     };
     augur.bignum = function (n, compact) {
         var bn;
-        if (n && n !== "0x") {
+        if (n !== null && n !== undefined && n !== "0x") {
             if (n.constructor === Number) {
                 if (Math.floor(Math.log(n) / Math.log(10) + 1) <= 15) {
                     bn = new BigNumber(n);

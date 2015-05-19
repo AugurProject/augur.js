@@ -59,6 +59,9 @@ describe("Augur API", function () {
         it("should be the same if called with a float or a string", function () {
             assert(Augur.bignum(ex_decimal).eq(Augur.bignum(ex_decimal_string)));
         });
+        it("should create 0 successfully", function () {
+            assert(Augur.bignum(0).eq(new BigNumber(0)));
+        });
     });
     describe("fix", function () {
         it("should be equal to round(n*2^64)", function () {
