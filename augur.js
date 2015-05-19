@@ -896,7 +896,12 @@ var Augur = (function (augur) {
             for (i = 0, len = types.length; i < len; ++i) {
                 if (types[i] === "int256") {
                     if (tx.params[i].constructor === Number) {
-                        stat = augur.bignum(tx.params[i]).mod(augur.MAXBITS).toFixed();
+                        stat = augur.bignum(tx.params[i]);
+                        if (stat !== 0) {
+                            stat = stat.mod(augur.MAXBITS).toFixed();
+                        } else {
+                            stat = stat.toFixed();
+                        }
                         statics += pad_left(encode_int(stat));
                     } else if (tx.params[i].constructor === String) {
                         if (tx.params[i].slice(0,1) === '-') {
