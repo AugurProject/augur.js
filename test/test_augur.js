@@ -93,8 +93,8 @@ describe("Augur API", function () {
     var participant_number = "1";
     var outcome = Augur.NO.toString();
     var event_id = "0x0919ce53f2c2c2a5422c2aacafdede55a3795ce4f6e4a4034e37e44bc054d13b";
-    var market_id = "0xd8fb9d0b319667d10be2c26a5a8fb431fef22f3510697b81dda9801cf5494cf3";
-    var market_id2 = "0xcc1003282a0f980c362d9e9e3a5a14cc4c04ee0ecced124755e1a6611e3d07d8";
+    var market_id = "0x9fa7e53477023001394ef9a7d65f5d2dffd9b7c975e7b40497a9d582b2665664";
+    var market_id2 = "0xfb79748fa3056de9b6df8cd0693c203f8024eedfb88c0abcaa4406184b5db243";
     var event_description = "[augur.js] " + Math.random().toString(36).substring(4);
     var market_description = "[augur.js] " + Math.random().toString(36).substring(4);
     // var event_description = "Will the Augur alpha be done by Saturday, May 16, 2015?";

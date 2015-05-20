@@ -470,6 +470,16 @@ var Augur = (function (augur) {
             position = init || 2;
             for (var i = 0; i < elements; ++i) {
                 array[i] = augur.prefix_hex(string.slice(position, position + stride));
+                position += stride;
+            }
+            if (array.length) {
+                if (parseInt(array[0]) === array.length - 1) {
+                    array.splice(0, 1);
+                } else if (parseInt(array[1]) === array.length - 2) {
+                    array.splice(0, 2);
+                }
+            }
+            for (i = 0; i < array.length; ++i) {
                 if (returns === "hash[]" && augur.BigNumberOnly) {
                     array[i] = augur.bignum(array[i]);
                 } else {
@@ -480,14 +490,6 @@ var Augur = (function (augur) {
                             array[i] = augur.unfix(array[i], "string");
                         }
                     }
-                }
-                position += stride;
-            }
-            if (array.length) {
-                if (parseInt(array[0]) === array.length - 1) {
-                    return array.slice(1);
-                } else if (parseInt(array[1]) === array.length - 2) {
-                    return array.slice(2);
                 }
             }
             return array;
@@ -844,15 +846,33 @@ var Augur = (function (augur) {
         }
     };
 
+    // estimate a transaction's gas cost
+    augur.estimateGas = function (tx, f) {
+        tx.to = tx.to || "";
+        return json_rpc(postdata("estimateGas", tx), f);
+    };
+
     // execute functions on contracts on the blockchain
     augur.call = function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? "0x" + tx.gas.toString(16) : augur.default_gas;
+        // if (!tx.gas) {
+        //     tx.gas = augur.estimateGas(tx);
+        //     log(tx.gas);
+        //     log("estimated gas: " + parseInt(tx.gas));
+        // } else {
+        //     tx.gas = augur.prefix_hex(tx.gas.toString(16));
+        // }
         return json_rpc(postdata("call", tx), f);
     };
     augur.sendTransaction = augur.sendTx = function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? "0x" + tx.gas.toString(16) : augur.default_gas;
+        // if (!tx.gas) {
+        //     tx.gas = augur.estimateGas(tx);
+        //     log(tx.gas);
+        //     log("estimated gas: " + parseInt(tx.gas));
+        // } else {
+        //     tx.gas = augur.prefix_hex(tx.gas.toString(16));
+        // }
         return json_rpc(postdata("sendTransaction", tx), f);
     };
 
@@ -1069,7 +1089,7 @@ var Augur = (function (augur) {
 
     // Error handling and propagation
     function error_codes(tx, response) {
-        if (response.constructor === Array) {
+        if (response && response.constructor === Array) {
             for (var i = 0, len = response.length; i < len; ++i) {
                 response[i] = error_codes(tx.method, response[i]);
             }
