@@ -17,7 +17,8 @@ constants.accounts = {
     simulator2: "0x78829d3d1fd441aee8eff7a1263c11ed2f3adba7",
     toast: "0xb76a02724d44c89c20e41882f729a092f14d3eaf",
     joey: "0x1c11aa45c792e202e9ffdc2f12f99d0d209bef70",
-    chris: "0x9b7e6cd69f45d93336606b0f70dac77b5b6e9fb0",
+    chris: "0xa369ca3e80c8e8e5fdc3e2fc7ee7764c519de70f",
+    chris_old: "0x9b7e6cd69f45d93336606b0f70dac77b5b6e9fb0",
     scott: "0x6fc0a64e2dce367e35417bfd1568fa35af9f3e4b",
     jay: "0xa381f37f23cb99ca036997008403ba1366fd8259" // bassguitarman
 };

@@ -855,24 +855,12 @@ var Augur = (function (augur) {
     // execute functions on contracts on the blockchain
     augur.call = function (tx, f) {
         tx.to = tx.to || "";
-        // if (!tx.gas) {
-        //     tx.gas = augur.estimateGas(tx);
-        //     log(tx.gas);
-        //     log("estimated gas: " + parseInt(tx.gas));
-        // } else {
-        //     tx.gas = augur.prefix_hex(tx.gas.toString(16));
-        // }
+        tx.gas = (tx.gas) ? augur.prefix_hex(tx.gas.toString(16)) : augur.default_gas;
         return json_rpc(postdata("call", tx), f);
     };
     augur.sendTransaction = augur.sendTx = function (tx, f) {
         tx.to = tx.to || "";
-        // if (!tx.gas) {
-        //     tx.gas = augur.estimateGas(tx);
-        //     log(tx.gas);
-        //     log("estimated gas: " + parseInt(tx.gas));
-        // } else {
-        //     tx.gas = augur.prefix_hex(tx.gas.toString(16));
-        // }
+        tx.gas = (tx.gas) ? augur.prefix_hex(tx.gas.toString(16)) : augur.default_gas;
         return json_rpc(postdata("sendTransaction", tx), f);
     };
 
@@ -1163,9 +1151,9 @@ var Augur = (function (augur) {
      * Call-send-confirm callback sequence *
      ***************************************/
 
-    function check_blockhash(tx, callreturn, txhash, count, callback) {
+    function check_blockhash(tx, numeric, txhash, count, callback) {
         if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
-            tx.callReturn = callreturn;
+            tx.callReturn = numeric;
             tx.txHash = tx.hash;
             delete tx.hash;
             if (callback) callback(tx);
@@ -1173,18 +1161,18 @@ var Augur = (function (augur) {
         } else {
             if (count !== undefined && count < augur.TX_POLL_MAX) {
                 setTimeout(function () {
-                    tx_notify(count, tx, txhash, callback);
+                    tx_notify(count + 1, numeric, txhash, callback);
                 }, augur.TX_POLL_INTERVAL);
             }
         }
     }
-    function tx_notify(count, callreturn, txhash, callback) {
+    function tx_notify(count, numeric, txhash, callback) {
         if (callback) {
             augur.getTx(txhash, function (tx) {
-                check_blockhash(tx, callreturn, txhash, count, callback);
+                check_blockhash(tx, numeric, txhash, count, callback);
             });
         } else {
-            check_blockhash(augur.getTx(txhash), callreturn, txhash, count);
+            check_blockhash(augur.getTx(txhash), numeric, txhash, count);
         }
     }
     function call_send_confirm(tx, onSent, onSuccess, onFailed) {
@@ -1205,7 +1193,7 @@ var Augur = (function (augur) {
                     augur.invoke(tx, function (txhash) {
                         if (txhash) {
                             onSent(txhash);
-                            if (onSuccess) tx_notify(0, callreturn, txhash, onSuccess);
+                            if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
                         }
                     });
                 }
@@ -2394,63 +2382,16 @@ var Augur = (function (augur) {
             if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId; // sha256
         }
+        var tx = copy(augur.tx.buyShares);
         if (onSent) {
             augur.getNonce(market, function (nonce) {
-                augur.tx.buyShares.params = [
-                    branch,
-                    market,
-                    outcome,
-                    augur.fix(amount),
-                    nonce
-                ];
-                augur.tx.buyShares.send = false;
-                augur.invoke(augur.tx.buyShares, function (res) {
-                    var res_number = augur.bignum(res).toFixed();
-                    if (augur.ERRORS.buyShares[res_number]) {
-                        if (onFailed) onFailed({
-                            error: res_number,
-                            message: augur.ERRORS.buyShares[res_number]
-                        });
-                    }
-                    if (res && augur.bignum(res).toNumber() > 0) {
-                        augur.tx.buyShares.send = true;
-                        augur.invoke(augur.tx.buyShares, function (txhash) {
-                            var pings, pingTx;
-                            if (txhash) {
-                                if (onSent) onSent({ txHash: txhash });
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getTx(txhash, function (tx) {
-                                            pings++;
-                                            if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
-                                                tx.txHash = tx.hash;
-                                                delete tx.hash;
-                                                onSuccess(tx);
-                                            } else {
-                                                if (pings < augur.TX_POLL_MAX) {
-                                                    setTimeout(pingTx, 12000);
-                                                }
-                                            }
-                                        });
-                                    };
-                                    pingTx();
-                                }
-                            }
-                        });
-                    }
-                });
+                tx.params = [branch, market, outcome, augur.fix(amount), nonce];
+                call_send_confirm(tx, onSent, onSuccess, onFailed);
             });
         } else {
             nonce = augur.getNonce(market);
-            augur.tx.buyShares.params = [
-                branch,
-                market,
-                outcome,
-                augur.fix(amount),
-                nonce
-            ];
-            return augur.invoke(augur.tx.buyShares);
+            tx.params = [branch, market, outcome, augur.fix(amount), nonce];
+            return call_send_confirm(tx);
         }
     };
     augur.sellShares = function (branch, market, outcome, amount, nonce, onSent, onSuccess, onFailed) {
@@ -2466,57 +2407,16 @@ var Augur = (function (augur) {
             if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId; // sha256
         }
+        var tx = copy(augur.tx.sellShares);
         if (onSent) {
             augur.getNonce(market, function (nonce) {
-                augur.tx.sellShares.params = [branch, market, outcome, augur.fix(amount), nonce];
-                augur.tx.sellShares.send = false;
-                augur.invoke(augur.tx.sellShares, function (res) {
-                    var res_number = augur.bignum(res).toFixed();
-                    if (augur.ERRORS.sellShares[res_number]) {
-                        if (onFailed) onFailed({
-                            error: res_number,
-                            message: augur.ERRORS.sellShares[res_number]
-                        });
-                    }
-                    if (res && augur.bignum(res).toNumber() > 0) {
-                        augur.tx.sellShares.send = true;
-                        augur.invoke(augur.tx.sellShares, function (txhash) {
-                            var pings, pingTx;
-                            if (txhash) {
-                                if (onSent) onSent({ txHash: txhash });
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getTx(txhash, function (tx) {
-                                            pings++;
-                                            if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
-                                                tx.txHash = tx.hash;
-                                                delete tx.hash;
-                                                onSuccess(tx);
-                                            } else {
-                                                if (pings < augur.TX_POLL_MAX) {
-                                                    setTimeout(pingTx, 12000);
-                                                }
-                                            }
-                                        });
-                                    };
-                                    pingTx();
-                                }
-                            }
-                        });
-                    }
-                });
+                tx.params = [branch, market, outcome, augur.fix(amount), nonce];
+                call_send_confirm(tx, onSent, onSuccess, onFailed);
             });
         } else {
             nonce = augur.getNonce(market);
-            augur.tx.sellShares.params = [
-                branch,
-                market,
-                outcome,
-                augur.fix(amount),
-                nonce
-            ];
-            return augur.invoke(augur.tx.sellShares);
+            tx.params = [branch, market, outcome, augur.fix(amount), nonce];
+            return call_send_confirm(tx);
         }
     };
 
