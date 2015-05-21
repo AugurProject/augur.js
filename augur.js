@@ -815,12 +815,35 @@ var Augur = (function (augur) {
     augur.getTransactionCount = augur.txCount = function (address, f) {
         return json_rpc(postdata("getTransactionCount", address || augur.coinbase), f);
     };
-    augur.pay = function (to, value, from, f) {
-        return this.sendTx({
+    augur.sendEther = augur.pay = function (to, value, from, onSent, onSuccess, onFailed) {
+        var tx, txhash;
+        if (to && to.value) {
+            value = to.value;
+            if (to.from) from = to.from;
+            if (to.onSent) onSent = to.onSent;
+            if (to.onSuccess) onSuccess = to.onSuccess;
+            if (to.onFailed) onFailed = to.onFailed;
+            to = to.to;
+        }
+        tx = {
             from: from || augur.coinbase,
             to: to,
             value: augur.bignum(value).mul(augur.ETHER).toFixed()
-        }, f);
+        };
+        if (onSent) {
+            augur.sendTx(tx, function (txhash) {
+                if (txhash) {
+                    onSent(txhash);
+                    if (onSuccess) tx_notify(0, null, txhash, onSuccess);
+                }
+            });
+        } else {
+            txhash = augur.sendTx(tx);
+            if (txhash) {
+                if (onSuccess) tx_notify(0, null, txhash, onSuccess);
+                return txhash;
+            }
+        }
     };
     augur.getTransactionByHash = augur.getTx = function (hash, f) {
         return json_rpc(postdata("getTransactionByHash", hash), f);
@@ -903,23 +926,25 @@ var Augur = (function (augur) {
         if (num_params === tx.params.length) {
             for (i = 0, len = types.length; i < len; ++i) {
                 if (types[i] === "int256") {
-                    if (tx.params[i].constructor === Number) {
-                        stat = augur.bignum(tx.params[i]);
-                        if (stat !== 0) {
-                            stat = stat.mod(augur.MAXBITS).toFixed();
-                        } else {
-                            stat = stat.toFixed();
-                        }
-                        statics += pad_left(encode_int(stat));
-                    } else if (tx.params[i].constructor === String) {
-                        if (tx.params[i].slice(0,1) === '-') {
-                            stat = augur.bignum(tx.params[i]).mod(augur.MAXBITS).toFixed();
+                    if (tx.params[i]) {
+                        if (tx.params[i].constructor === Number) {
+                            stat = augur.bignum(tx.params[i]);
+                            if (stat !== 0) {
+                                stat = stat.mod(augur.MAXBITS).toFixed();
+                            } else {
+                                stat = stat.toFixed();
+                            }
                             statics += pad_left(encode_int(stat));
-                        } else if (tx.params[i].slice(0,2) === "0x") {
-                            statics += pad_left(tx.params[i].slice(2), true);
-                        } else {
-                            stat = augur.bignum(tx.params[i]).mod(augur.MAXBITS);
-                            statics += pad_left(encode_int(stat));
+                        } else if (tx.params[i].constructor === String) {
+                            if (tx.params[i].slice(0,1) === '-') {
+                                stat = augur.bignum(tx.params[i]).mod(augur.MAXBITS).toFixed();
+                                statics += pad_left(encode_int(stat));
+                            } else if (tx.params[i].slice(0,2) === "0x") {
+                                statics += pad_left(tx.params[i].slice(2), true);
+                            } else {
+                                stat = augur.bignum(tx.params[i]).mod(augur.MAXBITS);
+                                statics += pad_left(encode_int(stat));
+                            }
                         }
                     }
                 } else if (types[i] === "bytes" || types[i] === "string") {
@@ -1175,30 +1200,51 @@ var Augur = (function (augur) {
             check_blockhash(augur.getTx(txhash), numeric, txhash, count);
         }
     }
-    function call_send_confirm(tx, onSent, onSuccess, onFailed) {
-        tx.send = false;
-        augur.invoke(tx, function (callreturn) {
-            var numeric;
-            if (callreturn) {
-                tx.send = true;
-                delete tx.returns;
-                numeric = augur.bignum(callreturn);
-                if (numeric) numeric = numeric.toFixed();
-                if (numeric && augur.ERRORS[tx.method] && augur.ERRORS[tx.method][numeric]) {
-                    if (onFailed) onFailed({
-                        error: numeric,
-                        message: augur.ERRORS[tx.method][numeric]
-                    });
-                } else {
+    function send_confirm(tx, callreturn, onSent, onSuccess, onFailed) {
+        var numeric, txhash;
+        if (tx && callreturn) {
+            if (augur.ERRORS[callreturn]) {
+                return {
+                    error: callreturn,
+                    message: augur.ERRORS[callreturn]
+                };
+            }
+            tx.send = true;
+            delete tx.returns;
+            numeric = augur.bignum(callreturn);
+            if (numeric) numeric = numeric.toFixed();
+            if (numeric && augur.ERRORS[tx.method] && augur.ERRORS[tx.method][numeric]) {
+                if (onFailed) onFailed({
+                    error: numeric,
+                    message: augur.ERRORS[tx.method][numeric]
+                });
+            } else {
+                if (onSent) {
                     augur.invoke(tx, function (txhash) {
                         if (txhash) {
                             onSent(txhash);
                             if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
                         }
                     });
+                } else {
+                    txhash = augur.invoke(tx);
+                    if (txhash) {
+                        if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
+                        return txhash;
+                    }
                 }
             }
-        });
+        }
+    }
+    function call_send_confirm(tx, onSent, onSuccess, onFailed) {
+        tx.send = false;
+        if (onSent) {
+            augur.invoke(tx, function (callreturn) {
+                send_confirm(tx, callreturn, onSent, onSuccess, onFailed);
+            });
+        } else {
+            return send_confirm(tx, augur.invoke(tx), null, onSuccess, onFailed);
+        }
     }
 
     /***********************
@@ -1236,12 +1282,19 @@ var Augur = (function (augur) {
         if (account) tx.params = account;
         return fire(tx, onSent);
     };
-    augur.sendCash = function (receiver, value, onSent) {
-        // receiver: sha256
+    augur.sendCash = function (to, value, onSent, onSuccess, onFailed) {
+        // to: sha256
         // value: number -> fixed-point
+        if (to && to.value) {
+            value = to.value;
+            if (to.onSent) onSent = to.onSent;
+            if (to.onSuccess) onSuccess = to.onSuccess;
+            if (to.onFailed) onFailed = to.onFailed;
+            to = to.to;
+        }
         var tx = copy(augur.tx.sendCash);
-        tx.params = [receiver, augur.fix(value)];
-        return fire(tx, onSent);
+        tx.params = [to, augur.fix(value)];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
     augur.cashFaucet = function (onSent) {
         return fire(augur.tx.cashFaucet, onSent);
@@ -2432,13 +2485,21 @@ var Augur = (function (augur) {
         signature: "iii",
         send: true
     };
-    augur.sendReputation = function (branch, receiver, value, onSent) {
+    augur.sendReputation = function (branch, to, value, onSent, onSuccess, onFailed) {
         // branch: sha256
-        // receiver: sha256
+        // to: sha256
         // value: number -> fixed-point
+        if (branch && branch.branchId && branch.to && branch.value) {
+            to = branch.to;
+            value = branch.value;
+            if (branch.onSent) onSent = branch.onSent;
+            if (branch.onSuccess) onSuccess = branch.onSuccess;
+            if (branch.onFailed) onFailed = branch.onFailed;
+            branch = branch.branchId;
+        }
         var tx = copy(augur.tx.sendReputation);
-        tx.params = [branch, receiver, augur.fix(value)];
-        return fire(tx, onSent);
+        tx.params = [branch, to, augur.fix(value)];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // transferShares.se

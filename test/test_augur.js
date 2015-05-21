@@ -106,38 +106,80 @@ describe("Augur API", function () {
     var receiving_account = constants.accounts.joey;
     var vote_period = 1;
 
+    // payment methods
+    describe("pay", function () {
+        it("complete call-send-confirm callback sequence", function (done) {
+            this.timeout(120000);
+            var start_balance = Augur.bignum(Augur.balance()).dividedBy(Augur.ETHER);
+            var value = 10;
+            var tx = {
+                to: constants.accounts.loopy,
+                value: value,
+                onSent: function (res) {
+                    // log(res);
+                },
+                onSuccess: function (res) {
+                    // log("success: " + JSON.stringify(res, null, 2));
+                    // var final_balance = Augur.bignum(Augur.balance()).dividedBy(Augur.ETHER);
+                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
+                    done();
+                }
+            };
+            Augur.pay(tx);
+        });
+    });
+    describe("sendCash", function () {
+        it("complete call-send-confirm callback sequence", function (done) {
+            this.timeout(120000);
+            var start_balance = Augur.bignum(Augur.getCashBalance());
+            var value = 10;
+            Augur.sendCash({
+                to: constants.accounts.scott,
+                value: value,
+                onSent: function (res) {
+                    // log(res);
+                },
+                onSuccess: function (res) {
+                    // log("success: " + JSON.stringify(res, null, 2));
+                    // var final_balance = Augur.bignum(Augur.getCashBalance());
+                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
+                    done();
+                },
+                onFailed: function (res) {
+                    log("failed: " + JSON.stringify(res, null, 2));
+                    done();
+                }
+            });
+        });
+    });
+    describe("sendReputation", function () {
+        it("complete call-send-confirm callback sequence", function (done) {
+            this.timeout(120000);
+            var start_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.dev));
+            var value = 10;
+            Augur.sendReputation({
+                branchId: Augur.branches.dev,
+                to: constants.accounts.scott,
+                value: value,
+                onSent: function (res) {
+                    // log(res);
+                },
+                onSuccess: function (res) {
+                    // log("success: " + JSON.stringify(res, null, 2));
+                    // var final_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.dev));
+                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
+                    done();
+                },
+                onFailed: function (res) {
+                    log("failed: " + JSON.stringify(res, null, 2));
+                    done();
+                }
+            });
+        });
+    });
+
     // cash.se
     describe("cash.se", function () {
-        // Augur.getCashBalance(Augur.coinbase, function (r) {
-        //     describe("getCashBalance(" + Augur.coinbase + ") -> " + r, function () {
-        //         it("is not zero", function () {
-        //             is_not_zero(r);
-        //         });
-        //         Augur.getCashBalance(receiving_account, function (r) {
-        //             describe("getCashBalance(" + receiving_account + ") -> " + r, function () {
-        //                 Augur.tx.sendCash.send = false;
-        //                 Augur.tx.sendCash.returns = "unfix";
-        //                 Augur.sendCash(receiving_account, amount, function (r) {
-        //                     describe("sendCash(" + receiving_account + ", " + amount + ") [call] -> " + r, function () {
-        //                         it("is not zero", function () {
-        //                             is_not_zero(r);
-        //                         });
-        //                         it("is equal to the input amount", function () {
-        //                             assert(r === amount);
-        //                         });
-        //                         Augur.tx.sendCash.send = true;
-        //                         Augur.tx.sendCash.returns = undefined;
-        //                         Augur.sendCash(receiving_account, amount, function (r) {
-        //                             log("sendCash(" + receiving_account + ", " + amount + ") [sendTx] -> " + r);
-        //                             is_not_zero(r);
-        //                             // TODO check that balances actually changed
-        //                         });
-        //                     });
-        //                 });
-        //             });
-        //         });
-        //     });
-        // });
         describe("cashFaucet() [call] -> '1'", function () {
             Augur.tx.cashFaucet.send = false;
             Augur.tx.cashFaucet.returns = "number";
