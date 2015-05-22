@@ -137,7 +137,7 @@ var Augur = (function (augur) {
         expiringEvents: "0x61d90fd4c1c3502646153003ec4d5c177de0fb58",
         fxpFunctions: "0xdaf26192091449d14c03026f79272e410fce0908",
         markets: "0x3be9601854135c88bc085510a3abb7ea9c13e6cf",
-        reporting: "0xead0c9a9bd9546f476337a79e3d9bc8875241e61",
+        reporting: "0xa9ff1dd752b6669884cd58b93a7bb0e75aab1a6b",
         whitelist: "0x21dbe4a05a9174e96e6c6bc1e05a7096338cb0d6",
 
         // Functions
@@ -147,8 +147,8 @@ var Augur = (function (augur) {
         p2pWagers: "0x7c2bbb3045fd8b39d28f4b4a5682dbec9a710771",
         sendReputation: "0xf2c3aa82457098dd23f4273678d234f715f77b39",
         transferShares: "0x0b7857e3f41f780aeed909f046009bb15d06ed8f",
-        makeReports: "0x0753cfca6d4f2be91c4bff14c4652db7d1f3322f",
-        createEvent: "0x80b2ff84b80a5936bb8a705f778efd290aea4954",
+        makeReports: "0x4dbde1b0890904e4c1a61efde63473502903d75f",
+        createEvent: "0xda062002b4cf172716e26b0dd4ef148b555a7087",
         createMarket: "0x32361732443f0cfd3ba47f76edafb4d6bd4e9262",
         closeMarket: "0x048938301770ccb1f5c09660b475203e37985e35",
         closeMarketOne: "0xa32259f70ac4ad4af6dc10d27ccbeeb2f975fe9e",

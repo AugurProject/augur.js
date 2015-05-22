@@ -153,11 +153,11 @@ describe("Augur API", function () {
     describe("sendReputation", function () {
         it("complete call-send-confirm callback sequence", function (done) {
             this.timeout(120000);
-            var start_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.dev));
+            var start_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.demo));
             var value = 10;
             Augur.sendReputation({
-                branchId: Augur.branches.dev,
-                to: constants.accounts.scott,
+                branchId: Augur.branches.demo,
+                to: constants.accounts.joey,
                 value: value,
                 onSent: function (res) {
                     // log(res);
