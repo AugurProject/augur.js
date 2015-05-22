@@ -131,31 +131,31 @@ var Augur = (function (augur) {
 
         // Data and API
         cash: "0xf1d413688a330839177173ce98c86529d0da6e5c",
-        info: "0x3530bfdc65394687732d9c2becd6a3108271231b", // same as original but it works (???)
+        info: "0x3530bfdc65394687732d9c2becd6a3108271231b",
         branches: "0x13dc5836cd5638d0b81a1ba8377a7852d41b5bbe",
         events: "0xb71464588fc19165cbdd1e6e8150c40df544467b",
         expiringEvents: "0x61d90fd4c1c3502646153003ec4d5c177de0fb58",
         fxpFunctions: "0xdaf26192091449d14c03026f79272e410fce0908",
-        markets: "0x3be9601854135c88bc085510a3abb7ea9c13e6cf", // new markets addr
+        markets: "0x3be9601854135c88bc085510a3abb7ea9c13e6cf",
         reporting: "0xead0c9a9bd9546f476337a79e3d9bc8875241e61",
         whitelist: "0x21dbe4a05a9174e96e6c6bc1e05a7096338cb0d6",
 
         // Functions
         checkQuorum: "0xe9aaab4aff0cf06e62d2442ae0f68660882e5a67",
-        buyAndSellShares: "0x2bc958557105fcc3f1609b6bdfc1c9881643bb02", // new info + markets addr
-        createBranch: "0xf8d9a15f0063ed327b2cc0fc81b429a8ec018c60", // new info addr
+        buyAndSellShares: "0x2bc958557105fcc3f1609b6bdfc1c9881643bb02",
+        createBranch: "0xf8d9a15f0063ed327b2cc0fc81b429a8ec018c60",
         p2pWagers: "0x7c2bbb3045fd8b39d28f4b4a5682dbec9a710771",
-        sendReputation: "0x049487d32b727be98a4c8b58c4eab6521791f288",
-        transferShares: "0x0b7857e3f41f780aeed909f046009bb15d06ed8f", // new info + markets addr
-        makeReports: "0x0753cfca6d4f2be91c4bff14c4652db7d1f3322f", // new info addr
-        createEvent: "0x80b2ff84b80a5936bb8a705f778efd290aea4954", // new info addr
-        createMarket: "0x32361732443f0cfd3ba47f76edafb4d6bd4e9262", // new info + markets addr
-        closeMarket: "0x048938301770ccb1f5c09660b475203e37985e35", // new info + markets addr
-        closeMarketOne: "0xa32259f70ac4ad4af6dc10d27ccbeeb2f975fe9e", // new markets addr
-        closeMarketTwo: "0xad98ee4873b54bad528c07b578cbac5c7ac8a5cc", // new markets addr
-        closeMarketFour: "0x7eae331a9ff722fdefd33c0fe312e0f8b8993d7a", // new markets addr
-        closeMarketEight: "0x6cc2a70dec07f24b7bfe9ce9c29fe7e14e575171", // new markets addr
-        dispatch: "0x3975c208cbab80321c14c845217fbf5a748e6d06", // new info addr
+        sendReputation: "0xf2c3aa82457098dd23f4273678d234f715f77b39",
+        transferShares: "0x0b7857e3f41f780aeed909f046009bb15d06ed8f",
+        makeReports: "0x0753cfca6d4f2be91c4bff14c4652db7d1f3322f",
+        createEvent: "0x80b2ff84b80a5936bb8a705f778efd290aea4954",
+        createMarket: "0x32361732443f0cfd3ba47f76edafb4d6bd4e9262",
+        closeMarket: "0x048938301770ccb1f5c09660b475203e37985e35",
+        closeMarketOne: "0xa32259f70ac4ad4af6dc10d27ccbeeb2f975fe9e",
+        closeMarketTwo: "0xad98ee4873b54bad528c07b578cbac5c7ac8a5cc",
+        closeMarketFour: "0x7eae331a9ff722fdefd33c0fe312e0f8b8993d7a",
+        closeMarketEight: "0x6cc2a70dec07f24b7bfe9ce9c29fe7e14e575171",
+        dispatch: "0x3975c208cbab80321c14c845217fbf5a748e6d06",
 
         // Consensus
         statistics: "0x0cb1277671d162b2f5c81e9435744f63768398d0",
@@ -170,7 +170,7 @@ var Augur = (function (augur) {
         redeem_score: "0xcd2f28fe067ea3cdc3b55f1a1e62cb347118b04c",
         redeem_adjust: "0x562cc65e8d901f03bbeb6d83011bbd48ad1d377e",
         redeem_resolve: "0xa9b43b17ed17106f075960f9b9af38c330df9471",
-        redeem_payout: "0x3975b52c75eb13ef6de3a5385afe6a1e5849812e" // new info addr
+        redeem_payout: "0x3975b52c75eb13ef6de3a5385afe6a1e5849812e"
     };
 
     // Branch IDs
@@ -2439,7 +2439,7 @@ var Augur = (function (augur) {
         return fire(tx, onSent);
     };
     augur.buyShares = function (branch, market, outcome, amount, nonce, onSent, onSuccess, onFailed) {
-        if (branch.constructor === Object && branch.branchId) {
+        if (branch && branch.constructor === Object && branch.branchId) {
             market = branch.marketId; // sha256
             outcome = branch.outcome; // integer (1 or 2 for binary)
             amount = branch.amount;   // number -> fixed-point
@@ -2464,7 +2464,7 @@ var Augur = (function (augur) {
         }
     };
     augur.sellShares = function (branch, market, outcome, amount, nonce, onSent, onSuccess, onFailed) {
-        if (branch.constructor === Object && branch.branchId) {
+        if (branch && branch.constructor === Object && branch.branchId) {
             market = branch.marketId; // sha256
             outcome = branch.outcome; // integer (1 or 2 for binary)
             amount = branch.amount;   // number -> fixed-point

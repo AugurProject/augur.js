@@ -95,7 +95,7 @@ describe("Contract ABI data serialization", function () {
             "getEventInfo", "i",
             "0xb2a6de45f349b5ac384b01a785e640f519f0a8597ab2031c964c7f572d96b13c");
     });
-    describe("Two int256 parameters", function () {
+    describe("Multiple int256 parameters", function () {
         it("multiply(2,3)", function () {
             var tx = {
                 to: constants.examples.multiplier,
@@ -107,6 +107,22 @@ describe("Contract ABI data serialization", function () {
                 "0000000000000000000000000000000000000000000000000000000000000002"+
                 "0000000000000000000000000000000000000000000000000000000000000003";
             assert.equal(Augur.encode_abi(tx), expected);
+        });
+        it("sendReputation", function () {
+            var tx = Augur.tx.sendReputation;
+            tx.params = [
+                Augur.branches.alpha,
+                constants.accounts.scott,
+                Augur.fix("5").toFixed()
+            ];
+            var expected = "0xa677135c"+
+                "490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646"+
+                "0000000000000000000000006fc0a64e2dce367e35417bfd1568fa35af9f3e4b"+
+                "0000000000000000000000000000000000000000000000050000000000000000";
+            var actual = Augur.encode_abi(tx);
+            var types = ["int256", "int256", "int256"];
+            assert.equal(actual, expected);
+            assert.equal(actual, "0xa677135c" + coder.encodeParams(types, tx.params));
         });
     });
     describe("Single int256[] parameter", function () {
