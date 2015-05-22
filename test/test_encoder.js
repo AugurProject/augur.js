@@ -175,8 +175,6 @@ describe("Contract ABI data serialization", function () {
         });
         it("createEvent('augur ragefest 2015')", function () {
             var tx = {
-                from: Augur.coinbase,
-                to: Augur.contracts.createEvent,
                 method: "createEvent",
                 signature: "isiiii",
                 params: [
@@ -199,12 +197,34 @@ describe("Contract ABI data serialization", function () {
                 "6175677572207261676566657374203230313500000000000000000000000000";
             assert.equal(Augur.encode_abi(tx), expected);
         });
+        it("createEvent('')", function () {
+            var tx = {
+                method: "createEvent",
+                signature: "isiiii",
+                params: [
+                    "0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5",
+                    "Will Jack win the June 2015 Augur Breakdancing Competition?",
+                    800029,
+                    0,
+                    1,
+                    2
+                ]
+            };
+            var expected = "0x130dd1b3"+
+                "3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5"+
+                "00000000000000000000000000000000000000000000000000000000000000c0"+
+                "00000000000000000000000000000000000000000000000000000000000c351d"+
+                "0000000000000000000000000000000000000000000000000000000000000000"+
+                "0000000000000000000000000000000000000000000000000000000000000001"+
+                "0000000000000000000000000000000000000000000000000000000000000002"+
+                "000000000000000000000000000000000000000000000000000000000000003b"+
+                "57696c6c204a61636b2077696e20746865204a756e6520323031352041756775"+
+                "7220427265616b64616e63696e6720436f6d7065746974696f6e3f";
+        });
     });
     describe("Multiple parameters: int256, string, int256[]", function () {
         it("createMarket('market for ragefests')", function () {
             var tx = {
-                from: Augur.coinbase,
-                to: Augur.contracts.createMarket,
                 method: "createMarket",
                 signature: "isiiia",
                 params: [
@@ -236,8 +256,6 @@ describe("Contract ABI data serialization", function () {
         // negative hash
         it("createMarket('unicorns are real')", function () {
             var tx = {
-                from: Augur.coinbase,
-                to: Augur.contracts.createMarket,
                 method: "createMarket",
                 signature: "isiiia",
                 params: [

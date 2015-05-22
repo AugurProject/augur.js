@@ -75,6 +75,7 @@ describe("Invoke contract functions", function () {
             var expected = "10";
             var tx = {
                 to: constants.examples.ten,
+                from: Augur.coinbase,
                 method: method,
                 send: false,
                 params: params,
@@ -96,6 +97,7 @@ describe("Invoke contract functions", function () {
             it(method + "(" + params + ") -> " + expected, function () {
                 var tx = {
                     to: Augur.contracts.cash,
+                    from: Augur.coinbase,
                     method: method,
                     params: params,
                     send: false
@@ -108,6 +110,7 @@ describe("Invoke contract functions", function () {
                 var expected = "1";
                 var tx = {
                     to: Augur.contracts.cash,
+                    from: Augur.coinbase,
                     method: method,
                     params: params,
                     send: false,
@@ -123,6 +126,7 @@ describe("Invoke contract functions", function () {
         describe("mul2.se: " + constants.examples.mul2, function () {
             var tx = {
                 to: constants.examples.mul2,
+                from: Augur.coinbase,
                 method: "double",
                 signature: "i",
                 returns: "number"
@@ -146,6 +150,7 @@ describe("Invoke contract functions", function () {
         describe("multiplier.se: " + constants.examples.multiplier, function () {
             var tx = {
                 to: constants.examples.multiplier,
+                from: Augur.coinbase,
                 method: "multiply",
                 signature: "ii",
                 returns: "number"
@@ -165,6 +170,7 @@ describe("Invoke contract functions", function () {
         describe("branches.se: " + Augur.contracts.branches, function () {
             var tx = {
                 to: Augur.contracts.branches,
+                from: Augur.coinbase,
                 method: "getMarkets",
                 signature: "i",
                 params: 1010101
@@ -195,10 +201,12 @@ describe("Batch RPC", function () {
         };
         var txlist = [{
             to: constants.examples.ten,
+            from: Augur.coinbase,
             method: "ten",
             returns: "number"
         }, {
             to: constants.examples.mul2,
+            from: Augur.coinbase,
             method: "double",
             signature: "i",
             returns: "number",

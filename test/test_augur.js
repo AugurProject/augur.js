@@ -97,8 +97,6 @@ describe("Augur API", function () {
     var market_id2 = "0xfb79748fa3056de9b6df8cd0693c203f8024eedfb88c0abcaa4406184b5db243";
     var event_description = "[augur.js] " + Math.random().toString(36).substring(4);
     var market_description = "[augur.js] " + Math.random().toString(36).substring(4);
-    // var event_description = "Will the Augur alpha be done by Saturday, May 16, 2015?";
-    // var market_description = "Will the Augur alpha be done by Saturday, May 16, 2015?";
     var reporter_index = "0";
     var reporter_address = constants.accounts.jack;
     var ballot = [Augur.YES, Augur.YES, Augur.NO, Augur.YES];
@@ -1090,92 +1088,96 @@ describe("Augur API", function () {
         });
     });
 
-    // createEvent.se
-    describe("createEvent.se", function () {
-        describe("createEvent: \"" + event_description + "\"", function () {
-            it("async", function (done) {
-                this.timeout(120000);
-                var expDate = "30000000";
-                var minValue = "1";
-                var maxValue = "2";
-                var numOutcomes = "2";
-                var eventObj = {
-                    branchId: branch_id,
-                    description: event_description,
-                    expDate: expDate,
-                    minValue: minValue,
-                    maxValue: maxValue,
-                    numOutcomes: numOutcomes,
-                    onSent: function (r) {
-                        log("sent: " + JSON.stringify(r, null, 2));
-                    },
-                    onSuccess: function (r) {
-                        log("success: " + JSON.stringify(r, null, 2));
-                        assert.equal(r.branch, branch_id);
-                        assert.equal(r.expirationDate, expDate);
-                        assert.equal(r.minValue, minValue);
-                        assert.equal(r.maxValue, maxValue);
-                        assert.equal(r.numOutcomes, numOutcomes);
-                        assert.equal(r.description, event_description);
-                        done();
-                    },
-                    onFailed: function (r) {
-                        log("failed: " + JSON.stringify(r, null, 2));
-                        done();
-                    }
-                };
-                Augur.createEvent(eventObj);
-                // done();
-            });
-        });
-    });
+    // // createEvent.se
+    // describe("createEvent.se", function () {
+    //     describe("createEvent: \"" + event_description + "\"", function () {
+    //         it("complete call-send-confirm callback sequence", function (done) {
+    //             this.timeout(120000);
+    //             var branch_id = "0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5";
+    //             // var event_description = "Will Jack win the June 2015 Augur Breakdancing Competition?";
+    //             var expDate = 800029;
+    //             var minValue = 0;
+    //             var maxValue = 1;
+    //             var numOutcomes = 2;
+    //             var eventObj = {
+    //                 branchId: branch_id,
+    //                 description: event_description,
+    //                 expDate: expDate,
+    //                 minValue: minValue,
+    //                 maxValue: maxValue,
+    //                 numOutcomes: numOutcomes,
+    //                 onSent: function (r) {
+    //                     log("sent: " + JSON.stringify(r, null, 2));
+    //                 },
+    //                 onSuccess: function (r) {
+    //                     log("success: " + JSON.stringify(r, null, 2));
+    //                     assert.equal(r.branch, branch_id);
+    //                     assert.equal(r.expirationDate, expDate);
+    //                     assert.equal(r.minValue, minValue);
+    //                     assert.equal(r.maxValue, maxValue);
+    //                     assert.equal(r.numOutcomes, numOutcomes);
+    //                     assert.equal(r.description, event_description);
+    //                     done();
+    //                 },
+    //                 onFailed: function (r) {
+    //                     log("failed: " + JSON.stringify(r, null, 2));
+    //                     done();
+    //                 }
+    //             };
+    //             Augur.createEvent(eventObj);
+    //             // done();
+    //         });
+    //     });
+    // });
 
-    // createMarket.se
-    describe("createMarket.se", function () {
-        describe("createMarket: \"" + market_description + "\"", function () {
-            it("async", function (done) {
-                this.timeout(120000);
-                var alpha = "0.0079";
-                var initialLiquidity = "5000";
-                var tradingFee = "0.03";
-                var events = ["0x0919ce53f2c2c2a5422c2aacafdede55a3795ce4f6e4a4034e37e44bc054d13b"];
-                var numOutcomes = "2";
-                var marketObj = {
-                    branchId: branch_id,
-                    description: market_description,
-                    alpha: alpha,
-                    initialLiquidity: initialLiquidity,
-                    tradingFee: tradingFee,
-                    events: events,
-                    onSent: function (r) {
-                        log("sent: " + JSON.stringify(r, null, 2));
-                    },
-                    onSuccess: function (r) {
-                        log("createMarket: \"" + market_description + "\"");
-                        log("success: " + JSON.stringify(r, null, 2));
-                        assert.equal(r.numOutcomes, numOutcomes);
-                        assert.equal(parseFloat(r.alpha).toFixed(5), parseFloat(alpha).toFixed(5));
-                        assert.equal(r.numOutcomes, numOutcomes);
-                        assert.equal(parseFloat(r.tradingFee).toFixed(5), parseFloat(tradingFee).toFixed(5));
-                        assert.equal(r.description, market_description);
-                        done();
-                    },
-                    onFailed: function (r) {
-                        log("createMarket: \"" + market_description + "\"");
-                        log("failed: " + JSON.stringify(r, null, 2));
-                        done();
-                    }
-                };
-                Augur.createMarket(marketObj);
-                // done();
-            });
-        });
-    });
+    // // createMarket.se
+    // describe("createMarket.se", function () {
+    //     describe("createMarket: \"" + market_description + "\"", function () {
+    //         it("complete call-send-confirm callback sequence", function (done) {
+    //             this.timeout(120000);
+    //             var alpha = "0.0079";
+    //             var initialLiquidity = 5000;
+    //             var tradingFee = "0.03";
+    //             var branch_id = "0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5";
+    //             var events = ["0x35e9d6de56de0d21e2615b256061783e038b79b60f5bf42cde1c6ab600aebff6"];
+    //             // var market_description = "Will Jack win the June 2015 Augur Breakdancing Competition?";
+    //             var numOutcomes = 2;
+    //             var marketObj = {
+    //                 branchId: branch_id,
+    //                 description: market_description,
+    //                 alpha: alpha,
+    //                 initialLiquidity: initialLiquidity,
+    //                 tradingFee: tradingFee,
+    //                 events: events,
+    //                 onSent: function (r) {
+    //                     log("sent: " + JSON.stringify(r, null, 2));
+    //                 },
+    //                 onSuccess: function (r) {
+    //                     log("createMarket: \"" + market_description + "\"");
+    //                     log("success: " + JSON.stringify(r, null, 2));
+    //                     assert.equal(r.numOutcomes, numOutcomes);
+    //                     assert.equal(parseFloat(r.alpha).toFixed(5), parseFloat(alpha).toFixed(5));
+    //                     assert.equal(r.numOutcomes, numOutcomes);
+    //                     assert.equal(parseFloat(r.tradingFee).toFixed(5), parseFloat(tradingFee).toFixed(5));
+    //                     assert.equal(r.description, market_description);
+    //                     done();
+    //                 },
+    //                 onFailed: function (r) {
+    //                     log("createMarket: \"" + market_description + "\"");
+    //                     log("failed: " + JSON.stringify(r, null, 2));
+    //                     done();
+    //                 }
+    //             };
+    //             Augur.createMarket(marketObj);
+    //             // done();
+    //         });
+    //     });
+    // });
 
     // closeMarket.se
     describe("closeMarket.se", function () {
         describe("closeMarket(" + branch_id + ", " + market_id + ") [call] ", function () {
-            it("async", function (done) {
+            it("complete call-send-confirm callback sequence", function (done) {
                 Augur.tx.closeMarket.send = false;
                 Augur.tx.closeMarket.returns = "number";
                 Augur.closeMarket(branch_id, market_id, function (r) {
@@ -1196,7 +1198,7 @@ describe("Augur API", function () {
                 assert(r.message);
                 assert.equal(r.error, "-1");
             };
-            it("async", function (done) {
+            it("complete call-send-confirm callback sequence", function (done) {
                 this.timeout(120000);
                 var dispatchObj = {
                     branchId: branch_id,

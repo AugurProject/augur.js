@@ -367,8 +367,13 @@ var Augur = (function (augur) {
     }
     function remove_leading_zeros(h) {
         var hex = h.toString();
-        while (hex.slice(0, 2) === "0x" || hex.slice(0, 2) === "00") {
+        if (hex.slice(0, 2) === "0x") {
             hex = hex.slice(2);
+        }
+        if (!/^0+$/.test(hex)) {
+            while (hex.slice(0, 2) === "00") {
+                hex = hex.slice(2);
+            }
         }
         return hex;
     }
@@ -909,7 +914,7 @@ var Augur = (function (augur) {
                 types.push("int256");
             }
         }
-        if (tx.params) {
+        if (tx.params !== undefined && tx.params !== null && tx.params !== [] && tx.params !== "") {
             if (tx.params.constructor === String) {
                 if (tx.params.slice(0,1) === "[" && tx.params.slice(-1) === "]") {
                     tx.params = JSON.parse(tx.params);
@@ -926,7 +931,7 @@ var Augur = (function (augur) {
         if (num_params === tx.params.length) {
             for (i = 0, len = types.length; i < len; ++i) {
                 if (types[i] === "int256") {
-                    if (tx.params[i]) {
+                    if (tx.params[i] !== undefined && tx.params[i] !== null && tx.params[i] !== [] && tx.params[i] !== "") {
                         if (tx.params[i].constructor === Number) {
                             stat = augur.bignum(tx.params[i]);
                             if (stat !== 0) {
