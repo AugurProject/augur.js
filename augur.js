@@ -1201,36 +1201,47 @@ var Augur = (function (augur) {
         }
     }
     function send_confirm(tx, callreturn, onSent, onSuccess, onFailed) {
-        var numeric, txhash;
+        var numeric, txhash, err;
         if (tx && callreturn) {
             if (augur.ERRORS[callreturn]) {
-                return {
+                err = {
                     error: callreturn,
                     message: augur.ERRORS[callreturn]
                 };
-            }
-            tx.send = true;
-            delete tx.returns;
-            numeric = augur.bignum(callreturn);
-            if (numeric) numeric = numeric.toFixed();
-            if (numeric && augur.ERRORS[tx.method] && augur.ERRORS[tx.method][numeric]) {
-                if (onFailed) onFailed({
-                    error: numeric,
-                    message: augur.ERRORS[tx.method][numeric]
-                });
-            } else {
-                if (onSent) {
-                    augur.invoke(tx, function (txhash) {
-                        if (txhash) {
-                            onSent(txhash);
-                            if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
-                        }
-                    });
+                if (onFailed) {
+                    onFailed(err);
                 } else {
-                    txhash = augur.invoke(tx);
-                    if (txhash) {
-                        if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
-                        return txhash;
+                    return err;
+                }
+            } else {
+                tx.send = true;
+                delete tx.returns;
+                numeric = augur.bignum(callreturn);
+                if (numeric) numeric = numeric.toFixed();
+                if (numeric && augur.ERRORS[tx.method] && augur.ERRORS[tx.method][numeric]) {
+                    err = {
+                        error: numeric,
+                        message: augur.ERRORS[tx.method][numeric]
+                    };
+                    if (onFailed) {
+                        onFailed(err);
+                    } else {
+                        return err;
+                    }
+                } else {
+                    if (onSent) {
+                        augur.invoke(tx, function (txhash) {
+                            if (txhash) {
+                                onSent(txhash);
+                                if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
+                            }
+                        });
+                    } else {
+                        txhash = augur.invoke(tx);
+                        if (txhash) {
+                            if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
+                            return txhash;
+                        }
                     }
                 }
             }
@@ -2506,7 +2517,6 @@ var Augur = (function (augur) {
 
     // makeReports.se
     augur.tx.report = {
-        from: augur.coinbase,
         to: augur.contracts.makeReports,
         method: "report",
         signature: "iaii",
@@ -2514,7 +2524,6 @@ var Augur = (function (augur) {
         send: true
     };
     augur.tx.submitReportHash = {
-        from: augur.coinbase,
         to: augur.contracts.makeReports,
         method: "submitReportHash",
         signature: "iii",
@@ -2522,22 +2531,12 @@ var Augur = (function (augur) {
         send: true
     };
     augur.tx.checkReportValidity = {
-        from: augur.coinbase,
         to: augur.contracts.makeReports,
         method: "checkReportValidity",
         signature: "iai",
         returns: "number"
     };
-    augur.tx.submitReportHash = {
-        from: augur.coinbase,
-        to: augur.contracts.makeReports,
-        method: "submitReportHash",
-        signature: "iii",
-        returns: "number",
-        send: true
-    };
     augur.tx.slashRep = {
-        from: augur.coinbase,
         to: augur.contracts.makeReports,
         method: "slashRep",
         signature: "iiiai",
