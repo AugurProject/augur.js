@@ -155,22 +155,22 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xad98ee4873b54bad528c07b578cbac5c7ac8a5cc",
         closeMarketFour: "0x7eae331a9ff722fdefd33c0fe312e0f8b8993d7a",
         closeMarketEight: "0x6cc2a70dec07f24b7bfe9ce9c29fe7e14e575171",
-        dispatch: "0x3975c208cbab80321c14c845217fbf5a748e6d06",
+        dispatch: "0x0ff365cdce82fe353449bd8a83f8b489879eddf0",
 
         // Consensus
         statistics: "0x0cb1277671d162b2f5c81e9435744f63768398d0",
-        interpolate: "0xeb51564b43068745ae80136fcefe3ca532617a87",
-        center: "0xcff950797165df23550b6d79fa98e55d4c250fbe",
-        score: "0x7e6a5373193e42e77133b44707e6dbce92adc6f4",
-        adjust: "0xfd268b3d161e0af75e487950d44e23c91229eb7f",
-        resolve: "0x82a0ce86301c4f1832f78a324c20dd981e21d57b",
-        payout: "0x0a4184e2bc58669fb78a9bcee0cc1ab0da9d3ce3",
-        redeem_interpolate: "0x6e87d29e2b80d1cfeff57f782dcb57cd2cc15d2d",
-        redeem_center: "0x1f0571210c03efb7a616ed8a29d408a81cefe846",
-        redeem_score: "0xcd2f28fe067ea3cdc3b55f1a1e62cb347118b04c",
-        redeem_adjust: "0x562cc65e8d901f03bbeb6d83011bbd48ad1d377e",
-        redeem_resolve: "0xa9b43b17ed17106f075960f9b9af38c330df9471",
-        redeem_payout: "0x3975b52c75eb13ef6de3a5385afe6a1e5849812e"
+        interpolate: "0xe1c0762839bbceb3203121c8415705bead38542e",
+        center: "0xe581b997600f802a151d107b5f04ca2abaec194c",
+        score: "0xa6f6ecff2011aa189eaa15010de5ec2375ebaa9a",
+        adjust: "0x430da065b1b222245b26fcdf5a6bc2b6f7fac5de",
+        resolve: "0xc8dfd6c888bbaee5073c62a50b6bb34e60d6da3c",
+        payout: "0x226b26c312657341d8a9c845bc67fa03486dc2c0",
+        redeem_interpolate: "0x2dbab29f11ee38383e36b2765437e0fbe898ee19",
+        redeem_center: "0x8c44d6382e1f21c0be367f4de209c1fcfbe15939",
+        redeem_score: "0xeb959b695fc70cbbad348479324b3d0c19fb04dd",
+        redeem_adjust: "0x9875948e728089fb79985b30f49b5249ca59be9d",
+        redeem_resolve: "0xdd0b52fb8aef2c6c3119ad69953fe8deca592259",
+        redeem_payout: "0x888e6acb3f7a7a7f4d800e076ea461b43e2cc860"
     };
 
     // Branch IDs
