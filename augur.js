@@ -142,7 +142,7 @@ var Augur = (function (augur) {
 
         // Functions
         checkQuorum: "0xe9aaab4aff0cf06e62d2442ae0f68660882e5a67",
-        buyAndSellShares: "0x2bc958557105fcc3f1609b6bdfc1c9881643bb02",
+        buyAndSellShares: "0xda8c4eb4d2893657ed2105a52fcc81501fb97db5",
         createBranch: "0xf8d9a15f0063ed327b2cc0fc81b429a8ec018c60",
         p2pWagers: "0x7c2bbb3045fd8b39d28f4b4a5682dbec9a710771",
         sendReputation: "0xf2c3aa82457098dd23f4273678d234f715f77b39",
