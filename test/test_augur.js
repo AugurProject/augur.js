@@ -216,7 +216,7 @@ describe("Augur API", function () {
 
     // info.se
     describe("info.se", function () {
-        describe("getCreator(" + event_id + ") [event] -> " + constants.accounts.jack, function () {
+        describe("getCreator(" + event_id + ") [event]", function () {
             it("sync", function () {
                 var res = Augur.getCreator(event_id);
                 assert.equal(res, constants.accounts.jack);
@@ -228,14 +228,14 @@ describe("Augur API", function () {
                 });
             });
         });
-        describe("getCreator(" + market_id + ") [market] -> ", function () {
+        describe("getCreator(" + market_id + ") [market]", function () {
             it("sync", function () {
                 var res = Augur.getCreator(market_id);
-                assert.equal(res, constants.accounts.jack);
+                assert.equal(res, "0xc6e469cdaa6d8b1a108d451679f7f220624f7864");
             });
             it("async", function (done) {
                 Augur.getCreator(market_id, function (r) {
-                    assert.equal(r, constants.accounts.jack);
+                    assert.equal(r, "0xc6e469cdaa6d8b1a108d451679f7f220624f7864");
                     done();
                 });
             });
@@ -409,7 +409,7 @@ describe("Augur API", function () {
         describe("getEventInfo(" + event_id + ")", function () {
             var test = function (res) {
                 on_root_branch(res);
-                assert.equal(res.expirationDate, "329557");
+                assert.equal(res.expirationDate, "30000000");
                 assert.equal(res.description, "[augur.js] dbk7kieqjxxbt9");
             };
             it("sync", function () {
@@ -423,9 +423,9 @@ describe("Augur API", function () {
         });
 
         // TODO getEventBranch
-        describe("getExpiration(" + event_id + ") == '329557'", function () {
+        describe("getExpiration(" + event_id + ") == '30000000'", function () {
             var test = function (r) {
-                assert.equal(r, "329557");
+                assert.equal(r, "30000000");
             };
             it("sync", function () {
                 test(Augur.getExpiration(event_id));
@@ -541,13 +541,13 @@ describe("Augur API", function () {
             it("should have 2 outcomes", function () {
                 assert.equal("2", marketInfo.numOutcomes);
             });
-            it("should have description '[augur.js] dbk7kieqjxxbt9'", function () {
-                assert.equal("[augur.js] dbk7kieqjxxbt9", marketInfo.description);
+            it("should have description 'test'", function () {
+                assert.equal("test", marketInfo.description);
             });
         });
         describe("getMarketInfo(" + market_id + ")", function () {
             var test = function (r) {
-                assert.equal(r.description, "[augur.js] dbk7kieqjxxbt9");
+                assert.equal(r.description, "test");
             };
             it("sync", function () {
                 test(Augur.getMarketInfo(market_id));
@@ -560,7 +560,7 @@ describe("Augur API", function () {
         });
         describe("getMarketInfo(" + market_id2 + ")", function () {
             var test = function (r) {
-                assert.equal(r.description, "Will Augur raise over $2M in the crowdsale?");
+                assert.equal(r.description, "What");
             };
             it("sync", function () {
                 test(Augur.getMarketInfo(market_id2));
@@ -574,7 +574,8 @@ describe("Augur API", function () {
         describe("getMarketEvents(" + market_id + ")", function () {
             function test(r) {
                 assert.equal(r.constructor, Array);
-                assert(array_equal(r, ["0x1253ae7a83d5cbd1b583db494bbef15ae57fa8cefc1dbea78887b111625d60bb"]));
+                log(r);
+                assert(array_equal(r, ["0x3884ecc71446039b93b90255da3413e4536d394ed35959078b412c8100900aa7"]));
             }
             it("sync", function () {
                 test(Augur.getMarketEvents(market_id));
@@ -665,6 +666,7 @@ describe("Augur API", function () {
         });
         describe("getWinningOutcomes(" + market_id + ")", function () {
             var test = function (r) {
+                log(r);
                 is_array(r);
             };
             it("sync", function () {
@@ -744,7 +746,7 @@ describe("Augur API", function () {
         });
         describe("getTradingPeriod(" + market_id + ") ", function () {
             var test = function (r) {
-                assert.equal(r, "1098");
+                assert.equal(r, "1304");
             };
             it("sync", function () {
                 test(Augur.getTradingPeriod(market_id));
@@ -800,7 +802,7 @@ describe("Augur API", function () {
         });
         describe("getReporterID(" + branch_id + ", " + reporter_index + ") ", function () {
             var test = function (r) {
-                assert.equal(r, constants.accounts.jack);
+                assert.equal(r, "0xe956d63ca15052ff707f68537e58b34c749999ee");
             };
             it("sync", function () {
                 test(Augur.getReporterID(branch_id, reporter_index));
@@ -858,7 +860,7 @@ describe("Augur API", function () {
         describe("hashReport([ballot], " + salt + ") ", function () {
             var test = function (r) {
                 // TODO double-check this
-                assert.equal(r, "0x7e2d63d1ba8dfda2b2764e6be7a616fc9b7195d84f40736f76fb769b8f819331");
+                assert.equal(r, "0xecb634e07550319ba80b77114114b7670d384edb4b4db01a67bfba058147a081");
             };
             it("sync", function () {
                 test(Augur.hashReport(ballot, salt));
@@ -978,12 +980,14 @@ describe("Augur API", function () {
                 is_not_zero(r);
                 assert.equal(r, amount);
             };
-            Augur.tx.sendReputation.send = false;
-            Augur.tx.sendReputation.returns = "unfix";
             it("sync", function () {
+                Augur.tx.sendReputation.send = false;
+                Augur.tx.sendReputation.returns = "unfix";
                 test(Augur.sendReputation(branch_id, receiving_account, amount));
             });
             it("async", function (done) {
+                Augur.tx.sendReputation.send = false;
+                Augur.tx.sendReputation.returns = "unfix";
                 Augur.sendReputation(branch_id, receiving_account, amount, function (r) {
                     test(r); done();
                 });
