@@ -67,9 +67,6 @@ describe("Connection", function () {
     });
     it("should update the transaction object addresses if the contracts are changed", function () {
         var new_address = "0x01";
-        var old_address = "0x13dc5836cd5638d0b81a1ba8377a7852d41b5bbe";
-        assert.equal(Augur.contracts.branches, old_address);
-        assert.equal(Augur.init_contracts.branches, old_address);
         Augur.contracts.branches = new_address;
         Augur.connect();
         assert.equal(Augur.contracts.branches, new_address);

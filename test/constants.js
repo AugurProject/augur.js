@@ -10,6 +10,8 @@ constants.accounts = {
     loopy_old: "0x00e3f8de3ed9d428dc235ce0c25bc1136073be8b",
     jack_new: "0xa18e10a46a36d59cb2ef1fe8ec18a0a5c78a7fbf",
     jack: "0x63524e3fe4791aefce1e932bbfb3fdf375bfad89",
+    tinybike: "0xac601fc0bd8928374f1648afad8e64e5a954f66b",
+    tinybike2: "0x6258d68ce4fd64e7a3a68bbf6e78314dec801b4d",
     jack_eth: "0x32a34974787b46a62dbecc491c8a030185eaeb9d",
     heavy: "0x816e547d69e20e918340e7ff766c9ea841fe577a",
     lifespan: "0x74dcba4a17d257486785f1811604c8fba5373eb4",
@@ -20,11 +22,25 @@ constants.accounts = {
     chris: "0xa369ca3e80c8e8e5fdc3e2fc7ee7764c519de70f",
     chris_old: "0x9b7e6cd69f45d93336606b0f70dac77b5b6e9fb0",
     scott: "0x6fc0a64e2dce367e35417bfd1568fa35af9f3e4b",
+    niran: "0xff5938864b2a6414aaa7ab6783c2ea0fb5e3b39f",
     jay: "0xa381f37f23cb99ca036997008403ba1366fd8259" // bassguitarman
 };
-constants.whisper = {
-    jack: "0x04ba344c755678c805a966f9ff425872e297220c3a25a7cc3f0400313fa29d387d83b899f046fd18b4cfab845d4c8a78f6ab14a5bbd823219577091c33d766012b",
-    vent: "0x04caf66a8e7eb14434ccb0f5d79782578b1b93c9e0467270989e58f276f564b7aaf7a44706af01fecf029f6e8db86eafc46f9e959e9d2aa680d2f875a964bfd722"
+constants.chain1337 = {
+    accounts: {
+        ChrisCalderon: "0xc9bc8c2a9f07810f0f43c94734f859211abfd17e",
+        tinybike: "0x4a0cf714e2c1b785ff2d650320acf63be9eb25c6"
+    },
+    enodes: {
+         tinybike: "enode://4014c7fa323dafbb1ada241b74ce16099efde03f994728a55b9ff09a9a80664920045993978de85cb7f6c2ac7e9218694554433f586c1290a8b8faa186ce072c@[::]:30303"
+    }
+};
+
+constants.enodes = {
+    ChrisCalderon: "enode://2c3bf2515ab634f66cea590f1ee8c7d9a5750681b6cb60cd8d24aa28719ac7d8c7f05f68680726331ae7dd55719382ce89ad203ba0f3841693a9d20129053f04@76.14.85.30:30303",
+    joeykrug: "enode://cc3130681a43a4e8b1237ddc70f71e7f7344719a2c2d8d786501ff272ed100c0390fa8db1c14dca3bea5fcf964bb8bcc5ff47d7c6873b826aa7677efb9efed50@76.14.85.30:30303",
+    niran: "enode://6edaa293d1b91bdc818bac348b5dee2b245481d9eb7a465df0d113683579d5a5f0f2a905b83daebcaa641d8024ddf1ca139cb316627cbf7857e35f7e13874ce3@[::]:30303",
+    scottzer0: "enode://b8092b9c390c40463f152bfb5e16837b435255db0780594bc473811e31c05ea0994c4cb435f2ce93eef59786477d445a558b2d8519e6afb614918ae0924ff727@24.4.140.216:30303",
+    tinybike: "enode://2bd88c5e9d27eb06b299c6895b2417ef926707860862040569fb8833fe10ff6c719c84d5c26d63b8f988c0798f74d3803cdbe37480f5854390e26ebcdb9293a0@[::]:30303"
 };
 
 constants.examples = {
