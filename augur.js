@@ -130,47 +130,47 @@ var Augur = (function (augur) {
     augur.contracts = {
 
         // Functions
-        checkQuorum: "0x6f1f0d4114b040c1f5f40110d355bee196038a6d",
-        buyAndSellShares: "0x5e1b33e02171a1f81245093d8d8c8b955dd7a521",
-        createBranch: "0xcfdfff9a9e9ba0fb6b332c94184e011761a066b4",
-        p2pWagers: "0xc6a4c27d752d503b22525335bc2d68aeaf2d174a",
-        sendReputation: "0x4e8b707ed760937a056e5f2d3b408bf1e0c20fa7",
-        transferShares: "0x37fa3c6b14a6e5b1aa88130450813622f4cc8247",
-        makeReports: "0xb950024a29ee378a901bb38e1d60e4db88b47288",
-        createEvent: "0x87758ddf0fb4070bccd3a7799dc454f5059e898f",
-        createMarket: "0xa8704c3dc827018a53bda3fd1ca1bf1149032557",
-        closeMarket: "0xb10229a7ec68d7bbd2f9d34f91d3dde64b8bc815",
-        closeMarketOne: "0x6c4d2f7f65a5b8678c81d6101106a63ed824af97",
-        closeMarketTwo: "0xec8e00e12715350c8d85719fb4672bd4c8a3f816",
-        closeMarketFour: "0xebc594fe7303f85ca4100268f53ea008a58c01cf",
-        closeMarketEight: "0x60ad22b72a33cac64e373ed4403f2e72421a98fa",
-        dispatch: "0x34680d7c34354255d5665438f96b0ac337e89df9",
+        checkQuorum: "0x7c349cc8658e399a01f80019f46bd7644dc97adb",
+        buyAndSellShares: "0xd3ac3ce511d6d9bdacb9679b85dc67e61dd06eb3",
+        createBranch: "0x99384f3bdd17031c6989ff70cbe14c044f158f38",
+        p2pWagers: "0x84bb069b2569683990dbebc0b0e2cad737aafc9c",
+        sendReputation: "0x54ed0a8df07492a4849bf95f7b7546c01fd424c4",
+        transferShares: "0x87dfd27bb4d90e483b9135953af22cd0c39bfbbe",
+        makeReports: "0xcc4f04ab3ebbc687f1ff8744387c506120172414",
+        createEvent: "0x68ca53bade0eaad0d86cfc882629bef830321fbc",
+        createMarket: "0xc2c05c50f1df4e7abd2948ed3ce062e33941abda",
+        closeMarket: "0x35c3f4d503757751e01324d7da94dc2753fcc139",
+        closeMarketOne: "0xcbd4763be1ce8a957c3468eb5cb7b7bcbde8409c",
+        closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
+        closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
+        closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
+        dispatch: "0xbb57c2b0eb6dcbbc8a7c14bbe0fafad274c4be1c",
 
         // Consensus
-        statistics: "0xb746ffcc38e7e3824c6806792b459e476a194ab8",
-        interpolate: "0x9f0b901caa3ce5b475d5f833af926b34d70eb970",
-        center: "0xefba5124626c011b865c103d1fc7c7b5b34c93dd",
-        score: "0x484795d6a0688f58b19df50bc0ee64a62e0763be",
-        adjust: "0x0b884cb9ff48fde245d438dea019c45ef47781bf",
-        resolve: "0x82b7d313a0e168ce03a756901d2a16c146d39a85",
-        payout: "0x7c7976130e2092cdc2e6aa61430090ccfbaeb920",
-        redeem_interpolate: "0xfa94e2e79b0ae92ce2e9a91329a8fd9309e59af1",
-        redeem_center: "0xffcb78735ee87aa674267f046e36cb0296421e3e",
-        redeem_score: "0x89bdc4aeb344e0cb39e209a35ca9a117377bc7f5",
-        redeem_adjust: "0x4b2d9a376c66bb9d3aa6cbb03a183874f2bf207c",
-        redeem_resolve: "0x52d6de61caae0d602f43ccd7da2b35b837bd074d",
-        redeem_payout: "0xc73bf596c570d2e45dc5a7ff9703457c6ffd3c66",
+        statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
+        interpolate: "0x0533e8b1a8a37f0215939808ea3baaeadbcc0c28",
+        center: "0x357938a55923451c8485fab9f7d148f53fa1005d",
+        score: "0x8c49af1fbd2d5bfbe2e9f1392cd32fc43419e028",
+        adjust: "0xd549223541ea70e1f1b764d1e9bda88c7c37ee29",
+        resolve: "0x40622a7635deb2b2dd6cdd317c576e4b5323912f",
+        payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
+        redeem_interpolate: "0xa4cd13a89abf2c6711e0421dd91e48c622f9f094",
+        redeem_center: "0x2c1e6ea080849e9c9d852728596f6cfd943f8779",
+        redeem_score: "0xfe1c604405356bbfb5fd899c53aa26d059c62a05",
+        redeem_adjust: "0x8a3d551785c28ff4dfd5faaa2da215f6dbd93821",
+        redeem_resolve: "0x8ca8b54b900e708ed05e2ec663ba4f6481ea0c60",
+        redeem_payout: "0xb09422ff655cfcf0e0892ea73cb84f4f219030c7",
 
         // Data and api
-        cash: "0x680cf23f52b6321d26b4fa7d1866c0b873c28c02",
-        info: "0xd926cde7c6adbfca834d47d84efc25a2bda5d27c",
-        branches: "0x6c043d48d4b2fea79cdad26143c3ee6ea9a596e3",
-        events: "0xa30ebfa872dcedc90fde80bf57beba152c4eb024",
-        expiringEvents: "0x8b0297203241b9fb01d4dcb936ca153125f2fb43",
-        fxMath: "0x7eb4d4c20cd9f77d596e9e8823b3f222ebcfcd0d",
-        markets: "0x88bd97b70377c9d679262ab1e2f1715dceeb7f43",
-        reporting: "0xe1f0d9b4e5c761177959269d5f62c25c3897778b",
-        whitelist: "0x21cb9b582fa904bff7ef9b2a2b0b561e7d677519"
+        cash: "0x3c99d4851b17df03655a42a3046035519f75469d",
+        info: "0xd46714c7b4bc8dc8af40ec8ea23207221c31c841",
+        branches: "0x3bc4532769424b380037df6f94ba52ed72636b7f",
+        events: "0xfdefa42a3209d3f320b220a234cd0cdea5e761f8",
+        expiringEvents: "0xf97d9fdba23823b2796446d4a45e18a7a1fdf905",
+        fxMath: "0x39b6041fec3b25fd398bf1b03bb6d52e58f59809",
+        markets: "0x10614b8d158b5b122ff4eaa362606ec0909cd822",
+        reporting: "0xbe774ec2c537ea1a4981529568060456a650d639",
+        whitelist: "0xd93ea5e50aad9442574a5613e800ff9c8236622d"
     };
 
     // Branch IDs
@@ -763,7 +763,6 @@ var Augur = (function (augur) {
             if (augur.coinbase && augur.coinbase !== "0x") {
                 for (var method in augur.tx) {
                     if (!augur.tx.hasOwnProperty(method)) continue;
-                    // rm "from" from the individual tx obj inits below
                     augur.tx[method].from = augur.coinbase;
                     key = has_value(augur.init_contracts, augur.tx[method].to);
                     if (key) augur.tx[method].to = augur.contracts[key];

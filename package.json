@@ -1,6 +1,6 @@
 {
   "name": "augur.js",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "description": "Augur JavaScript API",
   "main": "augur.js",
   "scripts": {
@@ -32,6 +32,7 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.14",
+    "it-each": "^0.3.1",
     "lodash": "^3.8.0",
     "mocha": "^2.2.4",
     "mocha-lcov-reporter": "0.0.2",
