@@ -19,13 +19,11 @@ describe("Reading contract code", function () {
         assert(Augur.read(Augur.contracts[c]) !== "0x");
     };
     var contract_list = [];
-    var value_list = [];
     for (var c in Augur.contracts) {
         if (!Augur.contracts.hasOwnProperty(c)) continue;
         contract_list.push(c);
-        value_list.push(Augur.contracts[c]);
     }
-    it.each(contract_list, "%s", ['element'], function (element, next) {
+    it.each(contract_list, "read contract: %s", ['element'], function (element, next) {
         test(element);
         next();
     });

@@ -144,7 +144,7 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
         closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
         closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        dispatch: "0xbb57c2b0eb6dcbbc8a7c14bbe0fafad274c4be1c",
+        dispatch: "0xda1666b97149a392d864b1ba0883679e54d9e2d4",
 
         // Consensus
         statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
@@ -175,9 +175,9 @@ var Augur = (function (augur) {
 
     // Branch IDs
     augur.branches = {
-        demo: "0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5",
-        alpha: "0x490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646",
-        dev: "0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991"
+        demo: '0x490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646',
+        alpha: '0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5',
+        dev: '0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991'
     };
 
     /*********************
@@ -1394,6 +1394,12 @@ var Augur = (function (augur) {
         signature: "i",
         returns: "number"
     };
+    augur.tx.getSubstep = {
+        to: augur.contracts.branches,
+        method: "getSubstep",
+        signature: "i",
+        returns: "number"
+    };
     augur.tx.getNumMarkets = {
         to: augur.contracts.branches,
         method: "getNumMarkets",
@@ -1440,6 +1446,12 @@ var Augur = (function (augur) {
     augur.getStep = function (branch, onSent) {
         // branch: sha256
         var tx = copy(augur.tx.getStep);
+        tx.params = branch;
+        return fire(tx, onSent);
+    };
+    augur.getSubstep = function (branch, onSent) {
+        // branch: sha256
+        var tx = copy(augur.tx.getSubstep);
         tx.params = branch;
         return fire(tx, onSent);
     };
