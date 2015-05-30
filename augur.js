@@ -144,7 +144,7 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
         closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
         closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        dispatch: "0xda1666b97149a392d864b1ba0883679e54d9e2d4",
+        dispatch: "0x85eb186c41153ad3bddd3e62f77a284972173dd6",
 
         // Consensus
         statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
@@ -154,12 +154,12 @@ var Augur = (function (augur) {
         adjust: "0xd549223541ea70e1f1b764d1e9bda88c7c37ee29",
         resolve: "0x40622a7635deb2b2dd6cdd317c576e4b5323912f",
         payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
-        redeem_interpolate: "0xa4cd13a89abf2c6711e0421dd91e48c622f9f094",
-        redeem_center: "0x2c1e6ea080849e9c9d852728596f6cfd943f8779",
-        redeem_score: "0xfe1c604405356bbfb5fd899c53aa26d059c62a05",
-        redeem_adjust: "0x8a3d551785c28ff4dfd5faaa2da215f6dbd93821",
-        redeem_resolve: "0x8ca8b54b900e708ed05e2ec663ba4f6481ea0c60",
-        redeem_payout: "0xb09422ff655cfcf0e0892ea73cb84f4f219030c7",
+        redeem_interpolate: "0x3ecaed5949e121926991d9fde8ac0c212e6fbff4",
+        redeem_center: "0x6621d0c3c37fea879ce067f5e85c80f08ffa5e7f",
+        redeem_score: "0x238ea089e5f7bdc776d7a995f4c0a4e37c36ea37",
+        redeem_adjust: "0x448045e770a235d10afd9c6012c4a557755c1a9b",
+        redeem_resolve: "0xcbc70f0a25977dc2e6dec54fd53769f755de4cd6",
+        redeem_payout: "0xb612eb2dc2be63445e541eaad4906580cff1557e",
 
         // Data and api
         cash: "0x3c99d4851b17df03655a42a3046035519f75469d",
@@ -175,9 +175,9 @@ var Augur = (function (augur) {
 
     // Branch IDs
     augur.branches = {
-        demo: '0x490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646',
-        alpha: '0x3d595622e5444dd258670ab405b82a467117bd9377dc8fa8c4530528242fe0c5',
-        dev: '0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991'
+        demo: '0x00000000000000000000000000000000000000000000000000000000000f69b5',
+        alpha: '0x00000000000000000000000000000000000000000000000000000000000f69b5',
+        dev: '0x00000000000000000000000000000000000000000000000000000000000f69b5'
     };
 
     /*********************
