@@ -144,21 +144,21 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
         closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
         closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        dispatch: "0xc54f331451b6347e75102ef31ed93a1994ada405",
+        dispatch: "0xd654a3d8b789f378e87321334644235081866251",
 
         // Consensus
         statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
-        interpolate: "0x0533e8b1a8a37f0215939808ea3baaeadbcc0c28",
+        interpolate: "0x554bb0bafa1760d17ebec20c667773f5a86f0ce4",
         center: "0x357938a55923451c8485fab9f7d148f53fa1005d",
         score: "0x8c49af1fbd2d5bfbe2e9f1392cd32fc43419e028",
-        adjust: "0xd549223541ea70e1f1b764d1e9bda88c7c37ee29",
-        resolve: "0x40622a7635deb2b2dd6cdd317c576e4b5323912f",
+        adjust: "0x5fb166f1c390f7c48253876abe9a342a4a4ad9bd",
+        resolve: "0x01329dc6cf3eeb7409f309f136a944064e04bacb",
         payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
-        redeem_interpolate: "0xd09627a5ce73b992ebfba7b365c0f4d3fa8d2313",
+        redeem_interpolate: "0x499bee78b5799ede28a437467601cdfd5f9f2076",
         redeem_center: "0x6621d0c3c37fea879ce067f5e85c80f08ffa5e7f",
         redeem_score: "0x238ea089e5f7bdc776d7a995f4c0a4e37c36ea37",
-        redeem_adjust: "0x448045e770a235d10afd9c6012c4a557755c1a9b",
-        redeem_resolve: "0xcbc70f0a25977dc2e6dec54fd53769f755de4cd6",
+        redeem_adjust: "0x6d5793203371b50670aa62a558a44d99aceb1404",
+        redeem_resolve: "0x081f48cd8ba8eaef5c7ade0d8e771555fccaeb4b",
         redeem_payout: "0xb612eb2dc2be63445e541eaad4906580cff1557e",
 
         // Data and api
