@@ -144,7 +144,7 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
         closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
         closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        dispatch: "0x85eb186c41153ad3bddd3e62f77a284972173dd6",
+        dispatch: "0xc54f331451b6347e75102ef31ed93a1994ada405",
 
         // Consensus
         statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
@@ -154,7 +154,7 @@ var Augur = (function (augur) {
         adjust: "0xd549223541ea70e1f1b764d1e9bda88c7c37ee29",
         resolve: "0x40622a7635deb2b2dd6cdd317c576e4b5323912f",
         payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
-        redeem_interpolate: "0x3ecaed5949e121926991d9fde8ac0c212e6fbff4",
+        redeem_interpolate: "0xd09627a5ce73b992ebfba7b365c0f4d3fa8d2313",
         redeem_center: "0x6621d0c3c37fea879ce067f5e85c80f08ffa5e7f",
         redeem_score: "0x238ea089e5f7bdc776d7a995f4c0a4e37c36ea37",
         redeem_adjust: "0x448045e770a235d10afd9c6012c4a557755c1a9b",
@@ -1400,6 +1400,18 @@ var Augur = (function (augur) {
         signature: "i",
         returns: "number"
     };
+    augur.tx.setSubstep = {
+        to: augur.contracts.branches,
+        method: "setSubstep",
+        signature: "ii",
+        send: true
+    };
+    augur.tx.incrementSubstep = {
+        to: augur.contracts.branches,
+        method: "incrementSubstep",
+        signature: "i",
+        send: true
+    };
     augur.tx.getNumMarkets = {
         to: augur.contracts.branches,
         method: "getNumMarkets",
@@ -1452,6 +1464,16 @@ var Augur = (function (augur) {
     augur.getSubstep = function (branch, onSent) {
         // branch: sha256
         var tx = copy(augur.tx.getSubstep);
+        tx.params = branch;
+        return fire(tx, onSent);
+    };
+    augur.setSubstep = function (branch, substep, onSent) {
+        var tx = copy(augur.tx.setSubstep);
+        tx.params = [branch, substep];
+        return fire(tx, onSent);
+    };
+    augur.incrementSubstep = function (branch, onSent) {
+        var tx = copy(augur.tx.incrementSubstep);
         tx.params = branch;
         return fire(tx, onSent);
     };
@@ -2747,7 +2769,6 @@ var Augur = (function (augur) {
 
     // closeMarket.se
     augur.tx.closeMarket = {
-       
         to: augur.contracts.closeMarket,
         method: "closeMarket",
         signature: "ii",
@@ -2764,7 +2785,6 @@ var Augur = (function (augur) {
 
     // dispatch.se
     augur.tx.dispatch = {
-       
         to: augur.contracts.dispatch,
         method: "dispatch",
         signature: "i",

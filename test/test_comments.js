@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Test-driving Augur's whisper-based comments system
  * @author Jack Peterson (jack@tinybike.net)
@@ -13,7 +12,6 @@ Augur.connect();
 var log = console.log;
 
 function test_comments() {
-    // var market = "-0x57a7e0a3b713b12662f7891c5a29cf55a6756b28ecb5b1c2dc7869fbdcaa594a";
     var market = "0x01";
 
     log("\nReset comments");

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * augur.js unit tests
  * @author Jack Peterson (jack@tinybike.net)
