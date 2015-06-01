@@ -131,7 +131,7 @@ var Augur = (function (augur) {
 
         // Functions
         checkQuorum: "0x142a6927cf0060133187ba8a8e74d641438f0c1c",
-        buyAndSellShares: "0x2a683cc552036f63fc8d3b7b4a40d519fcbe1423",
+        buyAndSellShares: "0xf7f311b2a03efa578cb8013dd353c5c07ff457d1",
         createBranch: "0x620aa4e715e0136409d9e1c597f77eb3de2f313f",
         p2pWagers: "0xffe3fa4570510435cc6c3086a7d0e2573e4f2c5e",
         sendReputation: "0x7858bb6a10fbf09370ab87e9c7e5ac1e0db738f2",
@@ -168,7 +168,7 @@ var Augur = (function (augur) {
         events: "0x1e147037f0a63df228fe6e7aef730f1ea31c8ce3",
         expiringEvents: "0x0ea65418d7bf32680f55572c943a94b590804998",
         fxMath: "0x39b6041fec3b25fd398bf1b03bb6d52e58f59809",
-        markets: "0x17bc0b9c165a8afabf15c811869e4067b1d30300",
+        markets: "0x6cc345f6d5d89072d360a0718d50d5658c9502b9",
         reporting: "0xe509e3a93beb1eba72f8cb8d25f93a85e2d54afb",
         whitelist: "0xd93ea5e50aad9442574a5613e800ff9c8236622d"
 
