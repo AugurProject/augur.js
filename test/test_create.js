@@ -32,7 +32,8 @@ describe("createMarket", function () {
     it.each(descriptions, "creating event/market: %s", ['element'], function (element, next) {
         this.timeout(240000);
         var event_description = element;
-        var expDate = Augur.blockNumber() + Math.round(Math.random() * 1000);
+        // var expDate = Augur.blockNumber() + Math.round(Math.random() * 1000);
+        var expDate = Augur.blockNumber()*10;
         var minValue = 0;
         var maxValue = 1;
         var numOutcomes = 2;
@@ -44,10 +45,10 @@ describe("createMarket", function () {
             maxValue: maxValue,
             numOutcomes: numOutcomes,
             onSent: function (r) {
-                log("createEvent sent: " + JSON.stringify(r, null, 2));
+                // log("createEvent sent: " + JSON.stringify(r, null, 2));
             },
             onSuccess: function (r) {
-                log("createEvent success: " + JSON.stringify(r, null, 2));
+                // log("createEvent success: " + JSON.stringify(r, null, 2));
                 // assert.equal(r.branch, Augur.branches.dev);
                 // assert.equal(r.expirationDate, expDate);
                 // assert.equal(r.minValue, minValue);
@@ -68,10 +69,10 @@ describe("createMarket", function () {
                     tradingFee: tradingFee,
                     events: events,
                     onSent: function (res) {
-                        log("createMarket sent: " + JSON.stringify(res, null, 2));
+                        // log("createMarket sent: " + JSON.stringify(res, null, 2));
                     },
                     onSuccess: function (res) {
-                        log("createMarket success: " + JSON.stringify(res, null, 2));
+                        // log("createMarket success: " + JSON.stringify(res, null, 2));
                         // assert.equal(res.numOutcomes, numOutcomes);
                         // assert.equal(parseFloat(res.alpha).toFixed(5), parseFloat(alpha).toFixed(5));
                         // assert.equal(res.numOutcomes, numOutcomes);
@@ -81,14 +82,14 @@ describe("createMarket", function () {
                         next();
                     },
                     onFailed: function (res) {
-                        log("createMarket failed: " + JSON.stringify(res, null, 2));
+                        // log("createMarket failed: " + JSON.stringify(res, null, 2));
                         next();
                     }
                 };
                 Augur.createMarket(marketObj);
             },
             onFailed: function (r) {
-                log("createEvent failed: " + JSON.stringify(r, null, 2));
+                // log("createEvent failed: " + JSON.stringify(r, null, 2));
                 next();
             }
         };
