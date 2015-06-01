@@ -129,8 +129,48 @@ var Augur = (function (augur) {
 
     augur.contracts = {
 
+        // checkQuorum: "0xbf9784a35c0053f60a0c4ca6a93d0ed5b31fcabd",
+        // buyAndSellShares: "0x8359c13ba8f3654edcab6a2dd9e1b1957f0217a8",
+        // createBranch: "0x8bc2d019b524dcee9bfc328a8f88acba011fbbee",
+        // p2pWagers: "0x71cfe5fd126cae76252b93b0dbd0821b0f4fa771",
+        // sendReputation: "0x4a47552c8b3322154596d2b69d9dde29f64bcdf0",
+        // transferShares: "0xa3c4a943836114fda75c9a6544d2a8bbb249b207",
+        // makeReports: "0x9844269c8029ac2955c6a980111f66f41f5a898c",
+        // createEvent: "0x425868414e99a15ccc9d5ca72f5ddde6ed566d6e",
+        // createMarket: "0xd663c8a0c90a3d3f133626e644783667da1bb9f5",
+        // closeMarket: "0x75e916fc94b4ead6dbea0037055d86f105b553af",
+        // closeMarketOne: "0xf437d72a0809b0724f2ab1c08fe0b5ad08ff1909",
+        // closeMarketTwo: "0x8b5937c98b977aec89184268a1d7420c9d2281d8",
+        // closeMarketFour: "0x0390444a58e3f9128f63bb32e1cc21cd5624c3df",
+        // closeMarketEight: "0xc668a7533f54fc5edb7d4f9de2b917b4550255fd",
+        // dispatch: "0xb4a24d9e9a073b9b35558ba1c8be9682c5292c04",
+
+        // statistics: "0x9662b24bf362f17ac717d0a4bba5fc643a1712bb",
+        // interpolate: "0x1738d1386eed23e7d16905a9ec005dbfee3cf63d",
+        // center: "0x1e55b745490a78e5eff0e900d3ebcc03076121c0",
+        // score: "0x0b17d23d931ec64c8377a99b760e62cd4b98434e",
+        // adjust: "0x4de1222b32021e72121caeede31057b7b1863e40",
+        // resolve: "0xbc04de35c41e4fdfad0659ab02641aaa73dbf68c",
+        // payout: "0x78fb15b342910511f5f71012b96d60e0592dd72d",
+        // redeem_interpolate: "0x2662de14e09155a7e13c296e8a71b4e49bdffe58",
+        // redeem_center: "0xe33258e06e5e8e90b71abac5035e1b1bcc1d1171",
+        // redeem_score: "0x308a71d8480d9bc821072614fc3b23b5d280a2f0",
+        // redeem_adjust: "0x91d744615f87b9e319ba921e888a187dff7b9103",
+        // redeem_resolve: "0x377e6270a00128355a5839980d7ed8ea3e88e072",
+        // redeem_payout: "0xcb0c8e4851600a3339be02103fe0707de833682a",
+
+        // cash: "0x0b523aead0ba735c2bdbb9140f94d4798ad458d3",
+        // info: "0x153663467a1bf6b96e251a9a6f8eef8319918448",
+        // branches: "0x11d9f7c9550d23da1e2ccf737b10745c77338532",
+        // events: "0x82605aa10d92238bcecbe16964c903ecb55fe69e",
+        // expiringEvents: "0xa9ed264c83fec1fd4397fad8d8b0c494a12704f4",
+        // fxMath: "0x39b6041fec3b25fd398bf1b03bb6d52e58f59809",
+        // markets: "0x14e6ff4cc1582584590e8ad52278b89ddc0742b0",
+        // reporting: "0x577c549ea9b81235c2be952f693c8543c3b7bcb4",
+        // whitelist: "0xd93ea5e50aad9442574a5613e800ff9c8236622d"
+
         // Functions
-        checkQuorum: "0x7c349cc8658e399a01f80019f46bd7644dc97adb",
+        checkQuorum: "0x4673364fbd9877849bb4b7c729823f3be6ad8615",
         buyAndSellShares: "0xd3ac3ce511d6d9bdacb9679b85dc67e61dd06eb3",
         createBranch: "0x99384f3bdd17031c6989ff70cbe14c044f158f38",
         p2pWagers: "0x84bb069b2569683990dbebc0b0e2cad737aafc9c",
@@ -144,17 +184,17 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
         closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
         closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        dispatch: "0xf2af9dd8d9f15e1ab5bad90bd03f0be0e7c7484c",
+        dispatch: "0x954662f1cc1c13f3747f213f0c02a2a8b0f9a0d1",
 
         // Consensus
         statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
-        interpolate: "0x3f4cdadf653406b872a9128731cd903e4a424ac7",
+        interpolate: "0x64354b74c50bc19f953d77c88f97da8ecd69c537",
         center: "0x357938a55923451c8485fab9f7d148f53fa1005d",
         score: "0x8c49af1fbd2d5bfbe2e9f1392cd32fc43419e028",
         adjust: "0x5fb166f1c390f7c48253876abe9a342a4a4ad9bd",
         resolve: "0x01329dc6cf3eeb7409f309f136a944064e04bacb",
         payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
-        redeem_interpolate: "0xc9964954e096d79675f3da5f2d4415c410b45528",
+        redeem_interpolate: "0x03fb53ae8a4373f6b9d6b4778288fb5d3dfbd4be",
         redeem_center: "0x6621d0c3c37fea879ce067f5e85c80f08ffa5e7f",
         redeem_score: "0x238ea089e5f7bdc776d7a995f4c0a4e37c36ea37",
         redeem_adjust: "0x6d5793203371b50670aa62a558a44d99aceb1404",
@@ -901,6 +941,7 @@ var Augur = (function (augur) {
     augur.sendTransaction = augur.sendTx = function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? augur.prefix_hex(tx.gas.toString(16)) : augur.default_gas;
+        // tx.gasPrice = "12500000000000";
         return json_rpc(postdata("sendTransaction", tx), f);
     };
 
@@ -1364,6 +1405,13 @@ var Augur = (function (augur) {
         return fire(tx, onSent);
     };
 
+    augur.checkPeriod = function (branch, f) {
+        var period = Number(augur.getVotePeriod(branch));
+        var currentPeriod = Math.floor(Augur.blockNumber() / Number(Augur.getPeriodLength(branch)));
+        var periodsBehind = (currentPeriod - 1) - period;
+        return periodsBehind;
+    };
+
     // branches.se
     augur.tx.getBranches = {
         to: augur.contracts.branches,
@@ -1393,6 +1441,12 @@ var Augur = (function (augur) {
         method: "getStep",
         signature: "i",
         returns: "number"
+    };
+    augur.tx.setStep = {
+        to: augur.contracts.branches,
+        method: "setStep",
+        signature: "ii",
+        send: true
     };
     augur.tx.getSubstep = {
         to: augur.contracts.branches,
@@ -1461,6 +1515,11 @@ var Augur = (function (augur) {
         tx.params = branch;
         return fire(tx, onSent);
     };
+    augur.setStep = function (branch, step, onSent) {
+        var tx = copy(augur.tx.setStep);
+        tx.params = [branch, step];
+        return fire(tx, onSent);
+    };
     augur.getSubstep = function (branch, onSent) {
         // branch: sha256
         var tx = copy(augur.tx.getSubstep);
@@ -1497,6 +1556,44 @@ var Augur = (function (augur) {
         var tx = copy(augur.tx.getBranch);
         tx.params = branchNumber;
         return fire(tx, onSent);
+    };
+
+    augur.tx.incrementPeriod = {
+        to: augur.contracts.branches,
+        method: "incrementPeriod",
+        signature: "i",
+        send: true
+    };
+    augur.tx.moveEventsToCurrentPeriod = {
+        to: augur.contracts.expiringEvents,
+        method: "moveEventsToCurrentPeriod",
+        signature: "iii",
+        send: true
+    };
+    augur.incrementPeriod = function (branch, onSent) {
+        var tx = copy(augur.tx.incrementPeriod);
+        tx.params = branch;
+        return fire(tx, onSent);
+    };
+    augur.moveEventsToCurrentPeriod = function (branch, currentVotePeriod, currentPeriod, onSent) {
+        var tx = copy(augur.tx.moveEventsToCurrentPeriod);
+        tx.params = [branch, currentVotePeriod, currentPeriod];
+        return fire(tx, onSent);
+    };
+    augur.getCurrentPeriod = function (branch) {
+        return parseInt(augur.blockNumber()) / parseInt(augur.getPeriodLength(branch));
+    };
+    augur.updatePeriod = function (branch) {
+        var currentPeriod = augur.getCurrentPeriod(branch);
+        augur.incrementPeriod(branch);
+        augur.setStep(branch, 0);
+        augur.setSubstep(branch, 0);
+        augur.moveEventsToCurrentPeriod(branch, augur.getVotePeriod(branch), currentPeriod);
+    };
+    augur.sprint = function (branch, length) {
+        for (var i = 0, len = length || 25; i < len; ++i) {
+            augur.updatePeriod(branch);
+        }
     };
 
     // events.se

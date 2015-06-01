@@ -6,5 +6,6 @@ GLOBAL.crypto = require('crypto');
 GLOBAL._ = require('lodash');
 GLOBAL.Augur = require('./augur');
 GLOBAL.constants = require('./test/constants');
+GLOBAL.b = Augur.branches.dev;
 
 Augur.connect();
