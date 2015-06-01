@@ -48,52 +48,44 @@ function is_not_zero(r) {
 
 describe("Augur API", function () {
 
-    var ex_integer = 12345678901;
-    var ex_decimal = 0.123456789;
-    var ex_integer_hex = "0x2dfdc1c35";
-    var ex_integer_string = "12345678901";
-    var ex_decimal_string = "0.123456789";
-
-    describe("bignum", function () {
-        it("should be the same if called with a float or a string", function () {
-            assert(Augur.bignum(ex_decimal).eq(Augur.bignum(ex_decimal_string)));
-        });
-        it("should create 0 successfully", function () {
-            assert(Augur.bignum(0).eq(new BigNumber(0)));
-        });
-    });
-    describe("fix", function () {
-        it("should be equal to round(n*2^64)", function () {
-            assert(Augur.fix(ex_decimal, "BigNumber").eq((new BigNumber(ex_decimal)).mul(Augur.ONE).round()));
-        });
-        it("should return a base 10 string '2277375790844960561'", function () {
-            assert(Augur.fix(ex_decimal, "string") === "2277375790844960561");
-        });
-        it("should return a base 16 string '0x1f9add3739635f31'", function () {
-            assert(Augur.fix(ex_decimal_string, "hex") === "0x1f9add3739635f31");
-        });
-    });
-    describe("unfix", function () {
-        it("fixed-point -> hex", function () {
-            assert.equal(Augur.unfix(Augur.fix(ex_integer_hex, "BigNumber"), "hex"), ex_integer_hex);
-        });
-        it("fixed-point -> string", function () {
-            assert.equal(Augur.unfix(Augur.fix(ex_integer_string, "BigNumber"), "string"), ex_integer_string);
-        });
-        it("fixed-point -> number", function () {
-            assert.equal(Augur.unfix(Augur.fix(ex_integer_string, "BigNumber"), "number"), ex_integer);
-        });
-    });
-
     var amount = "1";
     var branch_id = Augur.branches.dev;
     var branch_number = "1";
     var participant_id = constants.accounts.jack;
     var participant_number = "1";
     var outcome = Augur.NO.toString();
-    var event_id = "0x8423f7095761ece001a86555a8ff3fece4a751a089e2c364dc21cc5b19b899e4";
-    var market_id = "0x9fa7e53477023001394ef9a7d65f5d2dffd9b7c975e7b40497a9d582b2665664";
-    var market_id2 = "0xfb79748fa3056de9b6df8cd0693c203f8024eedfb88c0abcaa4406184b5db243";
+    var event_id = "0xfe56aaf4c27c86989616147f4219097b1b9ae015d05e1761a82d402c664ef89d";
+    var event_info_1 = {
+        branch: '0x00000000000000000000000000000000000000000000000000000000000f69b5',
+        expirationDate: '492149',
+        outcome: '0',
+        minValue: '0',
+        maxValue: '1',
+        numOutcomes: '2',
+        description: 'future'
+    };
+    var market_id = "0x70f56a29596a7455b35a4666ddd572c564a4cbad14af32cd68b8774cecc0083a";
+    var market_creator_1 = "0x63524e3fe4791aefce1e932bbfb3fdf375bfad89";
+    var market_info_1 = {
+        currentParticipant: '0',
+        alpha: '0.00790000000000000001',
+        cumulativeScale: '1',
+        numOutcomes: '2',
+        tradingPeriod: '24607',
+        tradingFee: '0.01999999999999999998',
+        description: 'future'
+    };
+    var market_id2 = "0x027f0086d94c77658eea3b954809c35c95bd8b8ff1a1cdb0df7a055c2a2ea823";
+    var market_creator_2 = "0x63524e3fe4791aefce1e932bbfb3fdf375bfad89";
+    var market_info_2 = {
+        currentParticipant: '0',
+        alpha: '0.00790000000000000001',
+        cumulativeScale: '1',
+        numOutcomes: '2',
+        tradingPeriod: '24584',
+        tradingFee: '0.01999999999999999998',
+        description: 'is it lel time?'
+    };
     var event_description = "[augur.js] " + Math.random().toString(36).substring(4);
     var market_description = "[augur.js] " + Math.random().toString(36).substring(4);
     var reporter_index = "0";
@@ -102,78 +94,6 @@ describe("Augur API", function () {
     var salt = "1337";
     var receiving_account = constants.accounts.joey;
     var vote_period = 1;
-
-    // payment methods
-    describe("pay", function () {
-        it("complete call-send-confirm callback sequence", function (done) {
-            this.timeout(120000);
-            var start_balance = Augur.bignum(Augur.balance()).dividedBy(Augur.ETHER);
-            var value = 10;
-            var tx = {
-                to: constants.accounts.loopy,
-                value: value,
-                onSent: function (res) {
-                    // log(res);
-                },
-                onSuccess: function (res) {
-                    // log("success: " + JSON.stringify(res, null, 2));
-                    // var final_balance = Augur.bignum(Augur.balance()).dividedBy(Augur.ETHER);
-                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
-                    done();
-                }
-            };
-            Augur.pay(tx);
-        });
-    });
-    describe("sendCash", function () {
-        it("complete call-send-confirm callback sequence", function (done) {
-            this.timeout(120000);
-            var start_balance = Augur.bignum(Augur.getCashBalance());
-            var value = 10;
-            Augur.sendCash({
-                to: constants.accounts.scott,
-                value: value,
-                onSent: function (res) {
-                    // log(res);
-                },
-                onSuccess: function (res) {
-                    // log("success: " + JSON.stringify(res, null, 2));
-                    // var final_balance = Augur.bignum(Augur.getCashBalance());
-                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
-                    done();
-                },
-                onFailed: function (res) {
-                    log("failed: " + JSON.stringify(res, null, 2));
-                    done();
-                }
-            });
-        });
-    });
-    describe("sendReputation", function () {
-        it("complete call-send-confirm callback sequence", function (done) {
-            this.timeout(120000);
-            var start_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.demo));
-            var value = 10;
-            Augur.sendReputation({
-                branchId: Augur.branches.demo,
-                to: constants.accounts.joey,
-                value: value,
-                onSent: function (res) {
-                    // log(res);
-                },
-                onSuccess: function (res) {
-                    // log("success: " + JSON.stringify(res, null, 2));
-                    // var final_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.dev));
-                    // assert.equal(start_balance.sub(final_balance).toNumber(), value);
-                    done();
-                },
-                onFailed: function (res) {
-                    log("failed: " + JSON.stringify(res, null, 2));
-                    done();
-                }
-            });
-        });
-    });
 
     // cash.se
     describe("cash.se", function () {
@@ -192,12 +112,6 @@ describe("Augur API", function () {
             });
         });
         describe("cashFaucet() [sendTx] != 0", function () {
-            // it("sync", function () {
-            //     Augur.tx.cashFaucet.send = true;
-            //     Augur.tx.cashFaucet.returns = undefined;
-            //     var res = Augur.cashFaucet();
-            //     is_not_zero(res);
-            // });
             it("async", function (done) {
                 Augur.tx.cashFaucet.send = true;
                 Augur.tx.cashFaucet.returns = undefined;
@@ -230,11 +144,11 @@ describe("Augur API", function () {
         describe("getCreator(" + market_id + ") [market]", function () {
             it("sync", function () {
                 var res = Augur.getCreator(market_id);
-                assert.equal(res, "0xc6e469cdaa6d8b1a108d451679f7f220624f7864");
+                assert.equal(res, constants.accounts.jack);
             });
             it("async", function (done) {
                 Augur.getCreator(market_id, function (r) {
-                    assert.equal(r, "0xc6e469cdaa6d8b1a108d451679f7f220624f7864");
+                    assert.equal(r, constants.accounts.jack);
                     done();
                 });
             });
@@ -266,11 +180,11 @@ describe("Augur API", function () {
         describe("getDescription(" + event_id + ")", function () {
             it("sync", function () {
                 var res = Augur.getDescription(event_id);
-                assert.equal(res, "[augur.js] dbk7kieqjxxbt9");
+                assert.equal(res, event_info_1.description);
             });
             it("async", function (done) {
                 Augur.getDescription(event_id, function (r) {
-                    assert.equal(r, "[augur.js] dbk7kieqjxxbt9");
+                    assert.equal(r, event_info_1.description);
                     done();
                 });
             });
@@ -540,13 +454,13 @@ describe("Augur API", function () {
             it("should have 2 outcomes", function () {
                 assert.equal("2", marketInfo.numOutcomes);
             });
-            it("should have description 'test'", function () {
-                assert.equal("test", marketInfo.description);
+            it("should have description '" + market_info_1.description + "'", function () {
+                assert.equal(market_info_1.description, marketInfo.description);
             });
         });
         describe("getMarketInfo(" + market_id + ")", function () {
             var test = function (r) {
-                assert.equal(r.description, "test");
+                assert.equal(r.description, market_info_1.description);
             };
             it("sync", function () {
                 test(Augur.getMarketInfo(market_id));
@@ -559,7 +473,7 @@ describe("Augur API", function () {
         });
         describe("getMarketInfo(" + market_id2 + ")", function () {
             var test = function (r) {
-                assert.equal(r.description, "What");
+                assert.equal(r.description, market_info_2.description);
             };
             it("sync", function () {
                 test(Augur.getMarketInfo(market_id2));
@@ -573,8 +487,7 @@ describe("Augur API", function () {
         describe("getMarketEvents(" + market_id + ")", function () {
             function test(r) {
                 assert.equal(r.constructor, Array);
-                log(r);
-                assert(array_equal(r, ["0x3884ecc71446039b93b90255da3413e4536d394ed35959078b412c8100900aa7"]));
+                assert(array_equal(r, [ event_id ]));
             }
             it("sync", function () {
                 test(Augur.getMarketEvents(market_id));
@@ -600,7 +513,7 @@ describe("Augur API", function () {
         });
         describe("getBranchID(" + market_id + ")", function () {
             var test = function (r) {
-                assert.equal(r, "0x38a820692912b5f7a3bfefc2a1d4826e1da6beaed5fac6de3d22b18132133991");
+                assert.equal(r, "0x0f69b5");
             };
             it("sync", function () {
                 test(Augur.getBranchID(market_id));
@@ -745,7 +658,7 @@ describe("Augur API", function () {
         });
         describe("getTradingPeriod(" + market_id + ") ", function () {
             var test = function (r) {
-                assert.equal(r, "1304");
+                assert.equal(r, "24607");
             };
             it("sync", function () {
                 test(Augur.getTradingPeriod(market_id));
@@ -801,7 +714,7 @@ describe("Augur API", function () {
         });
         describe("getReporterID(" + branch_id + ", " + reporter_index + ") ", function () {
             var test = function (r) {
-                assert.equal(r, "0xe956d63ca15052ff707f68537e58b34c749999ee");
+                assert.equal(r, "0xa369ca3e80c8e8e5fdc3e2fc7ee7764c519de70f");
             };
             it("sync", function () {
                 test(Augur.getReporterID(branch_id, reporter_index));
@@ -815,7 +728,7 @@ describe("Augur API", function () {
         describe("getReputation(" + reporter_address + ")", function () {
             var test = function (r) {
                 is_array(r);
-                assert(r.length >= 3); // why equal to 5...?
+                assert(r.length >= 1); // why equal to 5...?
                 for (var i = 0, len = r.length; i < len; ++i) {
                     gteq0(r[i]);
                 }
@@ -845,7 +758,7 @@ describe("Augur API", function () {
         });
         describe("repIDToIndex(" + branch_id + ", " + Augur.coinbase + ") ", function () {
             var test = function (r) {
-                assert.equal(r, "0");
+                assert.equal(r, "1");
             };
             it("sync", function () {
                 test(Augur.repIDToIndex(branch_id, Augur.coinbase));
@@ -995,101 +908,6 @@ describe("Augur API", function () {
     });
 
     // transferShares.se
-
-    // makeReports.se
-    describe("makeReports.se", function () {
-        describe("report", function () {
-            it("complete call-send-confirm callback sequence", function (done) {
-                this.timeout(120000);
-                var report = {
-                    branchId: branch_id,
-                    report: [1, 2, 1, 1],
-                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
-                    salt: salt,
-                    onSent: function (res) {
-                        // log("sent: " + JSON.stringify(res));
-                    },
-                    onSuccess: function (res) {
-                        // log("success: " + JSON.stringify(res));
-                        done();
-                    },
-                    onFailed: function (res) {
-                        log("failed: " + JSON.stringify(res));
-                        done();
-                    }
-                };
-                Augur.report(report);
-            });
-        });
-        describe("submitReportHash", function () {
-            it("complete call-send-confirm callback sequence", function (done) {
-                this.timeout(120000);
-                var reportHashObj = {
-                    branchId: branch_id,
-                    reportHash: Augur.hash('[1,2,1,1]'),
-                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
-                    onSent: function (res) {
-                        // log("sent: " + JSON.stringify(res, null, 2));
-                    },
-                    onSuccess: function (res) {
-                        // log("success: " + JSON.stringify(res, null, 2));
-                        done();
-                    },
-                    onFailed: function (res) {
-                        log("failed: " + JSON.stringify(res, null, 2));
-                        done();
-                    }
-                };
-                Augur.submitReportHash(reportHashObj);
-            });
-        });
-        describe("checkReportValidity", function () {
-            it("complete call-send-confirm callback sequence", function (done) {
-                this.timeout(120000);
-                var checkReportObj = {
-                    branchId: branch_id,
-                    report: [1, 2, 1, 1],
-                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
-                    onSent: function (res) {
-                        // log("sent: " + JSON.stringify(res, null, 2));
-                    },
-                    onSuccess: function (res) {
-                        // log("success: " + JSON.stringify(res, null, 2));
-                        done();
-                    },
-                    onFailed: function (res) {
-                        log("failed: " + JSON.stringify(res, null, 2));
-                        done();
-                    }
-                };
-                Augur.checkReportValidity(checkReportObj);
-            });
-        });
-        describe("slashRep", function () {
-            it("complete call-send-confirm callback sequence", function (done) {
-                this.timeout(120000);
-                var slashRepObj = {
-                    branchId: branch_id,
-                    votePeriod: Augur.getCurrentVotePeriod(branch_id),
-                    salt: salt,
-                    report: [1, 2, 1, 1],
-                    reporter: constants.accounts.jack,
-                    onSent: function (res) {
-                        // log("sent: " + JSON.stringify(res, null, 2));
-                    },
-                    onSuccess: function (res) {
-                        // log("success: " + JSON.stringify(res, null, 2));
-                        done();
-                    },
-                    onFailed: function (res) {
-                        log("failed: " + JSON.stringify(res, null, 2));
-                        done();
-                    }
-                };
-                Augur.slashRep(slashRepObj);
-            });
-        });
-    });
 
     // createEvent.se
     describe("createEvent.se", function () {
