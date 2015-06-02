@@ -138,7 +138,7 @@ var Augur = (function (augur) {
         transferShares: "0xa48efc16bb7daf708b667bf3248b36b1d309ac06",
         makeReports: "0xe75a8bddea1666c5eca9d7c0a2c7e22be548b954",
         createEvent: "0x901a98593c45a5bd98b046fa4dadc19429abf17e",
-        createMarket: "0x9dc3769977d95e745002901285da6ccb4986823a",
+        createMarket: "0xeadd0b411803b589240fabf3ceb4a4c968b32141",
         closeMarket: "0x6764dc6ef89e19bddad44d7a9bfbbc2d7ccc119a",
         closeMarketOne: "0x5d48b521ce03969bb7bb969c7856d431ccc2434f",
         closeMarketTwo: "0xa7c26777091f0bc9e9b15f77886bf6feeb2f136e",
