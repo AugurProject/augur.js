@@ -19,6 +19,7 @@ if (MODULAR) {
     }
     var keccak_256 = require('js-sha3').keccak_256;
     var BigNumber = require('bignumber.js');
+    var moment = require('moment');
 }
 
 var Augur = (function (augur) {
@@ -57,6 +58,7 @@ var Augur = (function (augur) {
     augur.ETHER = (new BigNumber(10)).toPower(18);
     augur.AGAINST = augur.NO = 1; // against: "won't happen"
     augur.ON = augur.YES = 2;     // on: "will happen"
+    augur.SECONDS_PER_BLOCK = 12;
 
     augur.id = 1;
     augur.data = {};
@@ -171,48 +173,49 @@ var Augur = (function (augur) {
         markets: "0xc1d720000b342bbc4ab46e6ac6cb7940d43134fe",
         reporting: "0x3fef2aaedbd0fc6c1d5e1453a773a74326a33c45"
 
+        /* Private chain 1010101 */
+
         // // Functions
-        // checkQuorum: "0x4673364fbd9877849bb4b7c729823f3be6ad8615",
-        // buyAndSellShares: "0xd3ac3ce511d6d9bdacb9679b85dc67e61dd06eb3",
-        // createBranch: "0x99384f3bdd17031c6989ff70cbe14c044f158f38",
-        // p2pWagers: "0x84bb069b2569683990dbebc0b0e2cad737aafc9c",
-        // sendReputation: "0x54ed0a8df07492a4849bf95f7b7546c01fd424c4",
-        // transferShares: "0x87dfd27bb4d90e483b9135953af22cd0c39bfbbe",
-        // makeReports: "0xcc4f04ab3ebbc687f1ff8744387c506120172414",
-        // createEvent: "0x68ca53bade0eaad0d86cfc882629bef830321fbc",
-        // createMarket: "0xc2c05c50f1df4e7abd2948ed3ce062e33941abda",
-        // closeMarket: "0x35c3f4d503757751e01324d7da94dc2753fcc139",
-        // closeMarketOne: "0xcbd4763be1ce8a957c3468eb5cb7b7bcbde8409c",
-        // closeMarketTwo: "0xb840c8ed2063a86b950c9257b133dc416ae7f8f1",
-        // closeMarketFour: "0x652f9bfcdbca9be878bd871887daeb07643eb015",
-        // closeMarketEight: "0xfbc3d545430b73168d80342af66c6a107e75a9b6",
-        // dispatch: "0x9deda4f1c2a6db93d1ab5a8c2d8203ff67548aed",
+        // checkQuorum: "0xead2da8fa2af61115a496a94309ef1ae72112149",
+        // buyAndSellShares: "0xed6213d5d9b1859f92440f7e4d43b61a9f77d210",
+        // createBranch: "0x84cbcc851058b82db2402ed5183c1b704e4d2640",
+        // p2pWagers: "0x716a64c329d490a2dc1e88dece760317f2e369fd",
+        // sendReputation: "0xb8ffb2e922ef10b43a0b1e4fe1e7762e78d3cd17",
+        // transferShares: "0x0296def27bb07ebd63766e855966dd515a4afde4",
+        // makeReports: "0xf6d84c1e13a49b7448540d70b3f5a2e0bff3006b",
+        // createEvent: "0x7d25f2ded9076d468f6cc7e84d1e9a01f587a96a",
+        // createMarket: "0x003d0ccd33461fdb61c4c2ab944756f80875ea7d",
+        // closeMarket: "0x6b59a0be9699428c4b5643ccce91d8c21da3c05c",
+        // closeMarketOne: "0x7bd1bad43e056e76788c782cb56e61c2d983f0d0",
+        // closeMarketTwo: "0x6efc702fc3393eabe505f0666a884c2139bda6e3",
+        // closeMarketFour: "0xe690b9507dd9277194ee211eef7cccf6d77bc82b",
+        // closeMarketEight: "0x082f8228b11dde30d3c49efd2e4d832eb613e2c1",
+        // dispatch: "0x03f6bb95913e4af4dcb433ace86ca10a5a6cc6bc",
 
         // // Consensus
-        // statistics: "0x3bf005562f0bc9854329fe5976a64ecca869298b",
-        // interpolate: "0x64354b74c50bc19f953d77c88f97da8ecd69c537",
-        // center: "0x357938a55923451c8485fab9f7d148f53fa1005d",
-        // score: "0x8c49af1fbd2d5bfbe2e9f1392cd32fc43419e028",
-        // adjust: "0x5fb166f1c390f7c48253876abe9a342a4a4ad9bd",
-        // resolve: "0x01329dc6cf3eeb7409f309f136a944064e04bacb",
-        // payout: "0x07e41da61e7c629ae33982df4c01f087a08642a5",
-        // redeem_interpolate: "0x03fb53ae8a4373f6b9d6b4778288fb5d3dfbd4be",
-        // redeem_center: "0x6621d0c3c37fea879ce067f5e85c80f08ffa5e7f",
-        // redeem_score: "0x238ea089e5f7bdc776d7a995f4c0a4e37c36ea37",
-        // redeem_adjust: "0x6d5793203371b50670aa62a558a44d99aceb1404",
-        // redeem_resolve: "0xdbce345525ca39d17fe5527bdbfdd435ee6976d6",
-        // redeem_payout: "0xb612eb2dc2be63445e541eaad4906580cff1557e",
+        // statistics: "0x5a6e7f6203fc0ea51b5878ee082d26293646f5b7",
+        // interpolate: "0xeddaf9bc9b2dffbfcb256f02413cbd108585d008",
+        // center: "0x7ababbb997cfd2ca749f4a819c39a7686d0129ec",
+        // score: "0xcc82a93b5d69fec0fe2c7b38007f5144f9c836b1",
+        // adjust: "0x4132424e34e2d3a49d194fe0381fa7ce17c19e23",
+        // resolve: "0xcc68ef8a0e1afb601b6df6f0c9e36df05fe1bca4",
+        // payout: "0x7e7f148832e635b18257986fb2910a31bc4181fc",
+        // redeem_interpolate: "0xca7df70f683c5d9a1f6667157ccac5ddf27023b0",
+        // redeem_center: "0xb23f15281550dd655fc9b712fe1dfecabfdcff67",
+        // redeem_score: "0x09997155f309662a510a896affbc2e437fbbec10",
+        // redeem_adjust: "0x6ea5c1e8e7941f715658c61fbf2f427c4d08f097",
+        // redeem_resolve: "0xa907b9542a859875d5c9dd7d0709895dbfaa15fe",
+        // redeem_payout: "0xb849d0a2ab125446565692d943bbe959f1eec69f",
 
         // // Data and api
-        // cash: "0x3c99d4851b17df03655a42a3046035519f75469d",
-        // info: "0xd46714c7b4bc8dc8af40ec8ea23207221c31c841",
-        // branches: "0x3bc4532769424b380037df6f94ba52ed72636b7f",
-        // events: "0xfdefa42a3209d3f320b220a234cd0cdea5e761f8",
-        // expiringEvents: "0xf97d9fdba23823b2796446d4a45e18a7a1fdf905",
-        // fxMath: "0x39b6041fec3b25fd398bf1b03bb6d52e58f59809",
-        // markets: "0x10614b8d158b5b122ff4eaa362606ec0909cd822",
-        // reporting: "0xbe774ec2c537ea1a4981529568060456a650d639",
-        // whitelist: "0xd93ea5e50aad9442574a5613e800ff9c8236622d"
+        // cash: "0x175ba7a68d35696947a30f2d7ecdaf6f3d7967db",
+        // info: "0x69a2ff043c2d6910f95cd578bc631c55dd9e3bd7",
+        // branches: "0xf5d7db4301976738ccc827890c5a7c139dbcb359",
+        // events: "0x1659240ed188069f66ffbe7f0a801f26bbe41191",
+        // expiringEvents: "0x9c26c31b01c1f1f4655b3da6d5f9c7f2b9e973b5",
+        // fxpFunctions: "0x74908136b62e28dd0f18e8a4bea1a0cbfd2946fb",
+        // markets: "0xbfaceed300c544af334af012afd82e01f0a426b5",
+        // reporting: "0x287c661b62f634433ae278123ef954ff9fa2ab80"
     };
 
     // Branch IDs
@@ -277,6 +280,23 @@ var Augur = (function (augur) {
             else setTimeout(iterate, 1);
         };
         next();
+    };
+
+    // calculate date from block number
+    augur.block_to_date = function (block) {
+        var current_block = augur.blockNumber();
+        var seconds = (block - current_block) * augur.SECONDS_PER_BLOCK;
+        var date = moment().add(seconds, 'seconds');
+        return date;
+    };
+
+    augur.date_to_block = function (date) {
+        date = moment(new Date(date));
+        var current_block = augur.blockNumber();
+        var now = moment();
+        var seconds_delta = date.diff(now, 'seconds');
+        var block_delta = parseInt(seconds_delta / augur.SECONDS_PER_BLOCK);
+        return current_block + block_delta;
     };
 
     /**************************
@@ -943,7 +963,7 @@ var Augur = (function (augur) {
     augur.sendTransaction = augur.sendTx = function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? augur.prefix_hex(tx.gas.toString(16)) : augur.default_gas;
-        // tx.gasPrice = "12500000000000";
+        tx.gasPrice = "15000000000000";
         return json_rpc(postdata("sendTransaction", tx), f);
     };
 
@@ -2559,6 +2579,26 @@ var Augur = (function (augur) {
     };
 
     // createBranch.se
+    augur.tx.createSubbranch = {
+        to: augur.contracts.createBranch,
+        method: "createSubbranch",
+        signature: "siii",
+        send: true
+    };
+    augur.createSubbranch = function (description, periodLength, parent, tradingFee, onSent, onSuccess, onFailed) {
+        if (description && description.periodLength) {
+            periodLength = description.periodLength;
+            parent = description.parent;
+            tradingFee = description.tradingFee;
+            if (description.onSent) onSent = description.onSent;
+            if (description.onSuccess) onSuccess = description.onSuccess;
+            if (description.onFailed) onFailed = description.onFailed;
+            description = description.description;
+        }
+        var tx = copy(augur.tx.sendReputation);
+        tx.params = [description, periodLength, parent, tradingFee];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
+    };
 
     // p2pWagers.se
 

@@ -14,7 +14,7 @@ Augur.connect();
 
 var log = console.log;
 
-describe("Augur API", function () {
+describe("Fixed point tests", function () {
 
     var ex_integer = 12345678901;
     var ex_decimal = 0.123456789;

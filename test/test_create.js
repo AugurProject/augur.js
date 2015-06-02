@@ -26,6 +26,19 @@ var descriptions = [
     "Will Hillary Clinton win the 2016 U.S. Presidential Election?",
     "Will Rand Paul win the 2016 U.S. Presidential Election?"
 ];
+var expiration_dates = [
+    Augur.date_to_block("7-1-2015"),
+    Augur.date_to_block("9-1-2015"),
+    Augur.date_to_block("9-1-2015"),
+    Augur.date_to_block("9-1-2015"),
+    Augur.date_to_block("1-1-2016"),
+    Augur.date_to_block("1-1-2016"),
+    Augur.date_to_block("12-1-2015"),
+    Augur.date_to_block("7-1-2015"),
+    Augur.date_to_block("12-15-2015"),
+    Augur.date_to_block("1-2-2017"),
+    Augur.date_to_block("1-2-2017")
+];
 
 // createMarket.se
 describe("createMarket", function () {
@@ -33,7 +46,8 @@ describe("createMarket", function () {
         this.timeout(240000);
         var event_description = element;
         // var expDate = Augur.blockNumber() + Math.round(Math.random() * 1000);
-        var expDate = Augur.blockNumber()*10;
+        // var expDate = Augur.blockNumber()*10;
+        var expDate = expiration_dates[x];
         var minValue = 0;
         var maxValue = 1;
         var numOutcomes = 2;

@@ -4,6 +4,7 @@ GLOBAL.XHR2 = require('xhr2');
 GLOBAL.httpsync = require('http-sync');
 GLOBAL.crypto = require('crypto');
 GLOBAL._ = require('lodash');
+GLOBAL.moment = require('moment');
 GLOBAL.Augur = require('./augur');
 GLOBAL.constants = require('./test/constants');
 GLOBAL.b = Augur.branches.dev;
