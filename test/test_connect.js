@@ -11,7 +11,7 @@ var constants = require("./constants");
 
 require('it-each')({ testPerIteration: true });
 
-Augur.connect();
+Augur.connect({ chain: 1010101 });
 
 describe("Reading contract code", function () {
     var test = function (c) {
