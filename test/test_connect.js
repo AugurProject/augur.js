@@ -87,6 +87,14 @@ describe("Connection", function () {
         assert.equal(Augur.contracts.branches, new_address);
         assert.equal(Augur.init_contracts.branches, new_address);
     });
+    it("should switch to 1010101 (private chain) contract addresses", function () {
+        assert(Augur.connect("http://localhost:8545", 1010101));
+        assert(Augur.contracts.branches, Augur.privatechain_contracts.branches);
+        assert(Augur.contracts.center, Augur.privatechain_contracts.center);
+        assert(Augur.connect({ host: 'localhost', port: 8545, chain: 1010101 }));
+        assert(Augur.contracts.branches, Augur.privatechain_contracts.branches);
+        assert(Augur.contracts.center, Augur.privatechain_contracts.center);
+    });
     // it("should connect successfully to 'http://www.poc9.com:8545'", function () {
     //     this.timeout(10000);
     //     assert(Augur.connect('http://www.poc9.com:8545'));
