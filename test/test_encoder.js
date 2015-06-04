@@ -8,7 +8,7 @@
 var assert = require("assert");
 var Augur = require("../augur");
 var constants = require("./constants");
-var coder = require("../lib/solidity/coder");
+var coder = require("./solidity/coder");
 
 Augur.connect();
 
@@ -24,11 +24,6 @@ describe("Solidity encoder (from web3.js)", function () {
     });
 });
 
-// describe("Block/date conversion", function () {
-//     it("2-2-2016 converts to block 1769329", function () {
-
-//     });
-// });
 describe("Contract ABI data serialization", function () {
     describe("No parameters", function () {
         it("ten()", function () {
@@ -109,11 +104,11 @@ describe("Contract ABI data serialization", function () {
             var tx = Augur.tx.sendReputation;
             tx.params = [
                 Augur.branches.alpha,
-                constants.accounts.scott,
+                constants.accounts.scottzer0,
                 Augur.fix("5").toFixed()
             ];
             var expected = "0xa677135c"+
-                "490ea71a6232f8c905bfb8a0832a1becb5828080e5ed2491b066986ea2161646"+
+                "00000000000000000000000000000000000000000000000000000000000f69b5"+
                 "0000000000000000000000006fc0a64e2dce367e35417bfd1568fa35af9f3e4b"+
                 "0000000000000000000000000000000000000000000000050000000000000000";
             var actual = Augur.encode_abi(tx);

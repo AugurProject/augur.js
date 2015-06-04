@@ -44,7 +44,7 @@ describe("Payment methods", function () {
         var start_balance = Augur.bignum(Augur.getCashBalance());
         var value = 10;
         Augur.sendCash({
-            to: constants.accounts.scott,
+            to: constants.accounts.loopy,
             value: value,
             onSent: function (res) {
                 log(res);

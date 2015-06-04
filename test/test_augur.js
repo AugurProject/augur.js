@@ -92,7 +92,7 @@ describe("Augur API", function () {
     var reporter_address = constants.accounts.jack;
     var ballot = [Augur.YES, Augur.YES, Augur.NO, Augur.YES];
     var salt = "1337";
-    var receiving_account = constants.accounts.joey;
+    var receiving_account = constants.accounts.joeykrug;
     var vote_period = 1;
 
     // cash.se

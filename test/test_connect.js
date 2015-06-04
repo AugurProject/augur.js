@@ -11,9 +11,28 @@ var constants = require("./constants");
 
 require('it-each')({ testPerIteration: true });
 
-Augur.connect({ chain: 1010101 });
+var REMOTE_SERVER = false;
+var REMOTE_TIMEOUT = 10000;
 
-describe("Reading contract code", function () {
+Augur.connect();
+
+describe("Reading contracts from Ethereum testnet", function () {
+    Augur.connect();
+    var test = function (c) {
+        assert(Augur.read(Augur.contracts[c]) !== "0x");
+    };
+    var contract_list = [];
+    for (var c in Augur.contracts) {
+        if (!Augur.contracts.hasOwnProperty(c)) continue;
+        contract_list.push(c);
+    }
+    it.each(contract_list, "read contract: %s", ['element'], function (element, next) {
+        test(element);
+        next();
+    });
+});
+describe("Reading contracts from private chain 1010101", function () {
+    Augur.connect({ chain: 1010101 });
     var test = function (c) {
         assert(Augur.read(Augur.contracts[c]) !== "0x");
     };
@@ -95,38 +114,53 @@ describe("Connection", function () {
         assert(Augur.contracts.branches, Augur.privatechain_contracts.branches);
         assert(Augur.contracts.center, Augur.privatechain_contracts.center);
     });
-    // it("should connect successfully to 'http://www.poc9.com:8545'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('http://www.poc9.com:8545'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
-    // it("should connect successfully to 'http://poc9.com'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('http://poc9.com'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
-    // it("should connect successfully to 'poc9.com:8545'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('poc9.com:8545'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
-    // it("should connect successfully to 'www.poc9.com:8545'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('www.poc9.com:8545'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
-    // it("should connect successfully to 'www.poc9.com'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('www.poc9.com'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
-    // it("should connect successfully to 'poc9.com'", function () {
-    //     this.timeout(10000);
-    //     assert(Augur.connect('poc9.com'));
-    //     assert.equal(Augur.coinbase, constants.accounts.loopy)
-    // });
+    it("should switch to Ethereum testnet contract addresses", function () {
+        assert(Augur.connect());
+        assert(Augur.contracts.branches, Augur.testnet_contracts.branches);
+        assert(Augur.contracts.center, Augur.testnet_contracts.center);
+        assert(Augur.connect("http://localhost:8545"));
+        assert(Augur.contracts.branches, Augur.testnet_contracts.branches);
+        assert(Augur.contracts.center, Augur.testnet_contracts.center);
+        assert(Augur.connect({ host: 'localhost', port: 8545, chain: null }));
+        assert(Augur.contracts.branches, Augur.testnet_contracts.branches);
+        assert(Augur.contracts.center, Augur.testnet_contracts.center);
+        assert(Augur.connect({ host: '127.0.0.1' }));
+        assert(Augur.contracts.branches, Augur.testnet_contracts.branches);
+        assert(Augur.contracts.center, Augur.testnet_contracts.center);
+    });
+    if (REMOTE_SERVER) {
+        it("should connect successfully to 'http://www.poc9.com:8545'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('http://www.poc9.com:8545'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+        it("should connect successfully to 'http://poc9.com'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('http://poc9.com'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+        it("should connect successfully to 'poc9.com:8545'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('poc9.com:8545'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+        it("should connect successfully to 'www.poc9.com:8545'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('www.poc9.com:8545'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+        it("should connect successfully to 'www.poc9.com'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('www.poc9.com'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+        it("should connect successfully to 'poc9.com'", function () {
+            this.timeout(REMOTE_TIMEOUT);
+            assert(Augur.connect('poc9.com'));
+            assert.equal(Augur.coinbase, constants.accounts.loopy)
+        });
+    }
     it("should connect successfully with no parameters and reset the RPC settings", function () {
-        this.timeout(10000);
         assert(Augur.connect());
         assert(Augur.coinbase);
         assert.equal(Augur.RPC.protocol, "http");
