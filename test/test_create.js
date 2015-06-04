@@ -17,7 +17,7 @@ var log = console.log;
 
 var TIMEOUT = 240000;
 var events = [
-    // ["Will Jack win the June 2015 Augur Breakdancing Competition?", Augur.date_to_block("7-1-2015")],
+    ["Will Jack win the June 2015 Augur Breakdancing Competition?", Augur.date_to_block("7-1-2015")],
     ["Will the Augur software sale clear $1M?", Augur.date_to_block("9-1-2015")],
     ["Will the Augur software sale clear $5M?", Augur.date_to_block("9-1-2015")],
     ["Will the Sun turn into a red giant and engulf the Earth by the end of 2015?", Augur.date_to_block("9-1-2015")],
