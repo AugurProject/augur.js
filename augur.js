@@ -176,47 +176,48 @@ var Augur = (function (augur) {
 
     /* Private chain (networkid 1010101) addresses */
     augur.privatechain_contracts = {
+
         // Functions
-        checkQuorum: "0xa873931125544a7927f27bd37fe1c786f7a82c1d",
-        buyAndSellShares: "0xb063271183af00bfeffcbf6a2ef2fd685e7bd7d7",
-        createBranch: "0xff9b59720b945f5d3436f838f1a13f9410bb78f1",
-        p2pWagers: "0x747aec9813bb640d3e5293786e9fa84d5daddf1f",
-        sendReputation: "0x1cb5791149b0f6a02ad5f86c28d139242ab5e92e",
-        transferShares: "0x5788c84b07c6029af3b63f4b4844906875a51754",
-        makeReports: "0xef180f2ecaa3266f9ed9ec90630258d9ef84ba2f",
-        createEvent: "0xf4274d0e4f139ea67d74fb978e5ebc057894a879",
-        createMarket: "0x048559dc7fdc601aaac89f33a0e6a90e8d046bf0",
-        closeMarket: "0x4b3acea26b2b936d10d74495c57ee2e6dfba0a92",
-        closeMarketOne: "0xb9e44e4f1fc203fbf53b69192be96d50c222cd04",
-        closeMarketTwo: "0x5afeaa9c92da4dbaa16125ef8a2382516a1cea58",
-        closeMarketFour: "0xb5018be2a9f43d8923c2cc186bc4039351483d49",
-        closeMarketEight: "0x16a831fa8d0d8537906130407aeca41e542ea51c",
-        dispatch: "0xdc94cec3e4acb3d5abe034e3464767ec2a5c9f19",
+        checkQuorum: "0x56e149efed89d40876fafabc2b22eeefa86b9249",
+        buyAndSellShares: "0x6b507afa7aac9363c73f0d9374e684728d562978",
+        createBranch: "0xad846a4b56c45634a0929ad9a95d1408a9bb135e",
+        p2pWagers: "0x9c85b1f56373dd2b951faf21c695a4bd0ce7ef6e",
+        sendReputation: "0x86bde38f31a6524903497fb67682a4b6e4e9f256",
+        transferShares: "0xee4d02143da614e127454ef6f2ed310211d1627c",
+        makeReports: "0x8f29770abee7357c2bce57dbdbe9a72dc1e78dcd",
+        createEvent: "0x29c1e1533d84b4aba36e7be33f516d47a23f6ac1",
+        createMarket: "0xcc81a3663f897aa56a289a8f1c51f8553c57fbec",
+        closeMarket: "0x276626eb3546fd518177e3e721cbfab8d0a1303a",
+        closeMarketOne: "0x3937f8607f64b5835fd6304fe01ab1ee385932ea",
+        closeMarketTwo: "0x99e43d9b71d23d28c7d46a76b13a1ad7f682112a",
+        closeMarketFour: "0x87ea0deb643d90685317a78d319242a287ddc513",
+        closeMarketEight: "0xf8b1f35b117105fc77bc2799aa2050be6c09b8ed",
+        dispatch: "0x088f320ef6154fee40efb6899f94e1b68576dc30",
 
         // Consensus
-        statistics: "0x1795d7ff474a530326b8112d1c57efbd8f24cca1",
-        interpolate: "0x4111bf717605ad8b8b804a27498b1f8146db6be9",
-        center: "0xb339031f2e0711f3c8d90156a930105c175260aa",
-        score: "0x1e336054a6d813f240bfc1f8c380a942141646b5",
-        adjust: "0x65f09b498094b1910ead3e1a732caadcffc90a92",
-        resolve: "0xe0c234c2eaee13414efbc32f7a4101443d4d0326",
-        payout: "0x855635110891e7f9232887e5a9c1deb272d9c7ae",
-        redeem_interpolate: "0xe8ae80a8a1048f33a59890b27fd17a9fc5bc2984",
-        redeem_center: "0xf5d6186db73553d57c6918ec66028243633eb35a",
-        redeem_score: "0xaac169f3444eb22609222b36322e05c601fbdc3f",
-        redeem_adjust: "0x2b06668f45e84a2d6219e8ea112a450286a9dd17",
-        redeem_resolve: "0xe1aeaa4db5da87823f0bc60fa18259b4098d3e64",
-        redeem_payout: "0x82ff39c8de8380b247153a83fb8314f8b952d2e8",
+        statistics: "0x6f54042b846dde7efc1cbd8d57bae2d0cfadfbb2",
+        interpolate: "0xb6f11a2fba456852ab0161100ebfe8d180620196",
+        center: "0x74de3bb03775ea70cdf9d23adcdce197820b9d99",
+        score: "0xc8d75079b9eccc58c60f808cd003b652e85aacd4",
+        adjust: "0xd5bf40ba2ac723e97d8e8ebc2f14d2c6fb46f1ed",
+        resolve: "0x17c96a2d95350282af1a5c8a3540ee9abdcf1533",
+        payout: "0xc60bf94290aba44255060af1633352aae0b2f40c",
+        redeem_interpolate: "0xac5e0af0ed36079d6baedce6e4d6c59c16cfe220",
+        redeem_center: "0x9386880b324a89d38555b27a60dbf239b50ad286",
+        redeem_score: "0x3e69c2cf9a5528857141f58db4a6684ac337842c",
+        redeem_adjust: "0xa0d624331f8afc1b2785524f49efa0045c71a7cd",
+        redeem_resolve: "0xd73891525a06de78712457768eedcb8296a27669",
+        redeem_payout: "0xdd36e3e6c4c69cf8b535beb52f63e0c729949b2e",
 
         // Data and API
-        cash: "0x02931d9f64064c1ab502220d137dd2794a6de6fc",
-        info: "0xa216dcd1291ad9572513b66008a1c714fe5d18fd",
-        branches: "0x7848abe5708f19e0f8d506a467b3447925f06bca",
-        events: "0xdebcd26bd4d7569cc162d1150bc9a3e9d0d3fdc9",
-        expiringEvents: "0x152e42989e7925da5e39a7b3b5b7c7362a6a0007",
-        fxpFunctions: "0xcedb06d8a931056c71e34843a3e75c1d77569120",
-        markets: "0x58f4671066855a29a0ebe9101bba59deae85e5a8",
-        reporting: "0x288466370bca91a607e90bf8d8cf8729ba937f21"
+        cash: "0x350322e1e90759dda936ae82b4dc7dce1caa460a",
+        info: "0xecdd12ea1589732c98f29eff08926ce734646d2f",
+        branches: "0x3aed3513d29f2c72f01d66ed966d26bc0eb3cf68",
+        events: "0x28a90a414be328bff494254531bcf7725d1858d5",
+        expiringEvents: "0x74ad526cbcdbe84b646bf14c0dd5dcec3805736f",
+        fxpFunctions: "0x244fe325f7a46d8beef20606639ca1ce98ec3e95",
+        markets: "0x3a3a9f440ba8796334e832a35e93198a08d30fce",
+        reporting: "0x600d9e771aa0f107bb0d6b1fdb16c5033229ecc3"
     };
 
     // Branch IDs
@@ -776,7 +777,7 @@ var Augur = (function (augur) {
      *******************************/
 
     augur.connect = function (rpcinfo, chain) {
-        var rpc, key;
+        var rpc, key, new_address;
         if (rpcinfo) {
             if (rpcinfo.constructor === Object) {
                 if (rpcinfo.protocol) augur.RPC.protocol = rpcinfo.protocol;
@@ -819,13 +820,6 @@ var Augur = (function (augur) {
                     }
                 }
             }
-            if (chain && (chain === "1010101" || chain === 1010101)) {
-                augur.contracts = copy(augur.privatechain_contracts);
-                augur.PRIVATE = true;
-            } else {
-                augur.contracts = copy(augur.testnet_contracts);
-                augur.PRIVATE = false;
-            }
         } else {
             augur.RPC = {
                 protocol: "http",
@@ -840,7 +834,22 @@ var Augur = (function (augur) {
                     if (!augur.tx.hasOwnProperty(method)) continue;
                     augur.tx[method].from = augur.coinbase;
                     key = has_value(augur.init_contracts, augur.tx[method].to);
-                    if (key) augur.tx[method].to = augur.contracts[key];
+                    if (key) {
+                        augur.tx[method].to = augur.contracts[key];
+                        new_address = true;
+                    }
+                }
+            }
+            if (new_address) {
+                if (chain && (chain === "1010101" || chain === 1010101)) {
+                    augur.contracts = copy(augur.privatechain_contracts);
+                } else {
+                    chain = json_rpc(postdata("version", [], "net_"));
+                    if (chain === "1010101" || chain === 1010101) {
+                        augur.contracts = copy(augur.privatechain_contracts);
+                    } else {
+                        augur.contracts = copy(augur.testnet_contracts);
+                    }
                 }
             }
             augur.init_contracts = copy(augur.contracts);

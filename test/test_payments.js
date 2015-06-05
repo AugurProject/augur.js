@@ -13,6 +13,7 @@ var constants = require("./constants");
 Augur.connect();
 
 var log = console.log;
+var TIMEOUT = 120000;
 
 describe("Payment methods", function () {
 
@@ -21,7 +22,7 @@ describe("Payment methods", function () {
     var receiving_account = constants.accounts.joey;
 
     it("pay: complete call-send-confirm callback sequence", function (done) {
-        this.timeout(120000);
+        this.timeout(TIMEOUT);
         var start_balance = Augur.bignum(Augur.balance()).dividedBy(Augur.ETHER);
         var value = 10;
         var tx = {
@@ -40,7 +41,7 @@ describe("Payment methods", function () {
         Augur.pay(tx);
     });
     it("sendCash: complete call-send-confirm callback sequence", function (done) {
-        this.timeout(120000);
+        this.timeout(TIMEOUT);
         var start_balance = Augur.bignum(Augur.getCashBalance());
         var value = 10;
         Augur.sendCash({
@@ -62,7 +63,7 @@ describe("Payment methods", function () {
         });
     });
     it("sendReputation: complete call-send-confirm callback sequence", function (done) {
-        this.timeout(120000);
+        this.timeout(TIMEOUT);
         var start_balance = Augur.bignum(Augur.getRepBalance(Augur.branches.demo));
         var value = 10;
         Augur.sendReputation({

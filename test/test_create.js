@@ -10,8 +10,7 @@ var Augur = require("../augur");
 
 require('it-each')({ testPerIteration: true });
 
-// Augur.connect();
-Augur.connect({ chain: 1010101 });
+Augur.connect();
 
 var log = console.log;
 
