@@ -777,7 +777,7 @@ var Augur = (function (augur) {
      *******************************/
 
     augur.connect = function (rpcinfo, chain) {
-        var rpc, key, new_address;
+        var rpc, key;
         if (rpcinfo) {
             if (rpcinfo.constructor === Object) {
                 if (rpcinfo.protocol) augur.RPC.protocol = rpcinfo.protocol;
@@ -828,19 +828,7 @@ var Augur = (function (augur) {
             };
         }
         try {
-            augur.coinbase = json_rpc(postdata("coinbase"));
-            if (augur.coinbase && augur.coinbase !== "0x") {
-                for (var method in augur.tx) {
-                    if (!augur.tx.hasOwnProperty(method)) continue;
-                    augur.tx[method].from = augur.coinbase;
-                    key = has_value(augur.init_contracts, augur.tx[method].to);
-                    if (key) {
-                        augur.tx[method].to = augur.contracts[key];
-                        new_address = true;
-                    }
-                }
-            }
-            if (new_address) {
+            if (JSON.stringify(augur.contracts) === JSON.stringify(augur.init_contracts)) {
                 if (chain && (chain === "1010101" || chain === 1010101)) {
                     augur.contracts = copy(augur.privatechain_contracts);
                 } else {
@@ -849,6 +837,17 @@ var Augur = (function (augur) {
                         augur.contracts = copy(augur.privatechain_contracts);
                     } else {
                         augur.contracts = copy(augur.testnet_contracts);
+                    }
+                }
+            }
+            augur.coinbase = json_rpc(postdata("coinbase"));
+            if (augur.coinbase && augur.coinbase !== "0x") {
+                for (var method in augur.tx) {
+                    if (!augur.tx.hasOwnProperty(method)) continue;
+                    augur.tx[method].from = augur.coinbase;
+                    key = has_value(augur.init_contracts, augur.tx[method].to);
+                    if (key) {
+                        augur.tx[method].to = augur.contracts[key];
                     }
                 }
             }
