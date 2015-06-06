@@ -146,19 +146,19 @@ var Augur = (function (augur) {
         closeMarketTwo: "0xb1e2bbc22eb477276a93a6792975b02226568e94",
         closeMarketFour: "0x867302e5d20f322326b8f9e10baf0c6f5bc3188a",
         closeMarketEight: "0x0632e0ded38995753327b2368f4186abfa9a1d41",
-        dispatch: "0xc4e4ef23d833e7e410e95d950e3215fa78a3e0c3",
+        dispatch: "0x8104c3881cbd7ea9a129aaec80e346784ff83d55",
 
         // Consensus
         statistics: "0xfb1377305dc846b7cef2805c41701e4afabedc27",
         interpolate: "0x8b2b49f5de8b9d505c1babd089fffd5df91b0843",
         center: "0x47c400e2cfa58b00ec687e78b429e283e8ac8311",
-        score: "0x10118a8c28e5b6a36b0e5b4b4c240df1b91a2039",
+        score: "0xbc4494e6dba414fdf47f2ea5bff63592fd4e4240",
         adjust: "0x12c30624ebe0e3bc3299db47748d678afa2c5a64",
         resolve: "0x0f809587da977cad60eb572d9f1b6403141d09da",
         payout: "0x71e9b98042baee7291bd1fceeaa2e520469696d4",
         redeem_interpolate: "0xde63100ad35d735ec43720ea3006e20497801379",
         redeem_center: "0x84d6c8c19a35a95da735918f1152cf23b5c4e84a",
-        redeem_score: "0x7cc3c39e6a1466eb1d6030dc3a0f7341ea42a9d7",
+        redeem_score: "0x63a69c85ffbd6e74b8fa570d9132e29067126d5d",
         redeem_adjust: "0xdbb0e7eb9cee7bbe4b508ff97c68945041ff6f99",
         redeem_resolve: "0xbfabbadc6e750001121868244bf63b6bc55435d2",
         redeem_payout: "0xe271890e035a36e8a61c128617c0684f54f68e58",
@@ -174,50 +174,50 @@ var Augur = (function (augur) {
         reporting: "0x3fef2aaedbd0fc6c1d5e1453a773a74326a33c45"
     };
 
-    /* Private chain (networkid 1010101) addresses */
+    /* Private chain addresses */
     augur.privatechain_contracts = {
 
         // Functions
-        checkQuorum: "0x00efc7b6eda1e903499d0786505f978b387a3857",
-        buyAndSellShares: "0xb0f58b8c4a1cfab29b8ce614bc01136a1952740b",
-        createBranch: "0x8e0366f40bb9bf1542ed0c26fdd3068ed845144d",
-        p2pWagers: "0xf99050643485601bd0a657162b1c1197508cb8cd",
-        sendReputation: "0xca2a62ee0ccc5aa103f61bfdfeb00cd6f968cb86",
-        transferShares: "0x54d29514547b242443171e3530d3b05e2d136967",
-        makeReports: "0xca18ae2b9a7c2ed16ad9fba428faae66b1be3990",
-        createEvent: "0x3fbf91c2f8d28d5f8f1302a74aa982bed0587b83",
-        createMarket: "0x7bdaa9ef98f9676ee9533fe09d4a0108118c4429",
-        closeMarket: "0xf2cffae03000526452f5a4cef9d32f35214206c6",
-        closeMarketOne: "0xeb05650afd7915f5cab8156aac11ad6dffde72e6",
-        closeMarketTwo: "0x2dbec3dcfee989f0e2b7292e28e07037b0dec87c",
-        closeMarketFour: "0xf77be8be54857044455ba55e28c40cad49612834",
-        closeMarketEight: "0x99f1741a38bf607d434cdefa4aaf63434a19592b",
-        dispatch: "0x759cd74951cd497d7bb2c4564e38ab450fb2afae",
+        checkQuorum: "0x6a934420af81bab0db4dd3715d540c79d7911052",
+        buyAndSellShares: "0x4a0ca4ac8e1b7dea3969f3fc4adb3586afb3bcac",
+        createBranch: "0x47b6b8852b52827a8be64c1d704e6307ffb038c8",
+        p2pWagers: "0xc600c27ad4f1aa266cf7d24b83c1f95473df209f",
+        sendReputation: "0xf5fa4fdbcf7efa8387a31ff226bd53275c18beb0",
+        transferShares: "0xf9cbfd6278641b452bf9b1188ee2b8a14ed176dc",
+        makeReports: "0x1aa931273e306ab67059d615d430646f5cf26a53",
+        createEvent: "0x7ad23583bf03c500ead8b5f42aefa81baa9ad48d",
+        createMarket: "0x892cba3006dce540b46ed05a933cdb80444bb6d7",
+        closeMarket: "0x57b73df5d08d2783b3f3772defca5f008fca7179",
+        closeMarketOne: "0xed0393ad90980af7eadc4fb692b3fa77b89bf40c",
+        closeMarketTwo: "0xae9c7c94027efa5832dfa61789e0dc82cdd1fe25",
+        closeMarketFour: "0x8b9145d979e72471192556482fa287736abaf9a3",
+        closeMarketEight: "0x28e2d0b6f1bba7f76693fd34f952d75ad5ffbb04",
+        dispatch: "0x953113196e0d4e0318c8032ec782f4c44d9b2cf2",
 
         // Consensus
-        statistics: "0x6e925c9640a90a47b95255f7d698b18907685dd1",
-        interpolate: "0x263986f455c2c2b5d014f63d2b1e54517f77baf0",
-        center: "0xf265d5611a7d7750365edddaf7f5b83fa1752070",
-        score: "0xb117a6aebf7c0ac84a294cbde1a8de4a18eb2d83",
-        adjust: "0x03d725b720f96f2c8435009514cb01aae4412480",
-        resolve: "0xfaea38ec74e56f03c927ceef62cf0047999ddb09",
-        payout: "0xf409bde97594e148a0744a563499ecedce3bdd58",
-        redeem_interpolate: "0x5ce436fe154415d39103fd9aeff6e4f9c801ac1d",
-        redeem_center: "0x0ac07f5d1660e0075edb0598ff5cc28cf89a03e8",
-        redeem_score: "0x2f315fbe1419c23ef74081a62c72100af293d393",
-        redeem_adjust: "0x6be110cb3ccb9c717f3c80e49147220b60514fae",
-        redeem_resolve: "0x5ec1e5521106fdfae87c8fdcf4dcf59de04b44ac",
-        redeem_payout: "0xf0cfee4374530a7db26effa8543f0f5acc42c3a3",
+        statistics: "0x10f668890021205f4b618c75294c3cb01240a91b",
+        interpolate: "0xb4cce7f258da35e84e5bd3c8b8fa600f172f71a1",
+        center: "0x25994c725acf5ad01396c2fb5fe0da4a03ba318c",
+        score: "0x4147cb49c3057c6ea46ad710c0f40806df7af0e4",
+        adjust: "0xb87d98221151e6873e20b59277227d064dc85981",
+        resolve: "0x4b19b2da13a9e268ea3b2744aeef59286bca5e9d",
+        payout: "0xfce65f55701e4c6f893c104532575a7771ca247d",
+        redeem_interpolate: "0x3c7b7d4d76fa25d6b397d9e1911f94a4fa0463b0",
+        redeem_center: "0x392d02f190f844f11a3e1c339b3b3ce2ca57f2c8",
+        redeem_score: "0xd3306fba1ab191a0bd9b3bedd57e9567b645c25e",
+        redeem_adjust: "0x22723bf0c5e8cd0097f7922de9a49840f968ea8c",
+        redeem_resolve: "0x5c9ac24d98a0216e8c8d5c7b369ca29873e7372b",
+        redeem_payout: "0x3bdd3c755942c08661fb8fdfb3211ffafa0144a8",
 
         // Data and api
-        cash: "0xbfdf8a2f42b8b31145ce00eac52bbcb95dd4bbfd",
-        info: "0x9f8498f04dcbe14c7074e818669c0f72dea108f1",
-        branches: "0xedb188ead5fc2e5f7f0c6bf49fab257ac093e1b9",
-        events: "0x00bb7321bfde8589e4d74254da4abb2bd8d0a48e",
-        expiringEvents: "0x1ca2b2aa07933d091c6b4794e94146f341b67f14",
-        fxpFunctions: "0xc1dd8c4439343acca7ce59a92ed899a9d87e502b",
-        markets: "0x2cfe28a12bde41ca0520fdb551cbb23d2a433107",
-        reporting: "0xfa48a84703ea87974172472950d3bec226ebf433"
+        cash: "0xb65fdd5c3f4fc2d71e2fac46118ec3b5f6464805",
+        info: "0x57e2cbf2c6fad9555fe0584ad5cf6a921edd04ca",
+        branches: "0x9d637daff42a73c5dbc5c25577442b6f004049ce",
+        events: "0xdeb4efb3705966f23eeddea18c37cdfe20379183",
+        expiringEvents: "0x86dc81486b8aac98582967fe70c68660edc599ef",
+        fxpFunctions: "0xec8b8be7d0330253ea27d4e24833c2f435d139f2",
+        markets: "0x7073620d60e0cb61b400bac8fbc9f88f88e9cdcc",
+        reporting: "0xe78f0c894946619c9e224c929960637976673321"
     };
 
     // Branch IDs
@@ -829,11 +829,11 @@ var Augur = (function (augur) {
         }
         try {
             if (JSON.stringify(augur.contracts) === JSON.stringify(augur.init_contracts)) {
-                if (chain && (chain === "1010101" || chain === 1010101)) {
+                if (chain && (chain === "1010101" || chain === 1010101 || chain === "10101" || chain == 10101)) {
                     augur.contracts = copy(augur.privatechain_contracts);
                 } else {
                     chain = json_rpc(postdata("version", [], "net_"));
-                    if (chain === "1010101" || chain === 1010101) {
+                    if (chain === "1010101" || chain === 1010101 || chain === "10101" || chain == 10101) {
                         augur.contracts = copy(augur.privatechain_contracts);
                     } else {
                         augur.contracts = copy(augur.testnet_contracts);
@@ -1487,6 +1487,34 @@ var Augur = (function (augur) {
         method: "center",
         signature: "iiiii",
         send: true
+    };
+
+    // redeem_score.se
+    augur.tx.redeem_blank = {
+        to: augur.contracts.redeem_score,
+        method: "blank",
+        signature: "iiiii",
+        returns: "hash[]",
+        send: false
+    };
+    augur.redeem_blank = function (branch, period, num_events, num_reports, flatsize, onSent) {
+        var tx = copy(augur.tx.redeem_blank);
+        tx.params = [branch, period, num_events, num_reports, flatsize];
+        return fire(tx, onSent);
+    };
+
+    // score.se
+    augur.tx.blank = {
+        to: augur.contracts.score,
+        method: "blank",
+        signature: "iii",
+        returns: "hash[]",
+        send: false
+    };
+    augur.blank = function (components_remaining, max_iterations, num_events, onSent) {
+        var tx = copy(augur.tx.blank);
+        tx.params = [components_remaining, max_iterations, num_events];
+        return fire(tx, onSent);
     };
 
     // branches.se
@@ -3169,10 +3197,9 @@ var Augur = (function (augur) {
         to: augur.contracts.dispatch,
         method: "dispatch",
         // signature: "i", // EDIT
-        signature: "ii",
-        send: true
+        signature: "ii"
     };
-    // augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
+    // augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
     augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
         // branch: sha256 or transaction object
         var step, pings, txhash, pingTx;
@@ -3184,66 +3211,68 @@ var Augur = (function (augur) {
         }
         // augur.tx.dispatch.params = branch;
         augur.tx.dispatch.params = [branch, period];
-        augur.tx.dispatch.send = false;
-        augur.tx.dispatch.returns = "number";
-        if (onSent) {
-            augur.invoke(augur.tx.dispatch, function (step) {
-                if (step) {
-                    if (augur.ERRORS.dispatch[step]) {
-                        step = {
-                            error: step,
-                            message: augur.ERRORS.dispatch[step]
-                        };
-                        if (onFailed) onFailed(step);
-                    } else {
-                        step = { step: step };
-                    }
-                    augur.tx.dispatch.send = true;
-                    delete augur.tx.dispatch.returns;
-                    augur.invoke(augur.tx.dispatch, function (txhash) {
-                        if (txhash) {
-                            step.txHash = txhash;
-                            if (onSent) onSent(step);
-                            if (onSuccess) {
-                                pings = 0;
-                                pingTx = function () {
-                                    augur.getTx(txhash, function (tx) {
-                                        pings++;
-                                        if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
-                                            tx.step = step.step;
-                                            tx.txHash = tx.hash;
-                                            delete tx.hash;
-                                            onSuccess(tx);
-                                        } else {
-                                            if (pings < augur.TX_POLL_MAX) {
-                                                setTimeout(pingTx, 12000);
-                                            }
-                                        }
-                                    });
-                                };
-                                pingTx();
-                            }
-                        }
-                    });
-                }
-            });
-        } else {
-            step = augur.invoke(augur.tx.dispatch);
-            if (step) {
-                step = { step: step };
-                if (augur.ERRORS.dispatch[step]) {
-                    if (onFailed) onFailed(step);
-                } else {
-                    augur.tx.dispatch.send = true;
-                    delete augur.tx.dispatch.returns;
-                    txhash = augur.invoke(augur.tx.dispatch);
-                    if (txhash) {
-                        step.txHash = txhash;
-                        return step;
-                    }
-                }
-            }
-        }
+        // augur.tx.dispatch.send = false;
+        augur.tx.dispatch.returns = "hash[]";
+        return fire(augur.tx.dispatch, onSent);
+        // augur.tx.dispatch.returns = "number";
+        // if (onSent) {
+        //     augur.invoke(augur.tx.dispatch, function (step) {
+        //         if (step) {
+        //             if (augur.ERRORS.dispatch[step]) {
+        //                 step = {
+        //                     error: step,
+        //                     message: augur.ERRORS.dispatch[step]
+        //                 };
+        //                 if (onFailed) onFailed(step);
+        //             } else {
+        //                 step = { step: step };
+        //             }
+        //             augur.tx.dispatch.send = true;
+        //             delete augur.tx.dispatch.returns;
+        //             augur.invoke(augur.tx.dispatch, function (txhash) {
+        //                 if (txhash) {
+        //                     step.txHash = txhash;
+        //                     if (onSent) onSent(step);
+        //                     if (onSuccess) {
+        //                         pings = 0;
+        //                         pingTx = function () {
+        //                             augur.getTx(txhash, function (tx) {
+        //                                 pings++;
+        //                                 if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
+        //                                     tx.step = step.step;
+        //                                     tx.txHash = tx.hash;
+        //                                     delete tx.hash;
+        //                                     onSuccess(tx);
+        //                                 } else {
+        //                                     if (pings < augur.TX_POLL_MAX) {
+        //                                         setTimeout(pingTx, 12000);
+        //                                     }
+        //                                 }
+        //                             });
+        //                         };
+        //                         pingTx();
+        //                     }
+        //                 }
+        //             });
+        //         }
+        //     });
+        // } else {
+        //     step = augur.invoke(augur.tx.dispatch);
+        //     if (step) {
+        //         step = { step: step };
+        //         if (augur.ERRORS.dispatch[step]) {
+        //             if (onFailed) onFailed(step);
+        //         } else {
+        //             augur.tx.dispatch.send = true;
+        //             delete augur.tx.dispatch.returns;
+        //             txhash = augur.invoke(augur.tx.dispatch);
+        //             if (txhash) {
+        //                 step.txHash = txhash;
+        //                 return step;
+        //             }
+        //         }
+        //     }
+        // }
     };
 
     /***************************
