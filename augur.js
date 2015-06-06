@@ -178,46 +178,46 @@ var Augur = (function (augur) {
     augur.privatechain_contracts = {
 
         // Functions
-        checkQuorum: "0x56e149efed89d40876fafabc2b22eeefa86b9249",
-        buyAndSellShares: "0x6b507afa7aac9363c73f0d9374e684728d562978",
-        createBranch: "0xad846a4b56c45634a0929ad9a95d1408a9bb135e",
-        p2pWagers: "0x9c85b1f56373dd2b951faf21c695a4bd0ce7ef6e",
-        sendReputation: "0x86bde38f31a6524903497fb67682a4b6e4e9f256",
-        transferShares: "0xee4d02143da614e127454ef6f2ed310211d1627c",
-        makeReports: "0x8f29770abee7357c2bce57dbdbe9a72dc1e78dcd",
-        createEvent: "0x29c1e1533d84b4aba36e7be33f516d47a23f6ac1",
-        createMarket: "0xcc81a3663f897aa56a289a8f1c51f8553c57fbec",
-        closeMarket: "0x276626eb3546fd518177e3e721cbfab8d0a1303a",
-        closeMarketOne: "0x3937f8607f64b5835fd6304fe01ab1ee385932ea",
-        closeMarketTwo: "0x99e43d9b71d23d28c7d46a76b13a1ad7f682112a",
-        closeMarketFour: "0x87ea0deb643d90685317a78d319242a287ddc513",
-        closeMarketEight: "0xf8b1f35b117105fc77bc2799aa2050be6c09b8ed",
-        dispatch: "0x088f320ef6154fee40efb6899f94e1b68576dc30",
+        checkQuorum: "0x00efc7b6eda1e903499d0786505f978b387a3857",
+        buyAndSellShares: "0xb0f58b8c4a1cfab29b8ce614bc01136a1952740b",
+        createBranch: "0x8e0366f40bb9bf1542ed0c26fdd3068ed845144d",
+        p2pWagers: "0xf99050643485601bd0a657162b1c1197508cb8cd",
+        sendReputation: "0xca2a62ee0ccc5aa103f61bfdfeb00cd6f968cb86",
+        transferShares: "0x54d29514547b242443171e3530d3b05e2d136967",
+        makeReports: "0xca18ae2b9a7c2ed16ad9fba428faae66b1be3990",
+        createEvent: "0x3fbf91c2f8d28d5f8f1302a74aa982bed0587b83",
+        createMarket: "0x7bdaa9ef98f9676ee9533fe09d4a0108118c4429",
+        closeMarket: "0xf2cffae03000526452f5a4cef9d32f35214206c6",
+        closeMarketOne: "0xeb05650afd7915f5cab8156aac11ad6dffde72e6",
+        closeMarketTwo: "0x2dbec3dcfee989f0e2b7292e28e07037b0dec87c",
+        closeMarketFour: "0xf77be8be54857044455ba55e28c40cad49612834",
+        closeMarketEight: "0x99f1741a38bf607d434cdefa4aaf63434a19592b",
+        dispatch: "0x759cd74951cd497d7bb2c4564e38ab450fb2afae",
 
         // Consensus
-        statistics: "0x6f54042b846dde7efc1cbd8d57bae2d0cfadfbb2",
-        interpolate: "0xb6f11a2fba456852ab0161100ebfe8d180620196",
-        center: "0x74de3bb03775ea70cdf9d23adcdce197820b9d99",
-        score: "0xc8d75079b9eccc58c60f808cd003b652e85aacd4",
-        adjust: "0xd5bf40ba2ac723e97d8e8ebc2f14d2c6fb46f1ed",
-        resolve: "0x17c96a2d95350282af1a5c8a3540ee9abdcf1533",
-        payout: "0xc60bf94290aba44255060af1633352aae0b2f40c",
-        redeem_interpolate: "0xac5e0af0ed36079d6baedce6e4d6c59c16cfe220",
-        redeem_center: "0x9386880b324a89d38555b27a60dbf239b50ad286",
-        redeem_score: "0x3e69c2cf9a5528857141f58db4a6684ac337842c",
-        redeem_adjust: "0xa0d624331f8afc1b2785524f49efa0045c71a7cd",
-        redeem_resolve: "0xd73891525a06de78712457768eedcb8296a27669",
-        redeem_payout: "0xdd36e3e6c4c69cf8b535beb52f63e0c729949b2e",
+        statistics: "0x6e925c9640a90a47b95255f7d698b18907685dd1",
+        interpolate: "0x263986f455c2c2b5d014f63d2b1e54517f77baf0",
+        center: "0xf265d5611a7d7750365edddaf7f5b83fa1752070",
+        score: "0xb117a6aebf7c0ac84a294cbde1a8de4a18eb2d83",
+        adjust: "0x03d725b720f96f2c8435009514cb01aae4412480",
+        resolve: "0xfaea38ec74e56f03c927ceef62cf0047999ddb09",
+        payout: "0xf409bde97594e148a0744a563499ecedce3bdd58",
+        redeem_interpolate: "0x5ce436fe154415d39103fd9aeff6e4f9c801ac1d",
+        redeem_center: "0x0ac07f5d1660e0075edb0598ff5cc28cf89a03e8",
+        redeem_score: "0x2f315fbe1419c23ef74081a62c72100af293d393",
+        redeem_adjust: "0x6be110cb3ccb9c717f3c80e49147220b60514fae",
+        redeem_resolve: "0x5ec1e5521106fdfae87c8fdcf4dcf59de04b44ac",
+        redeem_payout: "0xf0cfee4374530a7db26effa8543f0f5acc42c3a3",
 
-        // Data and API
-        cash: "0x350322e1e90759dda936ae82b4dc7dce1caa460a",
-        info: "0xecdd12ea1589732c98f29eff08926ce734646d2f",
-        branches: "0x3aed3513d29f2c72f01d66ed966d26bc0eb3cf68",
-        events: "0x28a90a414be328bff494254531bcf7725d1858d5",
-        expiringEvents: "0x74ad526cbcdbe84b646bf14c0dd5dcec3805736f",
-        fxpFunctions: "0x244fe325f7a46d8beef20606639ca1ce98ec3e95",
-        markets: "0x3a3a9f440ba8796334e832a35e93198a08d30fce",
-        reporting: "0x600d9e771aa0f107bb0d6b1fdb16c5033229ecc3"
+        // Data and api
+        cash: "0xbfdf8a2f42b8b31145ce00eac52bbcb95dd4bbfd",
+        info: "0x9f8498f04dcbe14c7074e818669c0f72dea108f1",
+        branches: "0xedb188ead5fc2e5f7f0c6bf49fab257ac093e1b9",
+        events: "0x00bb7321bfde8589e4d74254da4abb2bd8d0a48e",
+        expiringEvents: "0x1ca2b2aa07933d091c6b4794e94146f341b67f14",
+        fxpFunctions: "0xc1dd8c4439343acca7ce59a92ed899a9d87e502b",
+        markets: "0x2cfe28a12bde41ca0520fdb551cbb23d2a433107",
+        reporting: "0xfa48a84703ea87974172472950d3bec226ebf433"
     };
 
     // Branch IDs
@@ -984,7 +984,7 @@ var Augur = (function (augur) {
     augur.sendTransaction = augur.sendTx = function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? augur.prefix_hex(tx.gas.toString(16)) : augur.default_gas;
-        tx.gasPrice = "15000000000000";
+        // tx.gasPrice = "15000000000000";
         return json_rpc(postdata("sendTransaction", tx), f);
     };
 
@@ -1455,6 +1455,40 @@ var Augur = (function (augur) {
         return periodsBehind;
     };
 
+    // redeem_interpolate.se
+    augur.tx.redeem_interpolate = {
+        to: augur.contracts.redeem_interpolate,
+        method: "interpolate",
+        signature: "iiiii"
+        // send: true
+    };
+    augur.redeem_interpolate = function (branch, period, num_events, num_reports, flatsize, onSent) {
+        var tx = copy(augur.tx.redeem_interpolate);
+        tx.params = [branch, period, num_events, num_reports, flatsize];
+        return fire(tx, onSent);
+    };
+
+    // interpolate.se
+    augur.tx.interpolate = {
+        to: augur.contracts.interpolate,
+        method: "interpolate",
+        signature: "aaaaa",
+        send: true
+    };
+    augur.interpolate = function (reports, reputation, scaled, scaled_max, scaled_min, onSent) {
+        var tx = copy(augur.tx.interpolate);
+        tx.params = [reports, reputation, scaled, scaled_max, scaled_min];
+        return fire(tx, onSent);
+    };
+
+    // redeem_center.se
+    augur.tx.redeem_center = {
+        to: augur.contracts.redeem_center,
+        method: "center",
+        signature: "iiiii",
+        send: true
+    };
+
     // branches.se
     augur.tx.getBranches = {
         to: augur.contracts.branches,
@@ -1639,6 +1673,227 @@ var Augur = (function (augur) {
         }
     };
 
+    augur.tx.addEvent = {
+        to: augur.contracts.expiringEvents,
+        method: "addEvent",
+        signature: "iii",
+        send: true
+    };
+    augur.addEvent = function (branch, futurePeriod, eventID, onSent) {
+        var tx = copy(augur.tx.addEvent);
+        tx.params = [branch, futurePeriod, eventID];
+        return fire(tx, onSent);
+    };
+    augur.tx.setTotalRepReported = {
+        to: augur.contracts.expiringEvents,
+        method: "setTotalRepReported",
+        signature: "iii",
+        send: true
+    };
+    augur.setTotalRepReported = function (branch, expDateIndex, repReported, onSent) {
+        var tx = copy(augur.tx.setTotalRepReported);
+        tx.params = [branch, expDateIndex, repReported];
+        return fire(tx, onSent);
+    };
+    augur.tx.setReporterBallot = {
+        to: augur.contracts.expiringEvents,
+        method: "setReporterBallot",
+        signature: "iiiai",
+        send: true
+    };
+    augur.setReporterBallot = function (branch, expDateIndex, reporterID, report, reputation, onSent) {
+        var tx = copy(augur.tx.setReporterBallot);
+        tx.params = [branch, expDateIndex, reporterID, report, reputation];
+        return fire(tx, onSent);
+    };
+    augur.tx.setVSize = {
+        to: augur.contracts.expiringEvents,
+        method: "setVSize",
+        signature: "iii",
+        send: true
+    };
+    augur.setVSize = function (branch, expDateIndex, vSize, onSent) {
+        var tx = copy(augur.tx.setVSize);
+        tx.params = [branch, expDateIndex, vSize];
+        return fire(tx, onSent);
+    };
+    augur.tx.setReportsFilled = {
+        to: augur.contracts.expiringEvents,
+        method: "setReportsFilled",
+        signature: "iii",
+        send: true
+    };
+    augur.setReportsFilled = function (branch, expDateIndex, reportsFilled, onSent) {
+        var tx = copy(augur.tx.setVSize);
+        tx.params = [branch, expDateIndex, reportsFilled];
+        return fire(tx, onSent);
+    };
+    augur.tx.setReportsMask = {
+        to: augur.contracts.expiringEvents,
+        method: "setReportsMask",
+        signature: "iii",
+        send: true
+    };
+    augur.setReportsMask = function (branch, expDateIndex, reportsMask, onSent) {
+        var tx = copy(augur.tx.setReportsMask);
+        tx.params = [branch, expDateIndex, reportsMask];
+        return fire(tx, onSent);
+    };
+    augur.tx.setWeightedCenteredData = {
+        to: augur.contracts.expiringEvents,
+        method: "setWeightedCenteredData",
+        signature: "iii",
+        send: true
+    };
+    augur.setWeightedCenteredData = function (branch, expDateIndex, weightedCenteredData, onSent) {
+        var tx = copy(augur.tx.setWeightedCenteredData);
+        tx.params = [branch, expDateIndex, weightedCenteredData];
+        return fire(tx, onSent);
+    };
+    augur.tx.setCovarianceMatrixRow = {
+        to: augur.contracts.expiringEvents,
+        method: "setCovarianceMatrixRow",
+        signature: "iii",
+        send: true
+    };
+    augur.setCovarianceMatrixRow = function (branch, expDateIndex, covarianceMatrixRow, onSent) {
+        var tx = copy(augur.tx.setCovarianceMatrixRow);
+        tx.params = [branch, expDateIndex, covarianceMatrixRow];
+        return fire(tx, onSent);
+    };
+    augur.tx.setDeflated = {
+        to: augur.contracts.expiringEvents,
+        method: "setDeflated",
+        signature: "iii",
+        send: true
+    };
+    augur.setDeflated = function (branch, expDateIndex, covarianceMatrixRow, onSent) {
+        var tx = copy(augur.tx.setCovarianceMatrixRow);
+        tx.params = [branch, expDateIndex, covarianceMatrixRow];
+        return fire(tx, onSent);
+    };
+    augur.tx.setLoadingVector = {
+        to: augur.contracts.expiringEvents,
+        method: "setLoadingVector",
+        signature: "iii",
+        send: true
+    };
+    augur.setLoadingVector = function (branch, expDateIndex, loadingVector, onSent) {
+        var tx = copy(augur.tx.setLoadingVector);
+        tx.params = [branch, expDateIndex, loadingVector];
+        return fire(tx, onSent);
+    };
+    augur.tx.setScores = {
+        to: augur.contracts.expiringEvents,
+        method: "setScores",
+        signature: "iii",
+        send: true
+    };
+    augur.setScores = function (branch, expDateIndex, scores, onSent) {
+        var tx = copy(augur.tx.setScores);
+        tx.params = [branch, expDateIndex, scores];
+        return fire(tx, onSent);
+    };
+    augur.tx.setSetOne = {
+        to: augur.contracts.expiringEvents,
+        method: "setSetOne",
+        signature: "iii",
+        send: true
+    };
+    augur.setSetOne = function (branch, expDateIndex, setOne, onSent) {
+        var tx = copy(augur.tx.setOne);
+        tx.params = [branch, expDateIndex, setOne];
+        return fire(tx, onSent);
+    };
+    augur.tx.setSetTwo = {
+        to: augur.contracts.expiringEvents,
+        method: "setSetTwo",
+        signature: "iii",
+        send: true
+    };
+    augur.setSetTwo = function (branch, expDateIndex, setTwo, onSent) {
+        var tx = copy(augur.tx.setSetTwo);
+        tx.params = [branch, expDateIndex, setTwo];
+        return fire(tx, onSent);
+    };
+    augur.tx.setOld = {
+        to: augur.contracts.expiringEvents,
+        method: "setOld",
+        signature: "iii",
+        send: true
+    };
+    augur.setOld = function (branch, expDateIndex, setOld, onSent) {
+        var tx = copy(augur.tx.setOld);
+        tx.params = [branch, expDateIndex, setOld];
+        return fire(tx, onSent);
+    };
+    augur.tx.setNewOne = {
+        to: augur.contracts.expiringEvents,
+        method: "setNewOne",
+        signature: "iii",
+        send: true
+    };
+    augur.setNewOne = function (branch, expDateIndex, newOne, onSent) {
+        var tx = copy(augur.tx.setNewOne);
+        tx.params = [branch, expDateIndex, newOne];
+        return fire(tx, onSent);
+    };
+    augur.tx.setNewTwo = {
+        to: augur.contracts.expiringEvents,
+        method: "setNewTwo",
+        signature: "iii",
+        send: true
+    };
+    augur.setNewTwo = function (branch, expDateIndex, newTwo, onSent) {
+        var tx = copy(augur.tx.setNewTwo);
+        tx.params = [branch, expDateIndex, newTwo];
+        return fire(tx, onSent);
+    };
+    augur.tx.setAdjPrinComp = {
+        to: augur.contracts.expiringEvents,
+        method: "setAdjPrinComp",
+        signature: "iii",
+        send: true
+    };
+    augur.setAdjPrinComp = function (branch, expDateIndex, adjPrinComp, onSent) {
+        var tx = copy(augur.tx.setAdjPrinComp);
+        tx.params = [branch, expDateIndex, adjPrinComp];
+        return fire(tx, onSent);
+    };
+    augur.tx.setSmoothRep = {
+        to: augur.contracts.expiringEvents,
+        method: "setSmoothRep",
+        signature: "iii",
+        send: true
+    };
+    augur.setSmoothRep = function (branch, expDateIndex, smoothRep, onSent) {
+        var tx = copy(augur.tx.setSmoothRep);
+        tx.params = [branch, expDateIndex, smoothRep];
+        return fire(tx, onSent);
+    };
+    augur.tx.setOutcomesFinal = {
+        to: augur.contracts.expiringEvents,
+        method: "setOutcomesFinal",
+        signature: "iii",
+        send: true
+    };
+    augur.setOutcomesFinal = function (branch, expDateIndex, outcomesFinal, onSent) {
+        var tx = copy(augur.tx.setOutcomesFinal);
+        tx.params = [branch, expDateIndex, outcomesFinal];
+        return fire(tx, onSent);
+    };
+    augur.tx.setReportHash = {
+        to: augur.contracts.expiringEvents,
+        method: "setReportHash",
+        signature: "iii",
+        send: true
+    };
+    augur.setReportHash = function (branch, expDateIndex, reportHash, onSent) {
+        var tx = copy(augur.tx.setReportHash);
+        tx.params = [branch, expDateIndex, reportHash];
+        return fire(tx, onSent);
+    };
+
     // events.se
     augur.tx.getEventInfo = {
         to: augur.contracts.events,
@@ -1806,7 +2061,7 @@ var Augur = (function (augur) {
         to: augur.contracts.expiringEvents,
         method: "getReporterBallot",
         signature: "iii",
-        returns: "number[]"
+        returns: "hash[]"
     };
     augur.tx.getReport = {
         to: augur.contracts.expiringEvents,
@@ -2913,10 +3168,12 @@ var Augur = (function (augur) {
     augur.tx.dispatch = {
         to: augur.contracts.dispatch,
         method: "dispatch",
-        signature: "i",
+        // signature: "i", // EDIT
+        signature: "ii",
         send: true
     };
-    augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
+    // augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
+    augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
         // branch: sha256 or transaction object
         var step, pings, txhash, pingTx;
         if (branch.constructor === Object && branch.branchId) {
@@ -2925,7 +3182,8 @@ var Augur = (function (augur) {
             if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId;
         }
-        augur.tx.dispatch.params = branch;
+        // augur.tx.dispatch.params = branch;
+        augur.tx.dispatch.params = [branch, period];
         augur.tx.dispatch.send = false;
         augur.tx.dispatch.returns = "number";
         if (onSent) {

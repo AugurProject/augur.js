@@ -16,8 +16,6 @@ Augur.connect();
 
 var log = console.log;
 
-log(Augur.contracts.branches);
-
 function array_equal(a, b) {
     if (a === b) return true;
     if (a === null || b === null) return false;

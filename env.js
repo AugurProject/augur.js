@@ -8,5 +8,6 @@ GLOBAL.moment = require('moment');
 GLOBAL.Augur = require('./augur');
 GLOBAL.constants = require('./test/constants');
 GLOBAL.b = Augur.branches.dev;
+GLOBAL.ballot=[ 2, 1.5, 1.5, 1, 1.5, 1.5, 1 ]
 
 Augur.connect();

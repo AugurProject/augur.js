@@ -14,6 +14,8 @@ Augur.connect();
 
 var log = console.log;
 var TIMEOUT = 120000;
+var branch_id = Augur.branches.dev;
+var salt = "1337";
 
 // makeReports.se
 describe("makeReports.se", function () {

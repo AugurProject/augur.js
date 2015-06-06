@@ -14,7 +14,9 @@ Augur.connect();
 
 var log = console.log;
 
+var EXPIRING = true;
 var TIMEOUT = 240000;
+
 var events = [
     ["Will Jack win the June 2015 Augur Breakdancing Competition?", Augur.date_to_block("7-1-2015")],
     ["Will the Augur software sale clear $1M?", Augur.date_to_block("9-1-2015")],
@@ -28,11 +30,17 @@ var events = [
     ["Will the Larsen B ice shelf collapse by November 1, 2015?", Augur.date_to_block("11-2-2015")],
     ["Will it be revealed that Coinbase has a backdoor for the FBI?", Augur.date_to_block("11-1-2015")]
 ];
+
 describe("createMarket", function () {
     it.each(events, "creating event/market: %s", ['element'], function (element, next) {
         this.timeout(TIMEOUT);
         var event_description = element[0];
-        var expDate = element[1];
+        var expDate;
+        if (EXPIRING) {
+            expDate = Augur.blockNumber() + Math.round(Math.random() * 1000);
+        } else {
+            expDate = element[1];    
+        }
         var minValue = 0;
         var maxValue = 1;
         var numOutcomes = 2;
@@ -55,7 +63,7 @@ describe("createMarket", function () {
                 // assert.equal(r.numOutcomes, numOutcomes);
                 // assert.equal(r.description, event_description);
                 var alpha = "0.0079";
-                var initialLiquidity = 5000;
+                var initialLiquidity = 100;
                 var tradingFee = "0.02";
                 var events = [ r.id ];
                 var market_description = event_description;
