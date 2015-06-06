@@ -829,11 +829,11 @@ var Augur = (function (augur) {
         }
         try {
             if (JSON.stringify(augur.contracts) === JSON.stringify(augur.init_contracts)) {
-                if (chain && (chain === "1010101" || chain === 1010101 || chain === "10101" || chain == 10101)) {
+                if (chain && (chain === "1010101" || chain === 1010101 || chain === "10101" || chain === 10101)) {
                     augur.contracts = copy(augur.privatechain_contracts);
                 } else {
                     chain = json_rpc(postdata("version", [], "net_"));
-                    if (chain === "1010101" || chain === 1010101 || chain === "10101" || chain == 10101) {
+                    if (chain === "1010101" || chain === 1010101 || chain === "10101" || chain === 10101) {
                         augur.contracts = copy(augur.privatechain_contracts);
                     } else {
                         augur.contracts = copy(augur.testnet_contracts);
@@ -3199,8 +3199,8 @@ var Augur = (function (augur) {
         // signature: "i", // EDIT
         signature: "ii"
     };
-    // augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
-    augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
+    augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
+    // augur.dispatch = function (branch, period, onSent, onSuccess, onFailed) {
         // branch: sha256 or transaction object
         var step, pings, txhash, pingTx;
         if (branch.constructor === Object && branch.branchId) {
@@ -3209,70 +3209,70 @@ var Augur = (function (augur) {
             if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId;
         }
-        // augur.tx.dispatch.params = branch;
-        augur.tx.dispatch.params = [branch, period];
-        // augur.tx.dispatch.send = false;
-        augur.tx.dispatch.returns = "hash[]";
-        return fire(augur.tx.dispatch, onSent);
-        // augur.tx.dispatch.returns = "number";
-        // if (onSent) {
-        //     augur.invoke(augur.tx.dispatch, function (step) {
-        //         if (step) {
-        //             if (augur.ERRORS.dispatch[step]) {
-        //                 step = {
-        //                     error: step,
-        //                     message: augur.ERRORS.dispatch[step]
-        //                 };
-        //                 if (onFailed) onFailed(step);
-        //             } else {
-        //                 step = { step: step };
-        //             }
-        //             augur.tx.dispatch.send = true;
-        //             delete augur.tx.dispatch.returns;
-        //             augur.invoke(augur.tx.dispatch, function (txhash) {
-        //                 if (txhash) {
-        //                     step.txHash = txhash;
-        //                     if (onSent) onSent(step);
-        //                     if (onSuccess) {
-        //                         pings = 0;
-        //                         pingTx = function () {
-        //                             augur.getTx(txhash, function (tx) {
-        //                                 pings++;
-        //                                 if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
-        //                                     tx.step = step.step;
-        //                                     tx.txHash = tx.hash;
-        //                                     delete tx.hash;
-        //                                     onSuccess(tx);
-        //                                 } else {
-        //                                     if (pings < augur.TX_POLL_MAX) {
-        //                                         setTimeout(pingTx, 12000);
-        //                                     }
-        //                                 }
-        //                             });
-        //                         };
-        //                         pingTx();
-        //                     }
-        //                 }
-        //             });
-        //         }
-        //     });
-        // } else {
-        //     step = augur.invoke(augur.tx.dispatch);
-        //     if (step) {
-        //         step = { step: step };
-        //         if (augur.ERRORS.dispatch[step]) {
-        //             if (onFailed) onFailed(step);
-        //         } else {
-        //             augur.tx.dispatch.send = true;
-        //             delete augur.tx.dispatch.returns;
-        //             txhash = augur.invoke(augur.tx.dispatch);
-        //             if (txhash) {
-        //                 step.txHash = txhash;
-        //                 return step;
-        //             }
-        //         }
-        //     }
-        // }
+        augur.tx.dispatch.params = branch;
+        // augur.tx.dispatch.params = [branch, period];
+        augur.tx.dispatch.send = false;
+        // augur.tx.dispatch.returns = "hash[]";
+        // return fire(augur.tx.dispatch, onSent);
+        augur.tx.dispatch.returns = "number";
+        if (onSent) {
+            augur.invoke(augur.tx.dispatch, function (step) {
+                if (step) {
+                    if (augur.ERRORS.dispatch[step]) {
+                        step = {
+                            error: step,
+                            message: augur.ERRORS.dispatch[step]
+                        };
+                        if (onFailed) onFailed(step);
+                    } else {
+                        step = { step: step };
+                    }
+                    augur.tx.dispatch.send = true;
+                    delete augur.tx.dispatch.returns;
+                    augur.invoke(augur.tx.dispatch, function (txhash) {
+                        if (txhash) {
+                            step.txHash = txhash;
+                            if (onSent) onSent(step);
+                            if (onSuccess) {
+                                pings = 0;
+                                pingTx = function () {
+                                    augur.getTx(txhash, function (tx) {
+                                        pings++;
+                                        if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
+                                            tx.step = step.step;
+                                            tx.txHash = tx.hash;
+                                            delete tx.hash;
+                                            onSuccess(tx);
+                                        } else {
+                                            if (pings < augur.TX_POLL_MAX) {
+                                                setTimeout(pingTx, 12000);
+                                            }
+                                        }
+                                    });
+                                };
+                                pingTx();
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            step = augur.invoke(augur.tx.dispatch);
+            if (step) {
+                step = { step: step };
+                if (augur.ERRORS.dispatch[step]) {
+                    if (onFailed) onFailed(step);
+                } else {
+                    augur.tx.dispatch.send = true;
+                    delete augur.tx.dispatch.returns;
+                    txhash = augur.invoke(augur.tx.dispatch);
+                    if (txhash) {
+                        step.txHash = txhash;
+                        return step;
+                    }
+                }
+            }
+        }
     };
 
     /***************************
