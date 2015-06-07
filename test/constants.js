@@ -65,6 +65,13 @@ constants.chain1010101 = {
         loopy: "enode://035b7845dfa0c0980112abdfdf4dc11087f56b77e10d2831f186ca12bc00f5b9327c427d03d9cd8106db01488905fb2200b5706f9e41c5d75885057691d9997c@[::]:30303",
         tinybike: "enode://4014c7fa323dafbb1ada241b74ce16099efde03f994728a55b9ff09a9a80664920045993978de85cb7f6c2ac7e9218694554433f586c1290a8b8faa186ce072c@[::]:30303"
     }
-}
+};
+constants.chain10101 = {
+    accounts: {
+        loopy: "0xdde34adac615ca68a11a1f9a5015b75c2a92521a",
+        tinybike: "0x639b41c4d3d399894f2a57894278e1653e7cd24c",
+        tinybike_new: "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b"
+    }
+};
 
 if (MODULAR) module.exports = constants;
