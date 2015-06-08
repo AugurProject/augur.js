@@ -11,14 +11,12 @@ var fs = require("fs");
 var _ = require("lodash");
 var Augur = require("../augur");
 var constants = require("./constants");
-
 require('it-each')({ testPerIteration: true });
 
 Augur.connect();
 
 var log = console.log;
 var TIMEOUT = 120000;
-
 var branch_id = Augur.branches.dev;
 var minValue = 0;
 var maxValue = 1;

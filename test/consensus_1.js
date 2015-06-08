@@ -8,7 +8,6 @@
 var assert = require("assert");
 var fs = require('fs');
 var Augur = require("../augur");
-
 require('it-each')({ testPerIteration: true });
 
 Augur.connect();

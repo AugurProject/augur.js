@@ -1511,7 +1511,8 @@ var Augur = (function (augur) {
     augur.tx.redeem_center = {
         to: augur.contracts.redeem_center,
         method: "center",
-        signature: "iiiii"
+        signature: "iiiii",
+        returns: "number"
     };
     augur.redeem_center = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_center);
@@ -1535,8 +1536,19 @@ var Augur = (function (augur) {
         method: "blank",
         signature: "iiiii"
     };
+    augur.tx.redeem_loadings = {
+        to: augur.contracts.redeem_score,
+        method: "loadings",
+        signature: "iiiii",
+        returns: "number"
+    };
     augur.redeem_blank = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_blank);
+        tx.params = [branch, period, num_events, num_reports, flatsize];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
+    };
+    augur.redeem_loadings = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
+        var tx = copy(augur.tx.redeem_loadings);
         tx.params = [branch, period, num_events, num_reports, flatsize];
         return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
@@ -1548,9 +1560,26 @@ var Augur = (function (augur) {
         signature: "iii",
         returns: "number[]"
     };
+    augur.tx.loadings = {
+        to: augur.contracts.score,
+        method: "loadings",
+        signature: "aaaii",
+        returns: "number[]"
+    };
     augur.blank = function (components_remaining, max_iterations, num_events, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.blank);
         tx.params = [components_remaining, max_iterations, num_events];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
+    };
+    augur.loadings = function (iv, wcd, reputation, num_reports, num_events, onSent, onSuccess, onFailed) {
+        var tx = copy(augur.tx.loadings);
+        tx.params = [
+            Augur.fix(iv, "hex"),
+            Augur.fix(wcd, "hex"),
+            Augur.fix(reputation, "hex"),
+            num_reports,
+            num_events
+        ];
         return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
@@ -2194,7 +2223,7 @@ var Augur = (function (augur) {
         to: augur.contracts.expiringEvents,
         method: "getWeightedCenteredData",
         signature: "ii",
-        returns: "number[]"
+        returns: "unfix[]"
     };
     augur.tx.getCovarianceMatrixRow = {
         to: augur.contracts.expiringEvents,

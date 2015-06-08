@@ -13,13 +13,8 @@ Augur.connect();
 
 var log = console.log;
 var TIMEOUT = 120000;
-
 var branch = Augur.branches.dev;
 var period = Augur.getVotePeriod(branch);
-var num_events = Augur.getNumberEvents(branch, period);
-var num_reports = Augur.getNumberReporters(branch);
-var step = Augur.getStep(branch);
-var substep = Augur.getSubstep(branch);
 var num_events = Augur.getNumberEvents(branch, period);
 var num_reports = Augur.getNumberReporters(branch);
 var flatsize = num_events * num_reports;
@@ -27,9 +22,7 @@ var flatsize = num_events * num_reports;
 describe("set reporter ballots", function () {
 
     it("set coinbase report", function (done) {
-
         var i, ballot, reputation;
-
         this.timeout(TIMEOUT);
         ballot = new Array(num_events);
         for (i = 0; i < num_events; ++i) {
@@ -52,11 +45,10 @@ describe("set reporter ballots", function () {
             reputation,
             function (r) {
                 // sent
-                // console.log("sent: ", r);
             },
             function (r) {
                 // success
-                // console.log("success:", r);
+                assert.equal(r.callReturn, "0x01");
                 done();
             },
             function (r) {
@@ -68,9 +60,7 @@ describe("set reporter ballots", function () {
     });
 
     it("set secondary report", function (done) {
-
         var i, ballot, reputation;
-
         this.timeout(TIMEOUT);
         ballot = new Array(num_events);
         for (i = 0; i < num_events; ++i) {
@@ -99,11 +89,10 @@ describe("set reporter ballots", function () {
             reputation,
             function (r) {
                 // sent
-                // log("sent: ", r);
             },
             function (r) {
                 // success
-                // log("success:", r);
+                assert.equal(r.callReturn, "0x01");
                 done();
             },
             function (r) {

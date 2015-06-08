@@ -5,12 +5,9 @@
 
 "use strict";
 
-var BigNumber = require("bignumber.js");
 var assert = require("assert");
 var Augur = require("../augur");
-var _ = require("lodash");
 var constants = require("./constants");
-
 require('it-each')({ testPerIteration: true });
 
 Augur.connect();
@@ -18,28 +15,16 @@ Augur.connect();
 var log = console.log;
 var TIMEOUT = 120000;
 
-var amount = "1";
 var branch = Augur.branches.dev;
-var branch_number = "1";
-var participant_id = Augur.coinbase;
-var participant_number = "1";
-var outcome = Augur.NO.toString();
-var reporter_index = "0";
-var reporter_address = Augur.coinbase;
-var salt = "1010101";
-
 var period = Augur.getVotePeriod(branch);
 var num_events = Augur.getNumberEvents(branch, period);
 var num_reports = Augur.getNumberReporters(branch);
-var step = Augur.getStep(branch);
-var substep = Augur.getSubstep(branch);
-var num_events = Augur.getNumberEvents(branch, period);
-var num_reports = Augur.getNumberReporters(branch);
 var flatsize = num_events * num_reports;
+var reputation_vector = [
+    Augur.getRepBalance(branch, Augur.coinbase),
+    Augur.getRepBalance(branch, constants.chain10101.accounts.tinybike_new)
+];
 var ballot = new Array(num_events);
-
-var reputation = Augur.getRepBalance(branch, Augur.coinbase);
-var rep_new = Augur.getRepBalance(branch, constants.chain10101.accounts.tinybike_new);
 var reports = new Array(flatsize);
 for (var i = 0; i < num_reports; ++i) {
     ballot = Augur.getReporterBallot(branch, period, Augur.getReporterID(branch, i));
@@ -57,7 +42,6 @@ for (var i = 0; i < num_events; ++i) {
     scaled_min.push(1);
     scaled_max.push(2);
 }
-var reputation_vector = [reputation, rep_new];
 
 function fold(arr, num_cols) {
     var folded = [];
@@ -78,7 +62,7 @@ function fold(arr, num_cols) {
     return folded;
 }
 
-describe("Test PCA consensus", function () {
+describe("testing consensus/interpolate", function () {
 
     it("interpolate", function (done) {
         this.timeout(TIMEOUT);
@@ -95,11 +79,9 @@ describe("Test PCA consensus", function () {
             scaled_min,
             function (r) {
                 // sent
-                // log("interpolate sent:", r);
             },
             function (r) {
                 // success
-                log("ok");
                 var interpolated = Augur.unfix(r.callReturn, "number");
                 var reports_filled = fold(interpolated.slice(0, flatsize), num_events);
                 var reports_mask = fold(interpolated.slice(flatsize, 2*flatsize), num_events);
@@ -117,11 +99,6 @@ describe("Test PCA consensus", function () {
 
     it("redeem_interpolate", function (done) {
         this.timeout(TIMEOUT);
-
-        Augur.setStep(branch, 0);
-        Augur.setSubstep(branch, 0);
-
-        Augur.tx.redeem_interpolate.send = false;
         Augur.redeem_interpolate(
             branch,
             period,
@@ -130,12 +107,10 @@ describe("Test PCA consensus", function () {
             flatsize,
             function (r) {
                 // sent
-                // log("redeem_interpolate sent:", r);
             },
             function (r) {
                 // success
                 // var i, reports_filled, reports_mask, v_size;
-                log("redeem_interpolate success:", r);
                 assert.equal(r.callReturn, "0x01");
                 // reports_filled = Augur.getReportsFilled(branch, period);
                 // for (i = 0; i < num_events; ++i) {
