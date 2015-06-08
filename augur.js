@@ -1273,10 +1273,10 @@ var Augur = (function (augur) {
      * Call-send-confirm callback sequence *
      ***************************************/
 
-    function check_blockhash(tx, numeric, txhash, count, callback) {
+    function check_blockhash(tx, callreturn, txhash, count, callback) {
         var tx_timeout;
         if (tx && tx.blockHash && augur.bignum(tx.blockHash).toNumber() !== 0) {
-            tx.callReturn = numeric;
+            tx.callReturn = callreturn;
             tx.txHash = tx.hash;
             delete tx.hash;
             clearTimeout(tx_timeout);
@@ -1285,18 +1285,18 @@ var Augur = (function (augur) {
         } else {
             if (count !== undefined && count < augur.TX_POLL_MAX) {
                 tx_timeout = setTimeout(function () {
-                    tx_notify(count + 1, numeric, txhash, callback);
+                    tx_notify(count + 1, callreturn, txhash, callback);
                 }, augur.TX_POLL_INTERVAL);
             }
         }
     }
-    function tx_notify(count, numeric, txhash, callback) {
+    function tx_notify(count, callreturn, txhash, callback) {
         if (callback) {
             augur.getTx(txhash, function (tx) {
-                check_blockhash(tx, numeric, txhash, count, callback);
+                check_blockhash(tx, callreturn, txhash, count, callback);
             });
         } else {
-            check_blockhash(augur.getTx(txhash), numeric, txhash, count);
+            check_blockhash(augur.getTx(txhash), callreturn, txhash, count);
         }
     }
     function send_confirm(tx, callreturn, onSent, onSuccess, onFailed) {
@@ -1332,13 +1332,13 @@ var Augur = (function (augur) {
                         augur.invoke(tx, function (txhash) {
                             if (txhash) {
                                 onSent(txhash);
-                                if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
+                                if (onSuccess) tx_notify(0, callreturn, txhash, onSuccess);
                             }
                         });
                     } else {
                         txhash = augur.invoke(tx);
                         if (txhash) {
-                            if (onSuccess) tx_notify(0, numeric, txhash, onSuccess);
+                            if (onSuccess) tx_notify(0, callreturn, txhash, onSuccess);
                             return txhash;
                         }
                     }
@@ -1471,7 +1471,8 @@ var Augur = (function (augur) {
     augur.tx.interpolate = {
         to: augur.contracts.interpolate,
         method: "interpolate",
-        signature: "aaaaa"
+        signature: "aaaaa",
+        returns: "number[]"
     };
     augur.interpolate = function (reports, reputation, scaled, scaled_max, scaled_min, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.interpolate);

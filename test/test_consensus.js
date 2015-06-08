@@ -49,7 +49,6 @@ for (var i = 0; i < num_reports; ++i) {
         }
     }
 }
-log(reports);
 var scaled = [];
 var scaled_min = [];
 var scaled_max = [];
@@ -64,6 +63,7 @@ var reputation_vector = [reputation, rep_new];
 describe("Test PCA consensus", function () {
 
     it("interpolate", function (done) {
+        this.timeout(TIMEOUT);
         assert.equal(reports.length, flatsize);
         assert.equal(reputation_vector.length, 2);
         assert.equal(scaled.length, num_events);
@@ -77,11 +77,11 @@ describe("Test PCA consensus", function () {
             scaled_min,
             function (r) {
                 // sent
-                log("interpolate sent:", r);
+                // log("interpolate sent:", r);
             },
             function (r) {
                 // success
-                log("interpolate success:", r);
+                log("interpolate success:", r.callReturn);
                 done();
             },
             function (r) {

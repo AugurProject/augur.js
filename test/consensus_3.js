@@ -42,7 +42,6 @@ describe("set reporter ballots", function () {
                 ballot[i] = 1.0;
             }
         }
-        console.log(ballot);
         reputation = Augur.getRepBalance(branch, Augur.coinbase);
         assert.equal(Augur.getReporterID(branch, 0), Augur.coinbase);
         Augur.setReporterBallot(
