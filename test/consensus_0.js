@@ -27,6 +27,7 @@ var num_events = 10;
 
 describe("creating events for consensus", function () {
     var events = [];
+    fs.writeFileSync("events.dat", "");
     it.each(_.range(0, num_events), "creating event %s", ['element'], function (element, next) {
         this.timeout(TIMEOUT);
         var event_description = Math.random().toString(36).substring(4);

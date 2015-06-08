@@ -1284,6 +1284,7 @@ var Augur = (function (augur) {
             else return tx;
         } else {
             if (count !== undefined && count < augur.TX_POLL_MAX) {
+                clearTimeout(tx_timeout);
                 tx_timeout = setTimeout(function () {
                     tx_notify(count + 1, callreturn, txhash, callback);
                 }, augur.TX_POLL_INTERVAL);
