@@ -20,7 +20,6 @@ var log = console.log;
 var TIMEOUT = 120000;
 
 var branch_id = Augur.branches.dev;
-var expDate = Augur.blockNumber() + 25;
 var minValue = 0;
 var maxValue = 1;
 var numOutcomes = 2;
@@ -34,7 +33,7 @@ describe("creating events for consensus", function () {
         Augur.createEvent({
             branchId: branch_id,
             description: event_description,
-            expDate: expDate,
+            expDate: Augur.blockNumber() + 25,
             minValue: minValue,
             maxValue: maxValue,
             numOutcomes: numOutcomes,
@@ -42,11 +41,7 @@ describe("creating events for consensus", function () {
 
             },
             onSuccess: function (r) {
-                events.push(r.id);
-                if (parseInt(element) === num_events - 1) {
-                    log("writing events to events.dat...");
-                    fs.writeFileSync("events.dat", events.join("\n"));
-                }
+                fs.appendFile("events.dat", r.id + "\n");
                 next();
             },
             onFailed: function (r) {

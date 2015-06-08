@@ -19,13 +19,15 @@ describe("Ethereum JSON-RPC", function () {
         });
     });
     describe("net_version", function () {
-        it("should be version 0", function () {
-            assert.equal(Augur.rpc("net_version"), "0");
+        it("should be version 0, 10101, or 1010101", function () {
+            assert(Augur.rpc("net_version") === "0"
+                || Augur.rpc("net_version") === "10101"
+                || Augur.rpc("net_version") === "1010101");
         });
     });
     describe("eth_protocolVersion", function () {
-        it("should be version 60", function () {
-            assert.equal(Augur.eth("protocolVersion"), "60");
+        it("should be >= version 60", function () {
+            assert(parseInt(Augur.eth("protocolVersion")) >= 60);
         });
     });
     describe("eth_coinbase", function () {
@@ -66,8 +68,8 @@ describe("Ethereum JSON-RPC", function () {
         });
     });      
     describe("blockNumber", function () {
-        it("should be a number greater than or equal to 200,000", function () {
-            assert(parseFloat(Augur.blockNumber()) >= 200000);
+        it("should be a number greater than or equal to 0", function () {
+            assert(parseFloat(Augur.blockNumber()) >= 0);
         });
     });
     describe("balance", function () {
@@ -84,6 +86,7 @@ describe("Ethereum JSON-RPC", function () {
     });
     describe("peerCount", function () {
         it("should be a number greater than or equal to 0", function () {
+            this.timeout(12000);
             assert(parseInt(Augur.peerCount()) >= 0);
         });
     });

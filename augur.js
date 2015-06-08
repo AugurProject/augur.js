@@ -192,7 +192,7 @@ var Augur = (function (augur) {
         closeMarketTwo: "0x6c8229f1f83d4a31c0a8174d9031dbe8ae6d55bb",
         closeMarketFour: "0x06d1447b5e34fe3c9162013c4441bdb6533f749a",
         closeMarketEight: "0x6d93ab15603f46156e9f62add9aba1c8661e2100",
-        dispatch: "0x0f762db0798ac0d01eb8010dcc8e152e5daac20b",
+        dispatch: "0x8b6f2dbc468b4b10b63399e51686acda1723f202",
 
         // Consensus
         statistics: "0xe03d3e1d12df5c939c49804e3876608a92c24aba",
@@ -202,7 +202,7 @@ var Augur = (function (augur) {
         adjust: "0x5d4e8f7c9a65e81554d1e1ffcccec22ddb25d30e",
         resolve: "0x088bc955a71080aa16ce7af96ff78d5e9c74068f",
         payout: "0x74421a048a2038626e00ac6ccbaf0e7e5fb97e20",
-        redeem_interpolate: "0x34f9a16d94f53ea51dd3278de3518e962c56b08a",
+        redeem_interpolate: "0xf7672bfd4a47e121aeeb168d8468578e0df253b0",
         redeem_center: "0x9589e72650eaec19bdc7e4878281cc7e7ae67aeb",
         redeem_score: "0x1d153bd040d2de588389711b4a01c0a040f8ca7d",
         redeem_adjust: "0x28274751260df9398accae6821e8d7ae3b28d5c0",
@@ -1463,10 +1463,10 @@ var Augur = (function (augur) {
         method: "interpolate",
         signature: "iiiii"
     };
-    augur.redeem_interpolate = function (branch, period, num_events, num_reports, flatsize, onSent) {
+    augur.redeem_interpolate = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_interpolate);
         tx.params = [branch, period, num_events, num_reports, flatsize];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // interpolate.se
@@ -1475,7 +1475,7 @@ var Augur = (function (augur) {
         method: "interpolate",
         signature: "aaaaa"
     };
-    augur.interpolate = function (reports, reputation, scaled, scaled_max, scaled_min, onSent) {
+    augur.interpolate = function (reports, reputation, scaled, scaled_max, scaled_min, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.interpolate);
         tx.params = [
             Augur.fix(reports, "hex"),
@@ -1484,7 +1484,7 @@ var Augur = (function (augur) {
             scaled_max,
             scaled_min
         ];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // center.se
@@ -1493,7 +1493,7 @@ var Augur = (function (augur) {
         method: "center",
         signature: "aaaaaii"
     };
-    augur.center = function (reports, reputation, scaled, scaled_max, scaled_min, max_iterations, max_components, onSent) {
+    augur.center = function (reports, reputation, scaled, scaled_max, scaled_min, max_iterations, max_components, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.center);
         tx.params = [
             Augur.fix(reports, "hex"),
@@ -1504,7 +1504,7 @@ var Augur = (function (augur) {
             max_iterations,
             max_components
         ];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // redeem_center.se
@@ -1513,20 +1513,20 @@ var Augur = (function (augur) {
         method: "center",
         signature: "iiiii"
     };
-    augur.redeem_center = function (branch, period, num_events, num_reports, flatsize, onSent) {
+    augur.redeem_center = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_center);
         tx.params = [branch, period, num_events, num_reports, flatsize];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
     augur.tx.redeem_covariance = {
         to: augur.contracts.redeem_center,
         method: "covariance",
         signature: "iiiii"
     };
-    augur.redeem_covariance = function (branch, period, num_events, num_reports, flatsize, onSent) {
+    augur.redeem_covariance = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_covariance);
         tx.params = [branch, period, num_events, num_reports, flatsize];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // redeem_score.se
@@ -1535,10 +1535,10 @@ var Augur = (function (augur) {
         method: "blank",
         signature: "iiiii"
     };
-    augur.redeem_blank = function (branch, period, num_events, num_reports, flatsize, onSent) {
+    augur.redeem_blank = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_blank);
         tx.params = [branch, period, num_events, num_reports, flatsize];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // score.se
@@ -1548,10 +1548,10 @@ var Augur = (function (augur) {
         signature: "iii",
         returns: "number[]"
     };
-    augur.blank = function (components_remaining, max_iterations, num_events, onSent) {
+    augur.blank = function (components_remaining, max_iterations, num_events, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.blank);
         tx.params = [components_remaining, max_iterations, num_events];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // resolve.se
@@ -1561,7 +1561,7 @@ var Augur = (function (augur) {
         signature: "aaaaaii",
         returns: "number[]"
     };
-    augur.resolve = function (smooth_rep, reports, scaled, scaled_max, scaled_min, num_reports, num_events, onSent) {
+    augur.resolve = function (smooth_rep, reports, scaled, scaled_max, scaled_min, num_reports, num_events, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.resolve);
         tx.params = [
             Augur.fix(smooth_rep),
@@ -1572,7 +1572,7 @@ var Augur = (function (augur) {
             num_reports,
             num_events
         ];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // redeem_resolve.se
@@ -1581,10 +1581,10 @@ var Augur = (function (augur) {
         method: "resolve",
         signature: "iiiii"
     };
-    augur.redeem_resolve = function (branch, period, num_events, num_reports, flatsize, onSent) {
+    augur.redeem_resolve = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_resolve);
         tx.params = [branch, period, num_events, num_reports, flatsize];
-        return fire(tx, onSent);
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     // branches.se
@@ -3266,7 +3266,7 @@ var Augur = (function (augur) {
     augur.tx.test_dispatch = {
         to: augur.contracts.dispatch,
         method: "dispatch",
-        signature: "ii",
+        signature: "i",
         returns: "hash[]"
     };
     augur.tx.dispatch = {
@@ -3275,21 +3275,18 @@ var Augur = (function (augur) {
         signature: "i",
         returns: "number"
     };
-    augur.test_dispatch = function (branch, period, onSent, onSuccess, onFailed) {
-        if (branch.constructor === Object && branch.period && branch.branchId) {
-            period = branch.period;
+    augur.test_dispatch = function (branch, onSent) {
+        if (branch.constructor === Object && branch.branchId) {
             if (branch.onSent) onSent = branch.onSent;
-            if (branch.onSuccess) onSuccess = branch.onSuccess;
-            if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId;
         }
         var tx = copy(augur.tx.test_dispatch);
-        tx.params = [branch, period];
-        return call_send_confirm(tx, onSent, onSuccess, onFailed);
+        tx.params = branch;
+        return fire(tx, onSent);
     };
     augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
         // branch: sha256 or transaction object
-        var tx, step, pings, txhash, pingTx;
+        var tx, step, pings, txhash, pingTx, err;
         if (branch.constructor === Object && branch.branchId) {
             if (branch.onSent) onSent = branch.onSent;
             if (branch.onSuccess) onSuccess = branch.onSuccess;
@@ -3303,42 +3300,60 @@ var Augur = (function (augur) {
         if (onSent) {
             augur.invoke(tx, function (step) {
                 if (step) {
-                    if (augur.ERRORS.dispatch[step]) {
-                        step = {
-                            error: step,
-                            message: augur.ERRORS.dispatch[step]
-                        };
-                        if (onFailed) onFailed(step);
-                    } else {
-                        step = { step: step };
-                    }
-                    tx.send = true;
-                    delete tx.returns;
-                    augur.invoke(tx, function (txhash) {
-                        if (txhash) {
-                            step.txHash = txhash;
-                            if (onSent) onSent(step);
-                            if (onSuccess) {
-                                pings = 0;
-                                pingTx = function () {
-                                    augur.getTx(txhash, function (tx) {
-                                        pings++;
-                                        if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
-                                            tx.step = step.step;
-                                            tx.txHash = tx.hash;
-                                            delete tx.hash;
-                                            onSuccess(tx);
-                                        } else {
-                                            if (pings < augur.TX_POLL_MAX) {
-                                                setTimeout(pingTx, 12000);
-                                            }
-                                        }
-                                    });
-                                };
-                                pingTx();
-                            }
+                    if (step.error) {
+                        if (onFailed) {
+                            onFailed(step);
+                        } else {
+                            return step;
                         }
-                    });
+                    } else if (augur.ERRORS[step]) {
+                        err = {
+                            error: step,
+                            message: augur.ERRORS[step]
+                        };
+                        if (onFailed) {
+                            onFailed(err);
+                        } else {
+                            return err;
+                        }
+                    } else {
+                        if (augur.ERRORS.dispatch[step]) {
+                            step = {
+                                error: step,
+                                message: augur.ERRORS.dispatch[step]
+                            };
+                            if (onFailed) onFailed(step);
+                        } else {
+                            step = { step: step };
+                        }
+                        tx.send = true;
+                        delete tx.returns;
+                        augur.invoke(tx, function (txhash) {
+                            if (txhash) {
+                                step.txHash = txhash;
+                                if (onSent) onSent(step);
+                                if (onSuccess) {
+                                    pings = 0;
+                                    pingTx = function () {
+                                        augur.getTx(txhash, function (tx) {
+                                            pings++;
+                                            if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
+                                                tx.step = step.step;
+                                                tx.txHash = tx.hash;
+                                                delete tx.hash;
+                                                onSuccess(tx);
+                                            } else {
+                                                if (pings < augur.TX_POLL_MAX) {
+                                                    setTimeout(pingTx, 12000);
+                                                }
+                                            }
+                                        });
+                                    };
+                                    pingTx();
+                                }
+                            }
+                        });
+                    }
                 }
             });
         } else {
