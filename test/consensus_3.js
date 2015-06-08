@@ -19,6 +19,18 @@ var num_events = Augur.getNumberEvents(branch, period);
 var num_reports = Augur.getNumberReporters(branch);
 var flatsize = num_events * num_reports;
 
+// var ballot = new Array(num_events);
+// for (var i = 0; i < num_events; ++i) {
+//     ballot[i] = Math.random();
+//     if (ballot[i] > 0.6) {
+//         ballot[i] = 2.0;
+//     } else if (ballot[i] >= 0.4) {
+//         ballot[i] = 1.5;
+//     } else {
+//         ballot[i] = 1.0;
+//     }
+// }
+
 describe("set reporter ballots", function () {
 
     it("set coinbase report", function (done) {
@@ -35,6 +47,7 @@ describe("set reporter ballots", function () {
                 ballot[i] = 1.0;
             }
         }
+        log(ballot);
         reputation = Augur.getRepBalance(branch, Augur.coinbase);
         assert.equal(Augur.getReporterID(branch, 0), Augur.coinbase);
         Augur.setReporterBallot(
@@ -73,6 +86,7 @@ describe("set reporter ballots", function () {
                 ballot[i] = 1.0;
             }
         }
+        log(ballot);
         reputation = Augur.getRepBalance(
             branch,
             constants.chain10101.accounts.tinybike_new

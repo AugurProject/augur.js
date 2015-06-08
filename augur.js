@@ -1608,7 +1608,8 @@ var Augur = (function (augur) {
     augur.tx.redeem_resolve = {
         to: augur.contracts.redeem_resolve,
         method: "resolve",
-        signature: "iiiii"
+        signature: "iiiii",
+        returns: "number"
     };
     augur.redeem_resolve = function (branch, period, num_events, num_reports, flatsize, onSent, onSuccess, onFailed) {
         var tx = copy(augur.tx.redeem_resolve);
@@ -2182,7 +2183,7 @@ var Augur = (function (augur) {
         to: augur.contracts.expiringEvents,
         method: "getTotalRepReported",
         signature: "ii",
-        returns: "unfix"
+        returns: "number"
     };
     augur.tx.getReporterBallot = {
         to: augur.contracts.expiringEvents,
