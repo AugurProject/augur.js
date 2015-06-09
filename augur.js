@@ -106,9 +106,6 @@ var Augur = (function (augur) {
             "-3": "too many outcomes",
             "-4": "not enough money or market already exists"
         },
-        dispatch: {
-            "-1": "quorum not met"
-        },
         sendReputation: {
             "0": "not enough reputation",
             "-1": "Your reputation account was just created! Earn some "+
@@ -3423,97 +3420,16 @@ var Augur = (function (augur) {
     };
     augur.dispatch = function (branch, onSent, onSuccess, onFailed) {
         // branch: sha256 or transaction object
-        var tx, step, pings, txhash, pingTx, err;
+        // var tx, step, pings, txhash, pingTx, err;
         if (branch.constructor === Object && branch.branchId) {
             if (branch.onSent) onSent = branch.onSent;
             if (branch.onSuccess) onSuccess = branch.onSuccess;
             if (branch.onFailed) onFailed = branch.onFailed;
             branch = branch.branchId;
         }
-        tx = copy(augur.tx.dispatch);
+        var tx = copy(augur.tx.dispatch);
         tx.params = branch;
-        tx.send = false;
-        tx.returns = "number";
-        if (onSent) {
-            augur.invoke(tx, function (step) {
-                if (step) {
-                    if (step.error) {
-                        if (onFailed) {
-                            onFailed(step);
-                        } else {
-                            return step;
-                        }
-                    } else if (augur.ERRORS[step]) {
-                        err = {
-                            error: step,
-                            message: augur.ERRORS[step]
-                        };
-                        if (onFailed) {
-                            onFailed(err);
-                        } else {
-                            return err;
-                        }
-                    } else {
-                        if (augur.ERRORS.dispatch[step]) {
-                            step = {
-                                error: step,
-                                message: augur.ERRORS.dispatch[step]
-                            };
-                            if (onFailed) onFailed(step);
-                        } else {
-                            step = { step: step };
-                        }
-                        tx.send = true;
-                        delete tx.returns;
-                        augur.invoke(tx, function (txhash) {
-                            if (txhash) {
-                                if (txhash.constructor === Object && txhash.error) {
-                                    if (onFailed) onFailed(txhash);
-                                } else {
-                                    step.txHash = txhash;
-                                    if (onSent) onSent(step);
-                                    if (onSuccess) {
-                                        pings = 0;
-                                        pingTx = function () {
-                                            augur.getTx(txhash, function (tx) {
-                                                pings++;
-                                                if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
-                                                    tx.step = step.step;
-                                                    tx.txHash = tx.hash;
-                                                    delete tx.hash;
-                                                    onSuccess(tx);
-                                                } else {
-                                                    if (pings < augur.TX_POLL_MAX) {
-                                                        setTimeout(pingTx, augur.TX_POLL_INTERVAL);
-                                                    }
-                                                }
-                                            });
-                                        };
-                                        pingTx();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        } else {
-            step = augur.invoke(tx);
-            if (step) {
-                step = { step: step };
-                if (augur.ERRORS.dispatch[step]) {
-                    if (onFailed) onFailed(step);
-                } else {
-                    tx.send = true;
-                    delete tx.returns;
-                    txhash = augur.invoke(tx);
-                    if (txhash) {
-                        step.txHash = txhash;
-                        return step;
-                    }
-                }
-            }
-        }
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
     };
 
     /***************************
