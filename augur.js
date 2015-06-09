@@ -1377,12 +1377,22 @@ var Augur = (function (augur) {
                     } else {
                         return err;
                     }
+                } else if (callreturn.constructor === Object && callreturn.error) {
+                    if (onFailed) {
+                        onFailed(callreturn);
+                    } else {
+                        return callreturn;
+                    }
                 } else {
                     if (onSent) {
                         augur.invoke(tx, function (txhash) {
                             if (txhash) {
-                                onSent(txhash);
-                                if (onSuccess) tx_notify(0, callreturn, txhash, onSuccess);
+                                if (txhash.constructor === Object && txhash.error) {
+                                    if (onFailed) onFailed(txhash);
+                                } else {
+                                    onSent(txhash);
+                                    if (onSuccess) tx_notify(0, callreturn, txhash, onSuccess);
+                                }
                             }
                         });
                     } else {
@@ -3252,28 +3262,32 @@ var Augur = (function (augur) {
                         augur.invoke(augur.tx.createEvent, function (txhash) {
                             var pings, pingTx;
                             if (txhash) {
-                                event.txHash = txhash;
-                                if (onSent) onSent(event);
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getEventInfo(eventID, function (eventInfo) {
-                                            pings++;
-                                            if (eventInfo && eventInfo !== "0x" && eventInfo.expirationDate && eventInfo.expirationDate !== 0 && eventInfo.expirationDate !== "0") {
-                                                event.branch = eventInfo.branch;
-                                                event.expirationDate = eventInfo.expirationDate;
-                                                event.outcome = eventInfo.outcome;
-                                                event.minValue = eventInfo.minValue;
-                                                event.maxValue = eventInfo.maxValue;
-                                                event.numOutcomes = eventInfo.numOutcomes;
-                                                event.description = eventInfo.description;
-                                                onSuccess(event);
-                                            } else {
-                                                if (pings < augur.TX_POLL_MAX) setTimeout(pingTx, 12000);
-                                            }
-                                        });
-                                    };
-                                    pingTx();
+                                if (txhash.constructor === Object && txhash.error) {
+                                    if (onFailed) onFailed(txhash);
+                                } else {
+                                    event.txHash = txhash;
+                                    if (onSent) onSent(event);
+                                    if (onSuccess) {
+                                        pings = 0;
+                                        pingTx = function () {
+                                            augur.getEventInfo(eventID, function (eventInfo) {
+                                                pings++;
+                                                if (eventInfo && eventInfo !== "0x" && eventInfo.expirationDate && eventInfo.expirationDate !== 0 && eventInfo.expirationDate !== "0") {
+                                                    event.branch = eventInfo.branch;
+                                                    event.expirationDate = eventInfo.expirationDate;
+                                                    event.outcome = eventInfo.outcome;
+                                                    event.minValue = eventInfo.minValue;
+                                                    event.maxValue = eventInfo.maxValue;
+                                                    event.numOutcomes = eventInfo.numOutcomes;
+                                                    event.description = eventInfo.description;
+                                                    onSuccess(event);
+                                                } else {
+                                                    if (pings < augur.TX_POLL_MAX) setTimeout(pingTx, augur.TX_POLL_INTERVAL);
+                                                }
+                                            });
+                                        };
+                                        pingTx();
+                                    }
                                 }
                             }
                         });
@@ -3333,29 +3347,33 @@ var Augur = (function (augur) {
                         augur.invoke(augur.tx.createMarket, function (txhash) {
                             var pings, pingTx;
                             if (txhash) {
-                                market.txHash = txhash;
-                                if (onSent) onSent(market);
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getMarketInfo(marketID, function (marketInfo) {
-                                            pings++;
-                                            if (marketInfo && marketInfo !== "0x" && marketInfo.numOutcomes && marketInfo.numOutcomes !== 0 && marketInfo.numOutcomes !== "0") {
-                                                market.numOutcomes = marketInfo.numOutcomes;
-                                                market.currentParticipant = marketInfo.currentParticipant;
-                                                market.alpha = marketInfo.alpha;
-                                                market.cumulativeScale = marketInfo.cumulativeScale;
-                                                market.numOutcomes = marketInfo.numOutcomes;
-                                                market.tradingPeriod = marketInfo.tradingPeriod;
-                                                market.tradingFee = marketInfo.tradingFee;
-                                                market.description = marketInfo.description;
-                                                onSuccess(market);
-                                            } else {
-                                                if (pings < augur.TX_POLL_MAX) setTimeout(pingTx, 12000);
-                                            }
-                                        });
-                                    };
-                                    pingTx();
+                                if (txhash.constructor === Object && txhash.error) {
+                                    if (onFailed) onFailed(txhash);
+                                } else {
+                                    market.txHash = txhash;
+                                    if (onSent) onSent(market);
+                                    if (onSuccess) {
+                                        pings = 0;
+                                        pingTx = function () {
+                                            augur.getMarketInfo(marketID, function (marketInfo) {
+                                                pings++;
+                                                if (marketInfo && marketInfo !== "0x" && marketInfo.numOutcomes && marketInfo.numOutcomes !== 0 && marketInfo.numOutcomes !== "0") {
+                                                    market.numOutcomes = marketInfo.numOutcomes;
+                                                    market.currentParticipant = marketInfo.currentParticipant;
+                                                    market.alpha = marketInfo.alpha;
+                                                    market.cumulativeScale = marketInfo.cumulativeScale;
+                                                    market.numOutcomes = marketInfo.numOutcomes;
+                                                    market.tradingPeriod = marketInfo.tradingPeriod;
+                                                    market.tradingFee = marketInfo.tradingFee;
+                                                    market.description = marketInfo.description;
+                                                    onSuccess(market);
+                                                } else {
+                                                    if (pings < augur.TX_POLL_MAX) setTimeout(pingTx, augur.TX_POLL_INTERVAL);
+                                                }
+                                            });
+                                        };
+                                        pingTx();
+                                    }
                                 }
                             }
                         });
@@ -3449,26 +3467,30 @@ var Augur = (function (augur) {
                         delete tx.returns;
                         augur.invoke(tx, function (txhash) {
                             if (txhash) {
-                                step.txHash = txhash;
-                                if (onSent) onSent(step);
-                                if (onSuccess) {
-                                    pings = 0;
-                                    pingTx = function () {
-                                        augur.getTx(txhash, function (tx) {
-                                            pings++;
-                                            if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
-                                                tx.step = step.step;
-                                                tx.txHash = tx.hash;
-                                                delete tx.hash;
-                                                onSuccess(tx);
-                                            } else {
-                                                if (pings < augur.TX_POLL_MAX) {
-                                                    setTimeout(pingTx, 12000);
+                                if (txhash.constructor === Object && txhash.error) {
+                                    if (onFailed) onFailed(txhash);
+                                } else {
+                                    step.txHash = txhash;
+                                    if (onSent) onSent(step);
+                                    if (onSuccess) {
+                                        pings = 0;
+                                        pingTx = function () {
+                                            augur.getTx(txhash, function (tx) {
+                                                pings++;
+                                                if (tx && tx.blockHash && parseInt(tx.blockHash) !== 0) {
+                                                    tx.step = step.step;
+                                                    tx.txHash = tx.hash;
+                                                    delete tx.hash;
+                                                    onSuccess(tx);
+                                                } else {
+                                                    if (pings < augur.TX_POLL_MAX) {
+                                                        setTimeout(pingTx, augur.TX_POLL_INTERVAL);
+                                                    }
                                                 }
-                                            }
-                                        });
-                                    };
-                                    pingTx();
+                                            });
+                                        };
+                                        pingTx();
+                                    }
                                 }
                             }
                         });
