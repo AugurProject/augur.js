@@ -36,6 +36,7 @@ describe("testing consensus/dispatch", function () {
                 next();
             },
             onFailed: function (r) {
+                log(r);
                 throw("dispatch failed: " + r);
                 next();
             }

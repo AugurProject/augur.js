@@ -2,8 +2,6 @@
  * augur.js unit tests
  * @author Jack Peterson (jack@tinybike.net)
  */
-// var nock = require('nock');
-// nock.recorder.rec();
 
 "use strict";
 
@@ -391,23 +389,6 @@ describe("Augur API", function () {
         });
     });
 
-    // expiringEvents.se
-    describe("expiringEvents.se", function () {
-        describe("getEvents(" + branch_id + ", " + vote_period + ")", function () {
-            var test = function (r) {
-                log(r);
-            };
-            it("sync", function () {
-                test(Augur.getEvents(branch_id, vote_period));
-            });
-            it("async", function (done) {
-                Augur.getEvents(branch_id, vote_period, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-    });
-
     // markets.se
     describe("markets.se", function () {
         describe("getSimulatedBuy(" + market_id + ", " + outcome + ", " + amount + ")", function () {
@@ -678,122 +659,6 @@ describe("Augur API", function () {
             });
             it("async", function (done) {
                 Augur.getTradingFee(market_id, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-    });
-
-    // reporting.se
-    describe("reporting.se", function () {
-        describe("getRepBalance(" + branch_id + ") ", function () {
-            var test = function (r) {
-                gteq0(r);
-            };
-            it("sync", function () {
-                test(Augur.getRepBalance(branch_id, Augur.coinbase));
-            });
-            it("async", function (done) {
-                Augur.getRepBalance(branch_id, Augur.coinbase, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("getRepByIndex(" + branch_id + ", " + reporter_index + ") ", function () {
-            var test = function (r) {
-                gteq0(r);
-            };
-            it("sync", function () {
-                test(Augur.getRepByIndex(branch_id, reporter_index));
-            });
-            it("async", function (done) {
-                Augur.getRepByIndex(branch_id, reporter_index, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("getReporterID(" + branch_id + ", " + reporter_index + ") ", function () {
-            var test = function (r) {
-                assert.equal(r, "0xa369ca3e80c8e8e5fdc3e2fc7ee7764c519de70f");
-            };
-            it("sync", function () {
-                test(Augur.getReporterID(branch_id, reporter_index));
-            });
-            it("async", function (done) {
-                Augur.getReporterID(branch_id, reporter_index, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("getReputation(" + reporter_address + ")", function () {
-            var test = function (r) {
-                is_array(r);
-                assert(r.length >= 1); // why equal to 5...?
-                for (var i = 0, len = r.length; i < len; ++i) {
-                    gteq0(r[i]);
-                }
-            };
-            it("sync", function () {
-                test(Augur.getReputation(reporter_address));
-            });
-            it("async", function (done) {
-                Augur.getReputation(reporter_address, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("getNumberReporters(" + branch_id + ") ", function () {
-            var test = function (r) {
-                gteq0(r);
-                assert(parseInt(r) >= 1);
-            };
-            it("sync", function () {
-                test(Augur.getNumberReporters(branch_id));
-            });
-            it("async", function (done) {
-                Augur.getNumberReporters(branch_id, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("repIDToIndex(" + branch_id + ", " + Augur.coinbase + ") ", function () {
-            var test = function (r) {
-                assert.equal(r, "1");
-            };
-            it("sync", function () {
-                test(Augur.repIDToIndex(branch_id, Augur.coinbase));
-            });
-            it("async", function (done) {
-                Augur.repIDToIndex(branch_id, Augur.coinbase, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        describe("hashReport([ballot], " + salt + ") ", function () {
-            var test = function (r) {
-                // TODO double-check this
-                assert.equal(r, "0xecb634e07550319ba80b77114114b7670d384edb4b4db01a67bfba058147a081");
-            };
-            it("sync", function () {
-                test(Augur.hashReport(ballot, salt));
-            });
-            it("async", function (done) {
-                Augur.hashReport(ballot, salt, function (r) {
-                    test(r); done();
-                });
-            });
-        });
-        Augur.tx.reputationFaucet.send = false;
-        Augur.tx.reputationFaucet.returns = "number";
-        describe("reputationFaucet(" + branch_id + ") ", function () {
-            var test = function (r) {
-                assert.equal(r, "1");
-            };
-            it("sync", function () {
-                test(Augur.reputationFaucet(branch_id));
-            });
-            it("async", function (done) {
-                Augur.reputationFaucet(branch_id, function (r) {
                     test(r); done();
                 });
             });

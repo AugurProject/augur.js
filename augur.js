@@ -129,6 +129,7 @@ var Augur = (function (augur) {
      * Contract addresses *
      **********************/
 
+    /* Ethereum testnet addresses */
     augur.testnet_contracts = {
 
         // Functions
@@ -174,8 +175,50 @@ var Augur = (function (augur) {
         reporting: "0x3fef2aaedbd0fc6c1d5e1453a773a74326a33c45"
     };
 
-    /* Private chain addresses */
+    /* Augur private chain (networkid 1010101) addresses */
     augur.privatechain_contracts = {
+        "checkQuorum": "0x5107797d348e54ae0fb2c9323491060ce45bac96",
+        "buyAndSellShares": "0xd059aaed00c872ae8e38ba2407806f08b98b6a1f",
+        "createBranch": "0x5e1831eff1782d591bd3524c86242b3d93133e6f",
+        "p2pWagers": "0x264a5fffcbc477cb3d1a009ff66f12fd3ce230e9",
+        "sendReputation": "0xc8ad70eb6a388e0e2c528c6eec6997de9c88baa2",
+        "transferShares": "0xd89faaf15a8b7b7e4726f0f9f3a2e5aac47813c1",
+        "makeReports": "0xc800e9f92faa6d5a16628a9e6421ad802d12e3ed",
+        "createEvent": "0x0dd76cc357653a6e666283edbac1a13921390520",
+        "createMarket": "0xac70885b68f91b4757578288601c125093136de1",
+        "closeMarket": "0x99627457fa61ab073883576d20b38f8357c4a686",
+        "closeMarketOne": "0x5aabc733227ec849e13bd3d713fc0b0375fa3c58",
+        "closeMarketTwo": "0xf2bd9864b38403c3c03fb5e1da2a2c37c82d7715",
+        "closeMarketFour": "0x53428c49cca4a46a4c0ad1ec55032d1013ec1b6e",
+        "closeMarketEight": "0xa2c5cd2a292c07926b7b963b5177226da8c85cd1",
+        "dispatch": "0x4477f0397e05be810e9568e87cbae4849e075f30",
+
+        "cash": "0xe7dd5d08b0b36c3bc4504633625af68bca17ed14",
+        "info": "0xf0a8d60b812817d193aa48edd5ac7c71ac344161",
+        "branches": "0xdd346144a1665104a646db3fe9ad18663df8f4e6",
+        "events": "0x1d661104a07d38226449085a4e1d738d6bd5aede",
+        "expiringEvents": "0xa24d5c9fcb5e499f5ac4a4ac8e13f630a6f40d86",
+        "fxpFunctions": "0x446aca1c16dd91f216abca9ce04f85e1a7d2c255",
+        "markets": "0xfa0957c3cfb09099fe2c962e14c3328a8b872871",
+        "reporting": "0xb0daca2dbe8fdae8a99ab656ce242060ccf5e879",
+
+        "statistics": "0xe3040cf58d5661ecddd46b68987cfc77b4812f88",
+        "interpolate": "0xfbbf0a3f230f05822ed29ed0ca4cda22b7433b0a",
+        "center": "0x390135c32b458f6db621fb3a954106d5efb7d0d3",
+        "score": "0x36d83f62922b02d1fec77269fa811c6b9733cb3d",
+        "adjust": "0xf3f1d2e024dcf4b158858ce0c204e33134fe8cb7",
+        "resolve": "0x495d19ea467f118babc5c0c226e295d36bead152",
+        "payout": "0x4ef06b95ba4a39437d72ca8079005dc660d4084d",
+        "redeem_interpolate": "0x431b26f61ae7a189914ba213c8a6d32ec94a58a2",
+        "redeem_center": "0xebc5d961966e28a1fe290850325f761c5e80a475",
+        "redeem_score": "0x5742e1e96405e7b401a2b4429fd7fceddd499bbb",
+        "redeem_adjust": "0xb1a377986ab6362fd8e68565ce2c58f2f2db731e",
+        "redeem_resolve": "0x96889edb683f3bf8d5c65461d068eb753b7e24ee",
+        "redeem_payout": "0x61747561317e1cc42b7e9225b958b8de0456753c"
+    };
+
+    /* Testing private chain (networkid 10101) addresses */
+    augur.testchain_contracts = {
         "checkQuorum": "0x67f0ea717bc1587353c1119abf856bc5f68b8b6c",
         "buyAndSellShares": "0x795af763dd0c5627ce6ad590d8734bf4ce64a266",
         "createBranch": "0x0de7904a19f3cd77d5a22d56fabf271daeb61cc4",
@@ -827,12 +870,18 @@ var Augur = (function (augur) {
         }
         try {
             if (JSON.stringify(augur.contracts) === JSON.stringify(augur.init_contracts)) {
-                if (chain && (chain === "1010101" || chain === 1010101 || chain === "10101" || chain === 10101)) {
-                    augur.contracts = copy(augur.privatechain_contracts);
+                if (chain) {
+                    if (chain === "1010101" || chain === 1010101) {
+                        augur.contracts = copy(augur.privatechain_contracts);
+                    } else if (chain === "10101" || chain === 10101) {
+                        augur.contracts = copy(augur.testchain_contracts);
+                    }
                 } else {
                     chain = json_rpc(postdata("version", [], "net_"));
-                    if (chain === "1010101" || chain === 1010101 || chain === "10101" || chain === 10101) {
+                    if (chain === "1010101" || chain === 1010101) {
                         augur.contracts = copy(augur.privatechain_contracts);
+                    } else if (chain === "10101" || chain === 10101) {
+                        augur.contracts = copy(augur.testchain_contracts);
                     } else {
                         augur.contracts = copy(augur.testnet_contracts);
                     }
@@ -2492,6 +2541,34 @@ var Augur = (function (augur) {
         return fire(tx, onSent);
     };
 
+    augur.tx.getTotalReputation = {
+        to: augur.contracts.expiringEvents,
+        method: "getTotalReputation",
+        signature: "ii",
+        returns: "unfix"
+    };
+    augur.tx.setTotalReputation = {
+        to: augur.contracts.expiringEvents,
+        method: "setTotalReputation",
+        signature: "iii",
+        returns: "number"
+    };
+    augur.getTotalReputation = function (branch, votePeriod, onSent) {
+        // branch: sha256
+        // votePeriod: integer
+        var tx = copy(augur.tx.getTotalReputation);
+        tx.params = [branch, votePeriod];
+        return fire(tx, onSent);
+    };
+    augur.setTotalReputation = function (branch, votePeriod, totalReputation, onSent, onSuccess, onFailed) {
+        // branch: sha256
+        // votePeriod: integer
+        // totalReputation: number -> fixed
+        var tx = copy(augur.tx.setTotalReputation);
+        tx.params = [branch, votePeriod, Augur.fix(totalReputation, "hex")];
+        return call_send_confirm(tx, onSent, onSuccess, onFailed);
+    };
+
     augur.tx.makeBallot = {
         to: augur.contracts.expiringEvents,
         method: "makeBallot",
@@ -2862,6 +2939,18 @@ var Augur = (function (augur) {
         // repID: ethereum account
         var tx = copy(augur.tx.repIDToIndex);
         tx.params = [branch, repID];
+        return fire(tx, onSent);
+    };
+
+    augur.tx.getTotalRep = {
+        to: augur.contracts.reporting,
+        method: "getTotalRep",
+        signature: "i",
+        returns: "unfix"
+    };
+    augur.getTotalRep = function (branch, onSent) {
+        var tx = copy(augur.tx.getTotalRep);
+        tx.params = branch;
         return fire(tx, onSent);
     };
 
