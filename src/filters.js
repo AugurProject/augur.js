@@ -434,7 +434,7 @@ module.exports = function () {
                 run = async.series;
             }
             async.forEachOfSeries(cb, function (callback, label, next) {
-                if (self.filter[label].id === null && callback) {
+                if (self.filter[label] && callback) {
                     switch (label) {
                     case "contracts":
                         self.start_contracts_listener(function () {
@@ -456,6 +456,8 @@ module.exports = function () {
                             next(null, [label, self.filter[label].id]);
                         });
                     }
+                }else{
+                    next(null, null);
                 }
             }, function (err) {
                 if (err) console.error(err);
