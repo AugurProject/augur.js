@@ -18,3 +18,4 @@ qtest.js
 nuke
 .idea/
 yarn.lock
+tags
