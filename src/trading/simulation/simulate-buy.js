@@ -4,12 +4,14 @@ var simulateMakeBidOrder = require("./simulate-make-bid-order");
 var simulateTakeAskOrder = require("./simulate-take-ask-order");
 var sumSimulatedResults = require("./sum-simulated-results");
 var filterByPriceAndOutcomeAndUserSortByPrice = require("../order-book/filter-by-price-and-outcome-and-user-sort-by-price");
+var calculateSettlementFee = require('./calculate-settlement-fee');
 var constants = require("../../constants");
 var PRECISION = constants.PRECISION;
 var ZERO = constants.ZERO;
 
 function simulateBuy(outcome, sharesToCover, shareBalances, tokenBalance, userAddress, minPrice, maxPrice, price, marketCreatorFeeRate, reportingFeeRate, shouldCollectReportingFees, sellOrderBook) {
   var simulatedBuy = {
+    maxSettlementFees: ZERO,
     settlementFees: ZERO,
     gasFees: ZERO,
     sharesDepleted: ZERO,
@@ -31,6 +33,10 @@ function simulateBuy(outcome, sharesToCover, shareBalances, tokenBalance, userAd
       simulatedBuy = sumSimulatedResults(simulatedBuy, simulateMakeBidOrder(simulatedTakeAskOrder.sharesToCover, price, minPrice, outcome, shareBalances));
     }
   }
+
+
+  // Worst-case settlement fee for the buyer is if they buy at minPrice
+  simulatedBuy.maxSettlementFees = calculateSettlementFee(sharesToCover, marketCreatorFeeRate, maxPrice.minus(minPrice), shouldCollectReportingFees, reportingFeeRate, minPrice);
 
   return simulatedBuy;
 }
