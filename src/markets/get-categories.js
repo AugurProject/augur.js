@@ -24,7 +24,7 @@ var augurNode = require("../augur-node");
  * @return {Category[]} Array representing the categories in the specified universe.
  */
 function getCategories(p, callback) {
- augurNode.submitRequest("getCategories", p, callback);
+  augurNode.submitRequest("getCategories", p, callback);
 }
 
 module.exports = getCategories;
