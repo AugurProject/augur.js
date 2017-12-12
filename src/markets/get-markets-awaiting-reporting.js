@@ -1,3 +1,7 @@
+/**
+ * @todo Update `p.reportingState` once new reporting changes are added.
+ */
+
 "use strict";
 
 var augurNode = require("../augur-node");
@@ -7,7 +11,7 @@ var augurNode = require("../augur-node");
  * @param {Object} p Parameters object.
  * @param {string=} p.universe Contract address of the universe from which to retrieve markets, as a hexadecimal string. If this parameter is not specified, a reporting window must be specified instead.
  * @param {string=} p.reportingWindow Contract address of the reporting window from which to retrieve the markets, as a hexadecimal string. If this parameter is not specified, a universe must be specified instead.
- * @param {string=} p.reportingState Reporting state name. Valid values are "DESIGNATED_REPORTING", "FIRST_REPORTING", or "LAST_REPORTING".
+ * @param {string=} p.reportingState Description pending.
  * @param {string=} p.sortBy Field name by which to sort the markets.
  * @param {boolean=} p.isSortDescending Whether to sort the markets in descending order by sortBy field.
  * @param {string=} p.limit Maximum number of markets to return.

@@ -7,8 +7,8 @@
  * @property {number} creationBlockNumber Number of the Ethereum block containing the transfer.
  * @property {string} blockHash Hash of the Ethereum block containing the transfer.
  * @property {number} creationTime Timestamp, in seconds, when the Ethereum block containing the transfer was created.
- * @property {string} sender Ethereum address of the token sender.
- * @property {string} recipient Ethereum address of the token recipient.
+ * @property {string|null} sender Ethereum address of the token sender. If null, this indicates that new tokens were minted and sent to the user.
+ * @property {string|null} recipient Ethereum address of the token recipient. If null, this indicates that tokens were burned (i.e., destroyed).
  * @property {string} token Contract address of the contract for the sent token, as a hexadecimal string.
  * @property {number} value Quantity of tokens sent.
  * @property {string|null} symbol Token symbol (if any).

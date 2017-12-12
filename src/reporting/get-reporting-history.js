@@ -31,7 +31,7 @@
  * @property {string} marketID Contract address of the market, as a hexadecimal string.
  * @property {REPORTING_STATE} marketReportingState Reporting state of the market.
  * @property {string} reportingWindow Reporting window the market is in currently.
- * @property {Array<number|null>} payoutNumerators Array representing the payout set.
+ * @property {number[]} payoutNumerators Array representing the payout set.
  * @property {number} amountStaked Description the reporter has staked on the outcome of their report.
  * @property {string} stakeToken Contract address of the stake token, as a hexadecimal string.
  * @property {boolean} isCategorical Whether the market is categorical.
@@ -56,7 +56,7 @@ var augurNode = require("../augur-node");
  * @param {string=} p.limit Maximum number of reporting history reports to return.
  * @param {string=} p.offset Number of reporting history reports to truncate from the beginning of the results.
  * @param {function} callback Called when reporting history has been received and parsed.
- * @return {Object} Reporting history, keyed by universe, market ID, or reporting window. Each report is of type {@link Report}.
+ * @return {Object} Reporting history, keyed by universe or market ID. Each report is of type {@link Report}.
  */
 function getReportingHistory(p, callback) {
   augurNode.submitRequest("getReportingHistory", p, callback);
