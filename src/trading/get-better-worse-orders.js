@@ -2,8 +2,8 @@
 
 /**
  * @typedef BetterWorseOrders
- * @param {string|null} betterOrderID ID of the order with the better price, as a hexadecimal string.
- * @param {string|null} worseOrderID ID of the order with the worse price, as a hexadecimal string.
+ * @property {string|null} betterOrderID ID of the order with the next best price over the specified order ID, as a hexadecimal string.
+ * @property {string|null} worseOrderID ID of the order with the next worse price over the specified order ID, as a hexadecimal string.
  */
 
 var augurNode = require("../augur-node");

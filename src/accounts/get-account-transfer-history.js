@@ -19,7 +19,7 @@
 var augurNode = require("../augur-node");
 
 /**
- * Returns the token transfers made to or from a specific account. Requires an Augur Node connection.
+ * Returns the token transfers made to or from a specific Ethereum address. Requires an Augur Node connection.
  * @param {Object} p Parameters object.
  * @param {string} p.account Ethereum address of the account for which to get transfer history, as a hexadecimal string.
  * @param {string=} p.token Contract address of the token contract by which to limit the history results, as a hexadecimal string.
