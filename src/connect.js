@@ -83,10 +83,10 @@ function connect(connectOptions, callback) {
         self.api = api.generateContractApi(ethereumConnectionInfo.abi.functions);
         self.rpc = rpcInterface.createRpcInterface(ethereumConnectionInfo.rpc);
         ethereumConnectionInfo.rpc.getTransport().addReconnectListener(function () {
-          rpcInterface.emit("reconnect");
+          self.rpc.emit("reconnect");
         });
         ethereumConnectionInfo.rpc.getTransport().addDisconnectListener(function () {
-          rpcInterface.emit("disconnect");
+          self.rpc.emit("disconnect");
         });
         next(null, ethereumConnectionInfo);
       });
