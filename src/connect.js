@@ -5,7 +5,6 @@ var ethereumConnector = require("ethereumjs-connect");
 var ethrpc = require("ethrpc");
 var contracts = require("./contracts");
 var api = require("./api");
-var rpcInterface = require("./rpc-interface");
 var augurNode = require("./augur-node");
 var isFunction = require("./utils/is-function");
 var isObject = require("./utils/is-object");
@@ -81,12 +80,11 @@ function connect(connectOptions, callback) {
         console.log("connected to ethereum");
         ethereumConnectionInfo.contracts = ethereumConnectionInfo.contracts || contracts.addresses[DEFAULT_NETWORK_ID];
         self.api = api.generateContractApi(ethereumConnectionInfo.abi.functions);
-        self.rpc = rpcInterface.createRpcInterface(ethereumConnectionInfo.rpc);
         ethereumConnectionInfo.rpc.getTransport().addReconnectListener(function () {
-          rpcInterface.emit("reconnect");
+          self.rpc.emit("reconnect");
         });
         ethereumConnectionInfo.rpc.getTransport().addDisconnectListener(function () {
-          rpcInterface.emit("disconnect");
+          self.rpc.emit("disconnect");
         });
         next(null, ethereumConnectionInfo);
       });
