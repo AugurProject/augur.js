@@ -5,7 +5,6 @@ var ethereumConnector = require("ethereumjs-connect");
 var ethrpc = require("ethrpc");
 var contracts = require("./contracts");
 var api = require("./api");
-var rpcInterface = require("./rpc-interface");
 var augurNode = require("./augur-node");
 var isFunction = require("./utils/is-function");
 var isObject = require("./utils/is-object");
