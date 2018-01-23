@@ -7,12 +7,15 @@ var chalk = require("chalk");
 var connectionEndpoints = require("../connection-endpoints");
 var getPrivateKey = require("../canned-markets/lib/get-private-key");
 
-var keystoreFilePath = process.argv[2];
-var marketID = process.argv[3];
-var outcome = process.argv[4];
-var invalid = process.argv[5];
+var keystoreFilePath = null;
+var marketID = process.argv[2];
+var outcome = process.argv[3];
+var invalid = process.argv[4];
 
 var augur = new Augur();
+
+if (!marketID) { console.log(chalk.red("marketID is needed")); process.exit(1);}
+if (!outcome) { console.log(chalk.red("outcome is needed")); process.exit(1);}
 
 getPrivateKey(keystoreFilePath, function (err, auth) {
   if (err) return console.error("getPrivateKey failed:", err);

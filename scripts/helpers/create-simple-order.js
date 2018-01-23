@@ -11,12 +11,12 @@ var connectionEndpoints = require("../connection-endpoints");
 var debugOptions = require("../debug-options");
 var createOrder = require("../canned-markets/lib/create-order");
 
-var keystoreFilePath = process.argv[2];
-var marketID = process.argv[3];
-var orderType = process.argv[4];
-var outcome = process.argv[5];
-var shares = process.argv[6];
-var price = process.argv[7];
+var keystoreFilePath = null;
+var marketID = process.argv[2];
+var orderType = process.argv[3];
+var outcome = process.argv[4];
+var shares = process.argv[5];
+var price = process.argv[6];
 
 var augur = new Augur();
 

@@ -8,8 +8,8 @@ var connectionEndpoints = require("../connection-endpoints");
 var getPrivateKey = require("../canned-markets/lib/get-private-key");
 var encodeTag = require("../../src/format/tag/encode-tag");
 
-var keystoreFilePath = process.argv[2];
-var time = process.argv[3];
+var keystoreFilePath = null;
+var time = process.argv[2];
 
 var augur = new Augur();
 
