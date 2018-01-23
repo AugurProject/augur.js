@@ -10,16 +10,15 @@ var getOrderToFill = require("../canned-markets/lib/get-order-to-fill");
 var connectionEndpoints = require("../connection-endpoints");
 var debugOptions = require("../debug-options");
 
-var keystoreFilePath = process.argv[2];
-var marketID = process.argv[3];
-var orderType = process.argv[4];
-var outcomeToFill = process.argv[5];
-var sharesToFill = process.argv[6];
+var marketID = process.argv[2];
+var orderType = process.argv[3];
+var outcomeToFill = process.argv[4];
+var sharesToFill = process.argv[5];
 var augur = new Augur();
 
 augur.rpc.setDebugOptions(debugOptions);
 
-getPrivateKey(keystoreFilePath, function (err, auth) {
+getPrivateKey(null, function (err, auth) {
   if (err) return console.error("getPrivateKey failed:", err);
   augur.connect(connectionEndpoints, function (err) {
     if (err) return console.error(err);
