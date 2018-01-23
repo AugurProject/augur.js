@@ -9,7 +9,6 @@ var getPrivateKey = require("../canned-markets/lib/get-private-key");
 var connectionEndpoints = require("../connection-endpoints");
 var debugOptions = require("../debug-options");
 
-var keystoreFilePath = null;
 var marketID = process.argv[2];
 var orderType = process.argv[3];
 var outcomeToFill = process.argv[4];
@@ -18,7 +17,7 @@ var augur = new Augur();
 
 augur.rpc.setDebugOptions(debugOptions);
 
-getPrivateKey(keystoreFilePath, function (err, auth) {
+getPrivateKey(null, function (err, auth) {
   if (err) return console.error("getPrivateKey failed:", err);
   augur.connect(connectionEndpoints, function (err) {
     if (err) return console.error(err);
@@ -73,7 +72,6 @@ getPrivateKey(keystoreFilePath, function (err, auth) {
                   process.exit(1);
                 },
               });
-
             }
           });
         });

@@ -23,11 +23,19 @@ augur.connect(connectionEndpoints, function (err) {
         var endDate = marketInfo.endDate;
         var date = new Date(endDate * 1000);
         var ended = date - currentTime > 0 ? "NO" : "YES";
+<<<<<<< HEAD
         console.log(chalk.cyan("endDate:"), chalk.cyan(endDate), chalk.red(date), ended ? chalk.yellow(ended) : chalk.red(ended), chalk.blue(marketInfo.reportingState), chalk.green(marketInfo.designatedReporter));
         console.log(chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description));
         nextMarket();
       }, function () {
         console.log(chalk.red.dim("current time: "), chalk.blue(timestamp), chalk.red(currentTime));
+=======
+        console.log(chalk.cyan("endDate:"), chalk.cyan(endDate), chalk.red(date), ended ? chalk.yellow(ended) : chalk.red(ended), chalk.blue(marketInfo.reportingState), chalk.red(marketInfo.designatedReporter));
+        console.log(chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description));
+        nextMarket();
+      }, function () {
+        console.log(chalk.blue(timestamp), chalk.red.dim("current time: "), chalk.red(currentTime));
+>>>>>>> more-script-magic
         process.exit(0);
       });
     });
