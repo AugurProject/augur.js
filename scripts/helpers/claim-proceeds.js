@@ -8,12 +8,11 @@ var connectionEndpoints = require("../connection-endpoints");
 var getPrivateKey = require("../canned-markets/lib/get-private-key");
 var claimMarketsTradingProceeds = require("../../src/trading/claim-markets-trading-proceeds");
 
-var keystoreFilePath = null;
 var marketID = process.argv[2];
 
 var augur = new Augur();
 
-getPrivateKey(keystoreFilePath, function (err, auth) {
+getPrivateKey(null, function (err, auth) {
   if (err) return console.error("getPrivateKey failed:", err);
 
   augur.connect(connectionEndpoints, function (err) {
