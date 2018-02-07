@@ -9,17 +9,7 @@ var isFunction = require("../utils/is-function");
 var isObject = require("../utils/is-object");
 var noop = require("../utils/noop");
 
-/**
- * Start listening for events emitted by the Ethereum blockchain.
- * @param {Object.<function>=} eventCallbacks Callbacks to fire when events are received, keyed by contract name and event name.
- * @param {function=} onSetupComplete Called when all listeners are successfully set up.
- */
-function startBlockchainEventListeners(eventCallbacks, startingBlockNumber, onSetupComplete) {
-  if (!isFunction(onSetupComplete)) onSetupComplete = noop;
-  if (typeof startingBlockNumber !== "undefined") {
-    console.log("Starting blockstream at block ", startingBlockNumber);
-    ethrpc.startBlockStream(startingBlockNumber);
-  }
+function setupBlockstream(eventCallbacks, onSetupComplete) {
   var blockStream = ethrpc.getBlockStream();
   if (!blockStream) return onSetupComplete(new Error("Not connected to Ethereum"));
   if (!isObject(eventCallbacks)) return onSetupComplete(new Error("No event callbacks found"));
@@ -41,6 +31,25 @@ function startBlockchainEventListeners(eventCallbacks, startingBlockNumber, onSe
     if (err) return onSetupComplete(err);
     onSetupComplete(null);
   });
+}
+
+/**
+ * Start listening for events emitted by the Ethereum blockchain.
+ * @param {Object.<function>=} eventCallbacks Callbacks to fire when events are received, keyed by contract name and event name.
+ * @param {function=} onSetupComplete Called when all listeners are successfully set up.
+ */
+function startBlockchainEventListeners(eventCallbacks, startingBlockNumber, onSetupComplete) {
+  if (!isFunction(onSetupComplete)) onSetupComplete = noop;
+  if (typeof startingBlockNumber !== "undefined") {
+    console.log("Starting blockstream at block ", startingBlockNumber);
+    ethrpc.startBlockStream(startingBlockNumber, function (error) {
+      if (error) return onSetupComplete(error);
+
+      setupBlockStream(eventCallbacks, onSetupComplete);
+    });
+  } else {
+    setupBlockStream(eventCallback, onSetupComplete);
+  }
 }
 
 module.exports = startBlockchainEventListeners;
