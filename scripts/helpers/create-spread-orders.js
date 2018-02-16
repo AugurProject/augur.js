@@ -51,32 +51,55 @@ getPrivateKey(null, function (err, auth) {
           console.log(chalk.yellow.dim("max price:"), chalk.yellow(marketInfo.maxPrice));
           console.log(chalk.yellow.dim("min price:"), chalk.yellow(marketInfo.minPrice));
 
-          var numberOfOrders = 10;
-          var midPoint = Math.random() * (marketInfo.maxPrice - marketInfo.minPrice) + marketInfo.minPrice;
+          var numberOfOrders = 50;
+          var sharesPerOrder = 10;
+
+          // Get these to numbers
+          var tickSize = parseFloat(marketInfo.tickSize, 10);
+          var numTicks = parseFloat(marketInfo.numTicks, 10);
+
+          var midPoint = (Math.random() * (marketInfo.maxPrice - marketInfo.minPrice) + marketInfo.minPrice);
+          midPoint = Math.ceil((midPoint - (midPoint % tickSize)) * numTicks) / numTicks;
 
           // Create Bids
           var bidPriceIncrease = (midPoint - marketInfo.minPrice) / numberOfOrders;
+          bidPriceIncrease = Math.abs(bidPriceIncrease < tickSize ? tickSize : Math.ceil((bidPriceIncrease - (bidPriceIncrease % tickSize)) * numTicks) / numTicks);
+
           var bidPrice = marketInfo.minPrice === 0 ? marketInfo.minPrice + bidPriceIncrease : marketInfo.minPrice;
+
           while (bidPrice < midPoint) {
-            var order = { price: bidPrice, shares: 10 };
-            console.log(chalk.yellow.dim("order:"), chalk.yellow(JSON.stringify(order)));
+            var order = {
+              price: bidPrice,
+              shares: sharesPerOrder
+            };
+
+            console.log(chalk.yellow.dim("bid:"), chalk.yellow(JSON.stringify(order)));
             createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", order, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
             bidPrice += bidPriceIncrease
+            bidPrice = Math.ceil((bidPrice - (bidPrice % tickSize)) * numTicks) / numTicks
           }
 
           // Create Asks
           var askPriceIncrease = (marketInfo.maxPrice - midPoint) / numberOfOrders;
-          var askPrice = midPoint + (Math.random() * (0.001 - 0.0001) + 0.0001) // Give things a little distance from the midpoint to emulate spread
+          askPriceIncrease = Math.abs(askPriceIncrease < tickSize ? tickSize : Math.ceil((askPriceIncrease - (askPriceIncrease % tickSize)) * numTicks) / numTicks);
+
+          var askPrice = midPoint + tickSize
+
           while (askPrice < marketInfo.maxPrice) {
-            var order = { price: askPrice, shares: 10 };
+            var order = {
+              price: askPrice,
+              shares: sharesPerOrder
+            };
+            console.log(chalk.yellow.dim("ask:"), chalk.yellow(JSON.stringify(order)));
             createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "sell", order, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
             askPrice += askPriceIncrease
+            askPrice = Math.ceil((askPrice - (askPrice % tickSize)) * numTicks) / numTicks;
           }
         }
       });
