@@ -51,8 +51,9 @@ getPrivateKey(null, function (err, auth) {
           console.log(chalk.yellow.dim("max price:"), chalk.yellow(marketInfo.maxPrice));
           console.log(chalk.yellow.dim("min price:"), chalk.yellow(marketInfo.minPrice));
 
-          var numberOfOrders = 50;
+          // NOTE -- adjust these to modify the depth + # of orders in the order book.
           var sharesPerOrder = 10;
+          var numberOfOrders = 50;
 
           // Get these to numbers
           var tickSize = parseFloat(marketInfo.tickSize, 10);
@@ -63,7 +64,7 @@ getPrivateKey(null, function (err, auth) {
 
           // Create Bids
           var bidPriceIncrease = (midPoint - marketInfo.minPrice) / numberOfOrders;
-          bidPriceIncrease = Math.abs(bidPriceIncrease < tickSize ? tickSize : Math.ceil((bidPriceIncrease - (bidPriceIncrease % tickSize)) * numTicks) / numTicks);
+          bidPriceIncrease = tickedPriceIncrease(bidPriceIncrease, tickSize, numTicks)
 
           var bidPrice = marketInfo.minPrice === 0 ? marketInfo.minPrice + bidPriceIncrease : marketInfo.minPrice;
 
@@ -79,12 +80,12 @@ getPrivateKey(null, function (err, auth) {
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
             bidPrice += bidPriceIncrease
-            bidPrice = Math.ceil((bidPrice - (bidPrice % tickSize)) * numTicks) / numTicks
+            bidPrice = shiftToTicksize(bidPrice, tickSize, numTicks)
           }
 
           // Create Asks
           var askPriceIncrease = (marketInfo.maxPrice - midPoint) / numberOfOrders;
-          askPriceIncrease = Math.abs(askPriceIncrease < tickSize ? tickSize : Math.ceil((askPriceIncrease - (askPriceIncrease % tickSize)) * numTicks) / numTicks);
+          askPriceIncrease = tickedPriceIncrease(askPriceIncrease, tickSize, numTicks)
 
           var askPrice = midPoint + tickSize
 
@@ -99,10 +100,18 @@ getPrivateKey(null, function (err, auth) {
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
             askPrice += askPriceIncrease
-            askPrice = Math.ceil((askPrice - (askPrice % tickSize)) * numTicks) / numTicks;
+            askPrice = shiftToTicksize(askPrice, tickSize, numTicks)
           }
         }
       });
     });
   });
 });
+
+function tickedPriceIncrease(priceIncrease, tickSize, numTicks) {
+  return Math.abs(priceIncrease < tickSize ? tickSize : Math.ceil((priceIncrease - (priceIncrease % tickSize)) * numTicks) / numTicks);
+}
+
+function shiftToTicksize(price, tickSize, numTicks) {
+  return Math.ceil((price - (price % tickSize)) * numTicks) / numTicks
+}
