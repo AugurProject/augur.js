@@ -18,7 +18,7 @@ function tickedPriceIncrease(priceIncrease, tickSize, numTicks) {
 }
 
 function shiftToTicksize(price, tickSize, numTicks) {
-  return Math.ceil((price - (price % tickSize)) * numTicks) / numTicks
+  return Math.ceil((price - (price % tickSize)) * numTicks) / numTicks;
 }
 
 getPrivateKey(null, function (err, auth) {
@@ -77,8 +77,10 @@ getPrivateKey(null, function (err, auth) {
           var bidPrice = marketInfo.minPrice === 0 ? marketInfo.minPrice + bidPriceIncrease : marketInfo.minPrice;
 
           while (bidPrice < midPoint) {
-            console.log(chalk.yellow.dim("bid:"), chalk.yellow(JSON.stringify(order)));
-            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", { price: bidPrice, shares: sharesPerOrder }, auth, function (err, res) {
+            var bid = { price: bidPrice, shares: sharesPerOrder }
+
+            console.log(chalk.yellow.dim("bid:"), chalk.yellow(JSON.stringify(bid)));
+            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", bid, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
@@ -93,8 +95,10 @@ getPrivateKey(null, function (err, auth) {
           var askPrice = midPoint + tickSize;
 
           while (askPrice < marketInfo.maxPrice) {
-            console.log(chalk.yellow.dim("ask:"), chalk.yellow(JSON.stringify(order)));
-            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "sell", { price: askPrice, shares: sharesPerOrder }, auth, function (err, res) {
+            var ask = { price: askPrice, shares: sharesPerOrder };
+
+            console.log(chalk.yellow.dim("ask:"), chalk.yellow(JSON.stringify(ask)));
+            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "sell", ask, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
