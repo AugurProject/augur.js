@@ -77,7 +77,7 @@ getPrivateKey(null, function (err, auth) {
           var bidPrice = marketInfo.minPrice === 0 ? marketInfo.minPrice + bidPriceIncrease : marketInfo.minPrice;
 
           while (bidPrice < midPoint) {
-            var bid = { price: bidPrice, shares: sharesPerOrder }
+            var bid = { price: bidPrice, shares: sharesPerOrder };
 
             console.log(chalk.yellow.dim("bid:"), chalk.yellow(JSON.stringify(bid)));
             createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", bid, auth, function (err, res) {
