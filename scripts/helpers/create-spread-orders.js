@@ -13,6 +13,14 @@ var marketID = process.argv[2];
 
 var augur = new Augur();
 
+function tickedPriceIncrease(priceIncrease, tickSize, numTicks) {
+  return Math.abs(priceIncrease < tickSize ? tickSize : Math.ceil((priceIncrease - (priceIncrease % tickSize)) * numTicks) / numTicks);
+}
+
+function shiftToTicksize(price, tickSize, numTicks) {
+  return Math.ceil((price - (price % tickSize)) * numTicks) / numTicks
+}
+
 getPrivateKey(null, function (err, auth) {
   if (err) {
     console.error("getPrivateKey failed:", err);
@@ -64,54 +72,37 @@ getPrivateKey(null, function (err, auth) {
 
           // Create Bids
           var bidPriceIncrease = (midPoint - marketInfo.minPrice) / numberOfOrders;
-          bidPriceIncrease = tickedPriceIncrease(bidPriceIncrease, tickSize, numTicks)
+          bidPriceIncrease = tickedPriceIncrease(bidPriceIncrease, tickSize, numTicks);
 
           var bidPrice = marketInfo.minPrice === 0 ? marketInfo.minPrice + bidPriceIncrease : marketInfo.minPrice;
 
           while (bidPrice < midPoint) {
-            var order = {
-              price: bidPrice,
-              shares: sharesPerOrder
-            };
-
             console.log(chalk.yellow.dim("bid:"), chalk.yellow(JSON.stringify(order)));
-            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", order, auth, function (err, res) {
+            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "buy", { price: bidPrice, shares: sharesPerOrder }, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
-            bidPrice += bidPriceIncrease
-            bidPrice = shiftToTicksize(bidPrice, tickSize, numTicks)
+            bidPrice += bidPriceIncrease;
+            bidPrice = shiftToTicksize(bidPrice, tickSize, numTicks);
           }
 
           // Create Asks
           var askPriceIncrease = (marketInfo.maxPrice - midPoint) / numberOfOrders;
-          askPriceIncrease = tickedPriceIncrease(askPriceIncrease, tickSize, numTicks)
+          askPriceIncrease = tickedPriceIncrease(askPriceIncrease, tickSize, numTicks);
 
-          var askPrice = midPoint + tickSize
+          var askPrice = midPoint + tickSize;
 
           while (askPrice < marketInfo.maxPrice) {
-            var order = {
-              price: askPrice,
-              shares: sharesPerOrder
-            };
             console.log(chalk.yellow.dim("ask:"), chalk.yellow(JSON.stringify(order)));
-            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "sell", order, auth, function (err, res) {
+            createOrder(augur, marketID, outcomeI, marketInfo.numOutcomes, marketInfo.maxPrice, marketInfo.minPrice, marketInfo.numTicks, "sell", { price: askPrice, shares: sharesPerOrder }, auth, function (err, res) {
               if (err) console.error("create-orders failed:", err);
               console.log(chalk.green.dim("Order Created"), chalk.green(JSON.stringify(res)));
             });
-            askPrice += askPriceIncrease
-            askPrice = shiftToTicksize(askPrice, tickSize, numTicks)
+            askPrice += askPriceIncrease;
+            askPrice = shiftToTicksize(askPrice, tickSize, numTicks);
           }
         }
       });
     });
   });
 });
-
-function tickedPriceIncrease(priceIncrease, tickSize, numTicks) {
-  return Math.abs(priceIncrease < tickSize ? tickSize : Math.ceil((priceIncrease - (priceIncrease % tickSize)) * numTicks) / numTicks);
-}
-
-function shiftToTicksize(price, tickSize, numTicks) {
-  return Math.ceil((price - (price % tickSize)) * numTicks) / numTicks
-}
