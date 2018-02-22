@@ -35,7 +35,7 @@ function pushTime(augur, params, auth, callback) {
   } else {
     var paramArray = params.split(",");
     var action = paramArray[0];
-    var value = parseInt(paramArray[1], 10);
+    var value = paramArray[1];
     getTime(augur, auth, function (err, timeResult) {
       if (err) {
         console.log(chalk.red(err));
@@ -50,6 +50,8 @@ function pushTime(augur, params, auth, callback) {
         if (action === "SET") {
           if (value === "CURRENT") {
             value = Math.floor(new Date().getTime()/1000);
+          } else {
+            value = parseInt(value, 10);
           }
           setTimestamp(augur, value, timeResult.timeAddress, auth, callback);
         } else {
