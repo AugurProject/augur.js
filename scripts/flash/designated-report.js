@@ -48,7 +48,7 @@ function designateReportInternal(augur, marketId, outcomeId, invalid, auth, call
 }
 
 function help(callback) {
-  console.log(chalk.red("params syntax --> -p marketId,0,false"));
+  console.log(chalk.red("params syntax --> marketId,0,false"));
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
   console.log(chalk.red("parameter 3: invalid is optional, default is false"));

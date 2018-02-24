@@ -56,7 +56,7 @@ function initialReportInternal(augur, marketId, outcome, userAuth, invalid, auth
 }
 
 function help(callback) {
-  console.log(chalk.red("params syntax --> -p marketId,0,<user priv key>,false"));
+  console.log(chalk.red("params syntax --> marketId,0,<user priv key>,false"));
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
   console.log(chalk.red("parameter 3: user priv key is needed"));
