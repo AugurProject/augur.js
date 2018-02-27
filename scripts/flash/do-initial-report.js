@@ -7,7 +7,7 @@ var chalk = require("chalk");
 function doInitialReport(augur, marketId, payoutNumerators, invalid, auth, callback) {
   augur.api.Market.doInitialReport({
     meta: auth,
-    tx: { to: marketId  },
+    tx: { to: marketId, gas: "0x632ea0" },
     _payoutNumerators: payoutNumerators,
     _invalid: invalid,
     onSent: function (result) {
