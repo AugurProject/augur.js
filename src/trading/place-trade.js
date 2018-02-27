@@ -39,7 +39,6 @@ function placeTrade(p) {
     tradeUntilAmountIsZero(assign({}, immutableDelete(p, ["limitPrice", "amount", "minPrice", "maxPrice"]), {
       _price: normalizedPrice,
       _fxpAmount: p.amount,
-      numTicks: p.numTicks,
       _betterOrderId: betterWorseOrders.betterOrderId,
       _worseOrderId: betterWorseOrders.worseOrderId,
     }));
