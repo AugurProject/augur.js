@@ -16,6 +16,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
   var makerTokensDepleted = ZERO;
   var takerSharesDepleted = ZERO;
   var takerTokensDepleted = ZERO;
+  var tradesCompleted = 0;
   matchingSortedBids.forEach(function (matchingBid) {
     var takerDesiredSharesForThisOrder = BigNumber.min(new BigNumber(matchingBid.amount, 10), sharesToCover);
     var orderDisplayPrice = new BigNumber(matchingBid.fullPrecisionPrice, 10);
@@ -34,6 +35,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerSharesAvailable = takerSharesAvailable.minus(completeSets);
       makerSharesEscrowed = makerSharesEscrowed.minus(completeSets);
       takerDesiredSharesForThisOrder = takerDesiredSharesForThisOrder.minus(completeSets);
+      tradesCompleted++;
     }
 
     // maker is closing a short, taker is opening a short
@@ -43,6 +45,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerTokensDepleted = takerTokensDepleted.plus(tokensRequiredToCoverTaker);
       takerDesiredSharesForThisOrder = takerDesiredSharesForThisOrder.minus(makerSharesEscrowed);
       makerSharesEscrowed = ZERO;
+      tradesCompleted++;
     }
 
     // maker is opening a long, taker is closing a long
@@ -52,6 +55,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerSharesDepleted = takerSharesDepleted.plus(takerSharesAvailable);
       takerDesiredSharesForThisOrder = takerDesiredSharesForThisOrder.minus(takerSharesAvailable);
       takerSharesAvailable = ZERO;
+      tradesCompleted++;
     }
 
     // maker is opening a long, taker is opening a short
@@ -61,6 +65,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       makerTokensDepleted = makerTokensDepleted.plus(makerPortionOfCompleteSetCost);
       takerTokensDepleted = takerTokensDepleted.plus(takerPortionOfCompleteSetCost);
       takerDesiredSharesForThisOrder = ZERO;
+      tradesCompleted++;
     }
   });
   shareBalances[outcome] = shareBalances[outcome].minus(takerSharesDepleted);
@@ -72,6 +77,7 @@ function simulateFillBidOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
     sharesDepleted: takerSharesDepleted,
     tokensDepleted: takerTokensDepleted,
     shareBalances: shareBalances,
+    tradesCompleted: tradesCompleted,
   };
 }
 

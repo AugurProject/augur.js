@@ -18,6 +18,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
   var makerTokensDepleted = ZERO;
   var takerSharesDepleted = ZERO;
   var takerTokensDepleted = ZERO;
+  var tradesCompleted = 0;
   matchingSortedAsks.forEach(function (matchingAsk) {
     var takerDesiredShares = BigNumber.min(new BigNumber(matchingAsk.amount, 10), sharesToCover);
     var makerSharesEscrowed = BigNumber.min(new BigNumber(matchingAsk.sharesEscrowed, 10), sharesToCover);
@@ -35,6 +36,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerSharesDepleted = takerSharesDepleted.plus(completeSets);
       takerDesiredShares = takerDesiredShares.minus(completeSets);
       makerSharesEscrowed = makerSharesEscrowed.minus(completeSets);
+      tradesCompleted++;
     }
 
     // maker is closing a long, taker is opening a long: no complete sets sold
@@ -44,6 +46,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerTokensDepleted = takerTokensDepleted.plus(tokensRequiredToCoverTaker);
       takerDesiredShares = takerDesiredShares.minus(makerSharesEscrowed);
       makerSharesEscrowed = ZERO;
+      tradesCompleted++;
     }
 
     // maker is opening a short, taker is closing a short
@@ -53,6 +56,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       takerSharesDepleted = takerSharesDepleted.plus(takerSharesAvailable);
       takerDesiredShares = takerDesiredShares.minus(takerSharesAvailable);
       takerSharesAvailable = ZERO;
+      tradesCompleted++;
     }
 
     // maker is opening a short, taker is opening a long
@@ -62,6 +66,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
       makerTokensDepleted = makerTokensDepleted.plus(makerPortionOfCompleteSetCost);
       takerTokensDepleted = takerTokensDepleted.plus(takerPortionOfCompleteSetCost);
       takerDesiredShares = ZERO;
+      tradesCompleted++;
     }
   });
   if (takerSharesDepleted.gt(ZERO)) {
@@ -75,6 +80,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
     otherSharesDepleted: takerSharesDepleted,
     tokensDepleted: takerTokensDepleted,
     shareBalances: shareBalances,
+    tradesCompleted: tradesCompleted,
   };
 }
 
