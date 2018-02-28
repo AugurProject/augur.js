@@ -74,7 +74,7 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
                 if (result) {
                   augur.api.Market.contribute({
                     meta: disputerAuth,
-                    tx: { to: marketId  },
+                    tx: { to: marketId, gas: "0x632ea0"  },
                     _payoutNumerators: payoutNumerators,
                     _invalid: invalid,
                     _amount: stringAmount,
