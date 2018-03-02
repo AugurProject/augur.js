@@ -6,9 +6,10 @@ var chalk = require("chalk");
 var getTime = require("./get-timestamp");
 var getPrivateKeyFromString = require("../dp/lib/get-private-key").getPrivateKeyFromString;
 var repFaucet = require("../rep-faucet");
-var BigNumber = require("bignumber.js");
+var speedomatic = require("speedomatic");
 var displayTime = require("./display-time");
 var setTimestamp = require("./set-timestamp");
+var getPayoutNumerators = require("./get-payout-numerators");
 
 var day = 108000; // day
 
@@ -54,18 +55,14 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
             displayTime("Fee Window end time", feeWindowStartTime);
             displayTime("Set Time to", setTime);
             setTimestamp(augur, setTime, timeResult.timeAddress, auth, function (err) {
-              console.log("set time err", err);
               if (err) {
                 console.log(chalk.red(err));
                 return callback(err);
               }
-              var numTicks = market.numTicks;
-              var payoutNumerators = Array(market.numOutcomes).fill(0);
-              payoutNumerators[outcome] = numTicks;
-              var stringAmount = "0x" + new BigNumber(amount, 10).toString(16);
-              console.log(chalk.yellow("sending amount REP"), chalk.yellow(stringAmount));
+              var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
+              var attoREP = speedomatic.fix(amount, "hex");
+              console.log(chalk.yellow("sending amount REP"), chalk.yellow(attoREP), chalk.yellow(amount));
               augur.api.FeeWindow.isActive(feeWindowPayload, function (err, result) {
-                console.log("err", err, "value", result);
                 if (err) {
                   console.log(chalk.red(err));
                   return callback(err);
@@ -74,10 +71,10 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
                 if (result) {
                   augur.api.Market.contribute({
                     meta: disputerAuth,
-                    tx: { to: marketId, gas: "0x632ea0"  },
+                    tx: { to: marketId, gas: "0x632ea0" },
                     _payoutNumerators: payoutNumerators,
                     _invalid: invalid,
-                    _amount: stringAmount,
+                    _amount: attoREP,
                     onSent: function (result) {
                       console.log(chalk.yellow.dim("Sent Dispute:"), chalk.yellow(JSON.stringify(result)));
                       console.log(chalk.yellow.dim("Waiting for reply ...."));
@@ -111,7 +108,7 @@ function help(callback) {
   console.log(chalk.red("parameter 3: amount of REP is needed"));
   console.log(chalk.red("parameter 4: user priv key is needed"));
   console.log(chalk.red("parameter 5: invalid is optional, default is false"));
-  console.log(chalk.yellow("user will be give REP if balance is 0"));
+  console.log(chalk.yellow("user will be give REP if balance is 0, amount is whole REP, will convert to attoREP"));
   callback(null);
 }
 
