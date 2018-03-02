@@ -6,16 +6,14 @@ var chalk = require("chalk");
 var getTime = require("./get-timestamp");
 var setTimestamp = require("./set-timestamp");
 var doInitialReport = require("./do-initial-report");
+var getPayoutNumerators = require("./get-payout-numerators");
 
 /**
  * Move time to Market end time and do initial report
  */
-function designateReportInternal(augur, marketId, outcomeId, invalid, auth, callback) {
+function designateReportInternal(augur, marketId, outcome, invalid, auth, callback) {
   augur.markets.getMarketsInfo({ marketIds: [marketId] }, function (err, marketsInfo) {
     var market = marketsInfo[0];
-    if (outcomeId > market.numOutcomes - 1) {
-      return callback("outcomeId " + outcomeId + " Not Market Outcome ");
-    }
     var marketPayload = { tx: { to: marketId } };
     augur.api.Market.getEndTime(marketPayload, function (err, endTime) {
       console.log(chalk.red.dim("Market End Time"), chalk.red(endTime));
@@ -30,9 +28,7 @@ function designateReportInternal(augur, marketId, outcomeId, invalid, auth, call
             console.log(chalk.red(err));
             return callback(err);
           }
-          var numTicks = market.numTicks;
-          var payoutNumerators = Array(market.numOutcomes).fill(0);
-          payoutNumerators[outcomeId] = numTicks;
+          var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
 
           doInitialReport(augur, marketId, payoutNumerators, invalid, auth, function (err) {
             if (err) {
@@ -52,6 +48,7 @@ function help(callback) {
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
   console.log(chalk.red("parameter 3: invalid is optional, default is false"));
+  console.log(chalk.yellow("for scalar markets outcome is the value between min and max"));
   callback(null);
 }
 

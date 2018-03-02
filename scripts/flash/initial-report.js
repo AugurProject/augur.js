@@ -8,6 +8,7 @@ var setTimestamp = require("./set-timestamp");
 var displayTime = require("./display-time");
 var doInitialReport = require("./do-initial-report");
 var getPrivateKeyFromString = require("../dp/lib/get-private-key").getPrivateKeyFromString;
+var getPayoutNumerators = require("./get-payout-numerators");
 
 /**
  * Move time to Market end time and do initial report
@@ -31,9 +32,7 @@ function initialReportInternal(augur, marketId, outcome, userAuth, invalid, auth
             console.log(chalk.red(err));
             return callback(err);
           }
-          var numTicks = market.numTicks;
-          var payoutNumerators = Array(market.numOutcomes).fill(0);
-          payoutNumerators[outcome] = numTicks;
+          var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
           doInitialReport(augur, marketId, payoutNumerators, invalid, userAuth, function (err) {
             if (err) {
               console.log(chalk.red(err));
@@ -55,6 +54,7 @@ function help(callback) {
   console.log(chalk.red("parameter 3: user priv key is needed"));
   console.log(chalk.red("parameter 4: invalid is optional, default is false"));
   console.log(chalk.yellow("user will be give REP if balance is 0"));
+  console.log(chalk.yellow("for scalar markets outcome is the value between min and max"));
   callback(null);
 }
 
