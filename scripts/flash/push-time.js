@@ -59,10 +59,11 @@ function pushTime(augur, params, auth, callback) {
           var modTimeBy = 0;
           var digit = parseInt(params.match(regex), 10);
           var subtraction = params.indexOf("-") === -1 ? false : true;
+          var secondsPerDay = 86400;
           if (params.indexOf("d") === -1) {
-            modTimeBy = 604800; // week
+            modTimeBy = secondsPerDay * 7; // week
           } else {
-            modTimeBy = 86400; // day
+            modTimeBy = secondsPerDay; // day
           }
           var totalMovement = modTimeBy * digit;
           var newTimestamp = subtraction ? timestamp - totalMovement : timestamp + totalMovement;
