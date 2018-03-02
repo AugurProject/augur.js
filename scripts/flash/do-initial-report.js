@@ -3,11 +3,12 @@
 "use strict";
 
 var chalk = require("chalk");
+var constants = require("../../src/constants");
 
 function doInitialReport(augur, marketId, payoutNumerators, invalid, auth, callback) {
   augur.api.Market.doInitialReport({
     meta: auth,
-    tx: { to: marketId, gas: "0x632ea0" },
+    tx: { to: marketId, gas: constants.TRADE_GAS },
     _payoutNumerators: payoutNumerators,
     _invalid: invalid,
     onSent: function (result) {

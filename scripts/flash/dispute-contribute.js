@@ -10,6 +10,7 @@ var speedomatic = require("speedomatic");
 var displayTime = require("./display-time");
 var setTimestamp = require("./set-timestamp");
 var getPayoutNumerators = require("./get-payout-numerators");
+var constants = require("../../src/constants");
 
 var day = 108000; // day
 
@@ -71,7 +72,7 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
                 if (result) {
                   augur.api.Market.contribute({
                     meta: disputerAuth,
-                    tx: { to: marketId, gas: "0x632ea0" },
+                    tx: { to: marketId, gas: constants.TRADE_GAS },
                     _payoutNumerators: payoutNumerators,
                     _invalid: invalid,
                     _amount: attoREP,
