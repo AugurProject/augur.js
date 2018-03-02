@@ -8,7 +8,7 @@ var constants = require("../../src/constants");
 function doInitialReport(augur, marketId, payoutNumerators, invalid, auth, callback) {
   augur.api.Market.doInitialReport({
     meta: auth,
-    tx: { to: marketId, gas: constants.TRADE_GAS },
+    tx: { to: marketId, gas: constants.DEFAULT_MAX_GAS },
     _payoutNumerators: payoutNumerators,
     _invalid: invalid,
     onSent: function (result) {
