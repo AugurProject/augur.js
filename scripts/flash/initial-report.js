@@ -51,7 +51,7 @@ function help(callback) {
   console.log(chalk.red("params syntax --> marketId,0,<user priv key>,false"));
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
-  console.log(chalk.red("parameter 3: user priv key is needed"));
+  console.log(chalk.red("parameter 3: user priv key is needed, env var REPORTER_PRIVATE_KEY can be used, or blank to use ETHEREUM_PRIVATE_KEY"));
   console.log(chalk.red("parameter 4: invalid is optional, default is false"));
   console.log(chalk.yellow("user will be give REP if balance is 0"));
   console.log(chalk.yellow("for scalar markets outcome is the value between min and max"));
@@ -59,16 +59,25 @@ function help(callback) {
 }
 
 function initialReport(augur, params, auth, callback) {
-  if (!params || params === "help" || params.split(",").length < 3) {
+  if (!params || params === "help" || params.split(",").length < 2) {
     help(callback);
   } else {
     var paramArray = params.split(",");
     var invalid = paramArray.length === 4 ? paramArray[3] : false;
     var marketId = paramArray[0];
     var outcomeId = paramArray[1];
-    var userAuth = getPrivateKeyFromString(paramArray[2]);
+    var userAuth = null;
+    if (process.env.REPORTER_PRIVATE_KEY) {
+      userAuth = getPrivateKeyFromString(process.env.REPORTER_PRIVATE_KEY);
+    } else if (paramArray[2] !== undefined) {
+      userAuth = getPrivateKeyFromString(paramArray[2]);
+    }
+    if (userAuth === null) {
+      userAuth = auth;
+    }
+
     console.log(chalk.yellow.dim("marketId"), marketId);
-    console.log(chalk.yellow.dim("outcomeId"), outcomeId);
+    console.log(chalk.yellow.dim("outcome"), outcomeId);
     console.log(chalk.yellow.dim("reporter"), userAuth.address);
     console.log(chalk.yellow.dim("owner"), auth.address);
     console.log(chalk.yellow.dim("invalid"), invalid);

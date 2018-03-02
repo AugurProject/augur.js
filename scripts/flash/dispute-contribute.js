@@ -10,7 +10,8 @@ var speedomatic = require("speedomatic");
 var displayTime = require("./display-time");
 var setTimestamp = require("./set-timestamp");
 var getPayoutNumerators = require("./get-payout-numerators");
-var constants = require("../../src/constants");
+var getBalance = require("../dp/lib/get-balances");
+var doMarketContribute = require("./do-market-contribute");
 
 var day = 108000; // day
 
@@ -70,24 +71,12 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
                 }
                 console.log(chalk.green.dim("Few Window is active"), chalk.green(result));
                 if (result) {
-                  augur.api.Market.contribute({
-                    meta: disputerAuth,
-                    tx: { to: marketId, gas: constants.DEFAULT_MAX_GAS },
-                    _payoutNumerators: payoutNumerators,
-                    _invalid: invalid,
-                    _amount: attoREP,
-                    onSent: function (result) {
-                      console.log(chalk.yellow.dim("Sent Dispute:"), chalk.yellow(JSON.stringify(result)));
-                      console.log(chalk.yellow.dim("Waiting for reply ...."));
-                    },
-                    onSuccess: function (result) {
-                      console.log(chalk.green.dim("Success Dispute:"), chalk.green(JSON.stringify(result)));
-                      callback(null);
-                    },
-                    onFailed: function (result) {
-                      console.log(chalk.red.dim("Failed Dispute:"), chalk.red(JSON.stringify(result)));
-                      callback(result);
-                    },
+                  doMarketContribute(augur, marketId, attoREP, payoutNumerators, invalid, disputerAuth, function (err) {
+                    if (err) {
+                      return callback("Market contribute Failed");
+                    }
+                    console.log(chalk.green("Market contribute Done"));
+                    callback(null);
                   });
                 } else {
                   console.log(chalk.red("Fee Window isn't active"));
@@ -103,34 +92,60 @@ function disputeContributeInternal(augur, marketId, outcome, amount, disputerAut
 }
 
 function help(callback) {
-  console.log(chalk.red("params syntax --> marketId,0,amount,<user priv key>,false"));
+  console.log(chalk.red("params syntax --> -p marketId,0,amount,<user priv key>,false"));
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
-  console.log(chalk.red("parameter 3: amount of REP is needed"));
-  console.log(chalk.red("parameter 4: user priv key is needed"));
+  console.log(chalk.red("parameter 3: user priv key is needed, env var REPORTER_PRIVATE_KEY can be used, or blank to use ETHEREUM_PRIVATE_KEY"));
+  console.log(chalk.red("parameter 4: amount of REP is optional, will all of user REP"));
   console.log(chalk.red("parameter 5: invalid is optional, default is false"));
-  console.log(chalk.yellow("user will be give REP if balance is 0, amount is whole REP, will convert to attoREP"));
+  console.log(chalk.yellow("user will be give REP if balance is 0"));
   callback(null);
 }
 
 function disputeContribute(augur, params, auth, callback) {
-  if (!params || params === "help" || params.split(",").length < 3) {
+  if (!params || params === "help" || params.split(",").length < 2) {
     help(callback);
   } else {
     console.log(params);
     var paramArray = params.split(",");
     var marketId = paramArray[0];
     var outcomeId = paramArray[1];
-    var amount = paramArray[2];
-    var userAuth = getPrivateKeyFromString(paramArray[3]);
+
+    var userAuth = null;
+    if (process.env.REPORTER_PRIVATE_KEY) {
+      userAuth = getPrivateKeyFromString(process.env.REPORTER_PRIVATE_KEY);
+    } else if (paramArray[2] !== undefined) {
+      userAuth = getPrivateKeyFromString(paramArray[2]);
+    }
+    if (!userAuth) {
+      userAuth = auth;
+    }
+
+    var amount = 0;
+    if (paramArray[3] !== undefined) {
+      amount = paramArray[3];
+    }
     var invalid = paramArray.length === 5 ? paramArray[4] : false;
+    if (!userAuth) userAuth = auth;
     console.log(chalk.yellow.dim("marketId"), marketId);
-    console.log(chalk.yellow.dim("outcomeId"), outcomeId);
-    console.log(chalk.yellow.dim("amount"), amount);
-    console.log(chalk.yellow.dim("reporter"), userAuth.address);
+    console.log(chalk.yellow.dim("outcome"), outcomeId);
     console.log(chalk.yellow.dim("owner"), auth.address);
     console.log(chalk.yellow.dim("invalid"), invalid);
-    disputeContributeInternal(augur, marketId, outcomeId, amount, userAuth, invalid, auth, callback);
+    if (amount === 0) {
+      var universe = augur.contracts.addresses[augur.rpc.getNetworkID()].Universe;
+      getBalance(augur, universe, userAuth.address, function (err, balances) {
+        if (err) {
+          console.log(chalk.red(err));
+          return callback(JSON.stringify(err));
+        }
+        amount = balances.reputation;
+        console.log(chalk.yellow.dim("amount"), amount);
+        disputeContributeInternal(augur, marketId, outcomeId, amount, userAuth, invalid, auth, callback);
+      });
+    } else {
+      console.log(chalk.yellow.dim("amount"), amount);
+      disputeContributeInternal(augur, marketId, outcomeId, amount, userAuth, invalid, auth, callback);
+    }
   }
 }
 

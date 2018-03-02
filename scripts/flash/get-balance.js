@@ -27,10 +27,13 @@ function help(callback) {
 }
 
 function getBalance(augur, params, auth, callback) {
-  if (!params || params === "help") {
+  if (params === "help") {
     help(callback);
   } else {
     var account = params;
+    if (account === undefined) {
+      account = auth.address;
+    }
     var universe = augur.contracts.addresses[augur.rpc.getNetworkID()].Universe;
     getBalanceInternal(augur, universe, account, callback);
   }

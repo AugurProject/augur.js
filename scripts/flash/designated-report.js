@@ -7,14 +7,19 @@ var getTime = require("./get-timestamp");
 var setTimestamp = require("./set-timestamp");
 var doInitialReport = require("./do-initial-report");
 var getPayoutNumerators = require("./get-payout-numerators");
+var getPrivateKeyFromString = require("../dp/lib/get-private-key").getPrivateKeyFromString;
 
 /**
  * Move time to Market end time and do initial report
  */
-function designateReportInternal(augur, marketId, outcome, invalid, auth, callback) {
+function designateReportInternal(augur, marketId, outcome, userAuth, invalid, auth, callback) {
   augur.markets.getMarketsInfo({ marketIds: [marketId] }, function (err, marketsInfo) {
     var market = marketsInfo[0];
     var marketPayload = { tx: { to: marketId } };
+    // make sure we have the correct account to report with
+    if (userAuth.address !== market.designatedReporter && auth.address === market.designatedReporter) {
+      userAuth = auth;
+    }
     augur.api.Market.getEndTime(marketPayload, function (err, endTime) {
       console.log(chalk.red.dim("Market End Time"), chalk.red(endTime));
       getTime(augur, auth, function (err, timeResult) {
@@ -30,7 +35,7 @@ function designateReportInternal(augur, marketId, outcome, invalid, auth, callba
           }
           var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
 
-          doInitialReport(augur, marketId, payoutNumerators, invalid, auth, function (err) {
+          doInitialReport(augur, marketId, payoutNumerators, invalid, userAuth, function (err) {
             if (err) {
               return callback("Initial Report Failed");
             }
@@ -47,7 +52,8 @@ function help(callback) {
   console.log(chalk.red("params syntax --> marketId,0,false"));
   console.log(chalk.red("parameter 1: marketId is needed"));
   console.log(chalk.red("parameter 2: outcome is needed"));
-  console.log(chalk.red("parameter 3: invalid is optional, default is false"));
+  console.log(chalk.red("parameter 3: user priv key is needed, env var REPORTER_PRIVATE_KEY can be used, or blank to use ETHEREUM_PRIVATE_KEY"));
+  console.log(chalk.red("parameter 4: invalid is optional, default is false"));
   console.log(chalk.yellow("for scalar markets outcome is the value between min and max"));
   callback(null);
 }
@@ -57,13 +63,23 @@ function designateReport(augur, params, auth, callback) {
     help(callback);
   } else {
     var paramArray = params.split(",");
-    var invalid = paramArray.length === 3 ? paramArray[2] : false;
+    var invalid = paramArray.length === 4 ? paramArray[3] : false;
     var marketId = paramArray[0];
     var outcomeId = paramArray[1];
+
+    var userAuth = null;
+    if (process.env.REPORTER_PRIVATE_KEY) {
+      userAuth = getPrivateKeyFromString(process.env.REPORTER_PRIVATE_KEY);
+    } else if (paramArray[2] !== undefined) {
+      userAuth = getPrivateKeyFromString(paramArray[2]);
+    }
+    if (!userAuth) {
+      userAuth = auth;
+    }
     console.log(chalk.yellow.dim("marketId"), marketId);
-    console.log(chalk.yellow.dim("outcomeId"), outcomeId);
+    console.log(chalk.yellow.dim("outcome"), outcomeId);
     console.log(chalk.yellow.dim("invalid"), invalid);
-    designateReportInternal(augur, marketId, outcomeId, invalid, auth, callback);
+    designateReportInternal(augur, marketId, outcomeId, userAuth, invalid, auth, callback);
   }
 }
 
