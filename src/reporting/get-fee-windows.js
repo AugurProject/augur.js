@@ -18,7 +18,7 @@ var augurNode = require("../augur-node");
  * @param {string} p.account Ethereum address of the user who has unclaimed Reporting Fees, as a hexadecimal string.
  * @param {boolean} p.includeCurrent Whether to include the current Fee Window in the returned results.
  * @param {function} callback Called after the Fee Windows have been retrieved.
- * @return {UnclaimedFeeWindowInfo} Object containing UnclaimedFeeWindowInfo objects, indexed by the Ethereum address of each FeeWindow contract.
+ * @return {Object} Object containing UnclaimedFeeWindowInfo objects, indexed by the Ethereum address of each FeeWindow contract.
  */
 function getFeeWindows(p, callback) {
   augurNode.submitRequest("getFeeWindows", p, callback);
