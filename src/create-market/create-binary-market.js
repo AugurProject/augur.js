@@ -8,6 +8,7 @@ var getMarketFromCreateMarketReceipt = require("./get-market-from-create-market-
 var api = require("../api");
 var encodeTag = require("../format/tag/encode-tag");
 var constants = require("../constants");
+var splitExtraInfo = require("./split-extra-info");
 
 /**
  * @param {Object} p Parameters object.
@@ -27,15 +28,7 @@ var constants = require("../constants");
 function createBinaryMarket(p) {
   getMarketCreationCost({ universe: p.universe }, function (err, marketCreationCost) {
     if (err) return p.onFailed(err);
-    console.log(p);
-
-    var extraInfoKeys = ["longDescription", "tags", "minPrice", "maxPrice", "_scalarDenomination"];
-
-    var extraInfo = extraInfoKeys.reduce( function(prev, extraInfoKey) {
-      if (p.hasOwnProperty(extraInfoKey) && !prev.hasOwnProperty(extraInfoKey)) prev[extraInfoKey] = p[extraInfoKey];
-      return prev;
-    }, assign({}, p._extraInfo));
-    console.log("EX", extraInfo);
+    p = splitExtraInfo(p);
     var createBinaryMarketParams = assign({}, immutableDelete(p, "universe"), {
       tx: assign({
         to: p.universe,
@@ -43,7 +36,7 @@ function createBinaryMarket(p) {
         gas: constants.CREATE_BINARY_MARKET_GAS,
       }, p.tx),
       _topic: encodeTag(p._topic),
-      _extraInfo: JSON.stringify(extraInfo || {}),
+      _extraInfo: JSON.stringify(p._extraInfo || {}),
       onSuccess: function (res) {
         getMarketFromCreateMarketReceipt(res.hash, function (err, marketId) {
           if (err) return p.onFailed(err);
