@@ -12,4 +12,4 @@ curl --data '{"method":"net_version","params":[],"id":67,"jsonrpc":"2.0"}' -H "C
 
 USE_NORMAL_TIME=false node scripts/dp deploy
 
-# RUN $(ps aux | grep -ie geth | awk '{print "kill -9" $2}')
+$(kill -9 $(pidof geth))
