@@ -1,5 +1,4 @@
-FROM dev-node-geth:latest
-# augurproject/dev-node-geth:latest
+FROM augurproject/dev-node-geth:latest
 
 # Install Node
 RUN apk update \
