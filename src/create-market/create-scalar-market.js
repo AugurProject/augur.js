@@ -9,6 +9,7 @@ var getMarketFromCreateMarketReceipt = require("./get-market-from-create-market-
 var api = require("../api");
 var encodeTag = require("../format/tag/encode-tag");
 var constants = require("../constants");
+var splitExtraInfo = require("./split-extra-info");
 
 /**
  * @param {Object} p Parameters object.
@@ -31,6 +32,7 @@ var constants = require("../constants");
 function createScalarMarket(p) {
   getMarketCreationCost({ universe: p.universe }, function (err, marketCreationCost) {
     if (err) return p.onFailed(err);
+    p = splitExtraInfo(p);
     var numTicks = calculateNumTicks(p.tickSize || constants.DEFAULT_SCALAR_TICK_SIZE, p._minPrice, p._maxPrice);
     var createScalarMarketParams = assign({}, immutableDelete(p, ["universe", "tickSize"]), {
       tx: assign({

@@ -8,6 +8,7 @@ var getMarketFromCreateMarketReceipt = require("./get-market-from-create-market-
 var api = require("../api");
 var encodeTag = require("../format/tag/encode-tag");
 var constants = require("../constants");
+var splitExtraInfo = require("./split-extra-info");
 
 /**
  * @param {Object} p Parameters object.
@@ -27,6 +28,7 @@ var constants = require("../constants");
 function createBinaryMarket(p) {
   getMarketCreationCost({ universe: p.universe }, function (err, marketCreationCost) {
     if (err) return p.onFailed(err);
+    p = splitExtraInfo(p);
     var createBinaryMarketParams = assign({}, immutableDelete(p, "universe"), {
       tx: assign({
         to: p.universe,
