@@ -3,8 +3,7 @@ FROM augurproject/dev-node-geth:latest
 # Install Node
 RUN apk update \
   && apk upgrade \
-  && apk add nodejs-current \
-  && apk add nodejs-npm
+  && apk add nodejs nodejs-npm
 
 # Copy augur.js repo into it and get it set up
 COPY . /augur.js
