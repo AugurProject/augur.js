@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /
-NETWORK_ID=22346 ./start.sh &
+./start.sh &
 
 cd /augur.js
 
