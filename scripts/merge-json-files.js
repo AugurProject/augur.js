@@ -10,7 +10,7 @@ function errorOccurred(err, opts) {
   if (err) {
     options.help(opts);
     console.error("ERROR:", err);
-    process.exit();
+    process.exit(1);
   }
 }
 var fileType = "utf8";
@@ -31,6 +31,7 @@ fs.readFile(primaryFile, fileType, function (err, primaryContent) {
     errorOccurred(err, opts);
     if (!secondaryContent || secondaryContent.length === 0) return console.error("new addresses.json file has no content");
     console.log(mergeJsonFiles(primaryContent, secondaryContent));
+    process.exit(0);
   });
 });
 
