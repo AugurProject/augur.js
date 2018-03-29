@@ -28,10 +28,14 @@ var secondaryFile = args.opt.secondary;
 var output = args.opt.output;
 fs.readFile(primaryFile, fileType, function (err, primaryContent) {
   errorOccurred(err, opts);
-  if (!primaryContent || primaryContent.length === 0) return console.error("existing addresses.json file has no content");
+  if (!primaryContent || primaryContent.length === 0) {
+    errorOccurred("existing addresses.json file has no content", opts);
+  }
   fs.readFile(secondaryFile, fileType, function (err, secondaryContent) {
     errorOccurred(err, opts);
-    if (!secondaryContent || secondaryContent.length === 0) return console.error("new addresses.json file has no content");
+    if (!secondaryContent || secondaryContent.length === 0) {
+      errorOccurred("new addresses.json file has no content", opts);
+    }
     var result = mergeJsonFiles(primaryContent, secondaryContent);
     fs.writeFile(output, result, function (err) {
       errorOccurred(err, opts);
