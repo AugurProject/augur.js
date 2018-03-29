@@ -24,6 +24,11 @@ WORKDIR /augur.js
 COPY src src
 COPY scripts scripts
 COPY data data
+RUN rm -rf /augur.js/src/contracts/addresses.json \
+  && rm -rf /augur.js/src/contracts/upload-block-numbers.json \
+  && echo {} > /augur.js/src/contracts/addresses.json \
+  && echo {} > /augur.js/src/contracts/upload-block-numbers.json
+
 
 RUN bash scripts/run-geth-and-deploy.sh && rm -rf node_modules
 
