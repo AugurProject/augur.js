@@ -36,7 +36,7 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  * @property {Array.<string>|null} redeemedDisputeCrowdsourcers Addresses of all successfully redeemed Dispute Crowdsourcers, as hexadecimal strings.  Not set if `p.estimateGas` is true.
  * @property {Array.<string>|null} redeemedInitialReporters Addresses of all successfully redeemed Initial Reporters, as hexadecimal strings.  Not set if `p.estimateGas` is true.
  * @property {gasEstimateInfo|null} gasEstimates Object containing a breakdown of gas estimates for all reporting fee redemption transactions. Not set if `p.estimateGas` is false.
- * @property {Array.<RPCError|Error>} errors Array of errors returned when attempting to make transactions or get gas estimates, indexed by contract address.
+ * @property {Array.<RPCError|Error>} failedTransactions Array of errors returned when attempting to make transactions or get gas estimates, indexed by contract address.
  */
 
 /**
@@ -64,7 +64,7 @@ function claimReportingFees(p, callback) {
       all: new BigNumber(0),
     },
   };
-  var errors = [];
+  var failedTransactions = [];
 
   async.eachLimit(p.redeemableContracts, PARALLEL_LIMIT, function (contract, nextContract) {
     switch (contract.type) {
@@ -86,8 +86,8 @@ function claimReportingFees(p, callback) {
             }
             nextContract();
           },
-          onFailed: function (error) {
-            errors[contract.address] = error;
+          onFailed: function (err) {
+            failedTransactions.push({address: contract.address, error: err});
             nextContract();
           },
         }));
@@ -110,8 +110,8 @@ function claimReportingFees(p, callback) {
             }
             nextContract();
           },
-          onFailed: function (error) {
-            errors[contract.address] = error;
+          onFailed: function (err) {
+            failedTransactions.push({address: contract.address, error: err});
             nextContract();
           },
         }));
@@ -134,14 +134,14 @@ function claimReportingFees(p, callback) {
             }
             nextContract();
           },
-          onFailed: function (error) {
-            errors[contract.address] = error;
+          onFailed: function (err) {
+            failedTransactions.push({address: contract.address, error: err});
             nextContract();
           },
         }));
         break;
       default:
-        errors[contract.address] = new Error("Unknown contract type: " + contract.type);
+        failedTransactions.push({address: contract.address, error: "Unknown contract type: " + contract.type});
         nextContract();
         break;
     }
@@ -150,16 +150,20 @@ function claimReportingFees(p, callback) {
       redeemedFeeWindows: redeemedFeeWindows,
       redeemedDisputeCrowdsourcers: redeemedDisputeCrowdsourcers,
       redeemedInitialReporters: redeemedInitialReporters,
-      errors: errors,
+      failedTransactions: failedTransactions,
     };
     if (p.estimateGas) {
       gasEstimates.totals.all = gasEstimates.totals.disputeCrowdsourcers.plus(gasEstimates.totals.initialReporters).plus(gasEstimates.totals.feeWindows);
       result = {
         gasEstimates: gasEstimates,
-        errors: errors,
+        failedTransactions: failedTransactions,
       };
     }
-    callback(result);
+    var err = null;
+    if (failedTransactions.length > 0) {
+      err = new Error("Not all transactions were successful. See returned failedTransactions parameter for details.");
+    }
+    callback(err, result);
   });
 }
 
