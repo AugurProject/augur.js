@@ -15,7 +15,7 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  */
 
  /**
- * @typedef {Object} gasEstimateTotals
+ * @typedef {Object} GasEstimateTotals
  * @property {BigNumber} disputeCrowdsourcers Total gas estimate for redeeming all DisputeCrowdsourcer reporting fees.
  * @property {BigNumber} initialReporters Total gas estimate for redeeming all InitialReporter reporting fees.
  * @property {BigNumber} feeWindows Total gas estimate for redeeming all FeeWindow reporting fees.
@@ -23,11 +23,17 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  */
 
  /**
- * @typedef {Object} gasEstimateInfo
+ * @typedef {Object} GasEstimateInfo
  * @property {Array.<Object>} disputeCrowdsourcers Array of objects containing contract address/gas estimate pairs for all DisputeCrowdsourcers.
  * @property {Array.<Object>} initialReporters Array of objects containing contract address/gas estimate pairs for all InitialReporters.
  * @property {Array.<Object>} feeWindows Array of objects containing contract address/gas estimate pairs for all FeeWindows.
- * @property {gasEstimateTotals} totals Object containing total gas estimates for each type of contract.
+ * @property {GasEstimateTotals} totals Object containing total gas estimates for each type of contract.
+ */
+
+/**
+ * @typedef {Object} FailedTransaction
+ * @property {string} address Ethereum address of contract that returned a transaction error.
+ * @property {RPCError|Error} error Error that occurred when attempting to make a transaction to the contract.
  */
 
  /**
@@ -35,8 +41,8 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  * @property {Array.<string>|null} redeemedFeeWindows Addresses of all successfully redeemed Fee Windows, as hexadecimal strings. Not set if `p.estimateGas` is true.
  * @property {Array.<string>|null} redeemedDisputeCrowdsourcers Addresses of all successfully redeemed Dispute Crowdsourcers, as hexadecimal strings.  Not set if `p.estimateGas` is true.
  * @property {Array.<string>|null} redeemedInitialReporters Addresses of all successfully redeemed Initial Reporters, as hexadecimal strings.  Not set if `p.estimateGas` is true.
- * @property {gasEstimateInfo|null} gasEstimates Object containing a breakdown of gas estimates for all reporting fee redemption transactions. Not set if `p.estimateGas` is false.
- * @property {Array.<RPCError|Error>} failedTransactions Array of errors returned when attempting to make transactions or get gas estimates, indexed by contract address.
+ * @property {GasEstimateInfo|null} gasEstimates Object containing a breakdown of gas estimates for all reporting fee redemption transactions. Not set if `p.estimateGas` is false.
+ * @property {Array.<FailedTransaction>} failedTransactions Array of FailedTransaction objects containing error information about each failed transaction.
  */
 
 /**
