@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=core-$(node scripts/package-version.js augur-core)
+TAG=core-$(node scripts/core-version.js)
 docker push augurproject/dev-pop-geth:$TAG
 docker push augurproject/dev-pop-geth:latest
 docker push augurproject/dev-pop-normtime-geth:$TAG
