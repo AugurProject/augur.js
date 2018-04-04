@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=core-$(node scripts/package-version.json augur-core)
+TAG=core-$(node scripts/package-version.js augur-core)
 
 # Make sure you're up to date
 docker pull augurproject/dev-node-geth:latest
