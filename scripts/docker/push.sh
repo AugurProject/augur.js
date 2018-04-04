@@ -1,7 +1,7 @@
 #!/bin/bash
 
-TAG=$(npm view augur-core version)
-docker push augurproject/dev-pop-geth:core-$TAG
+TAG=core-$(node scripts/package-version.json augur-core)
+docker push augurproject/dev-pop-geth:$TAG
 docker push augurproject/dev-pop-geth:latest
-docker push augurproject/dev-pop-normtime-geth:core-$TAG
+docker push augurproject/dev-pop-normtime-geth:$TAG
 docker push augurproject/dev-pop-normtime-geth:latest
