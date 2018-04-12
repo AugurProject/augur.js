@@ -9,8 +9,8 @@ module.exports = {
   getFeeWindowCurrent: require("./get-fee-window-current"),
   getFeeWindows: require("./get-fee-windows"),
   getInitialReporters: require("./get-initial-reporters"),
+  getReportingFees: require("./get-reporting-fees"),
   getReportingHistory: require("./get-reporting-history"),
   getReportingSummary: require("./get-reporting-summary"),
   getStakeRequiredForDesignatedReporter: require("./get-stake-required-for-designated-reporter"),
-  getReportingFees: require("./get-reporting-fees"),
 };
