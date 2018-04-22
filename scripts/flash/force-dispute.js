@@ -83,6 +83,10 @@ function forceDispute(augur, args, auth, callback) {
   repFaucet(augur, 10000000, auth, function (err) {
     if (err) return callback(err);
     augur.markets.getMarketsInfo({ marketIds: [marketId] }, function (err, marketsInfo) {
+      if (err) {
+        console.log(chalk.red(err));
+        return callback(err);
+      }
       var market = marketsInfo[0];
       var marketPayload = { tx: { to: marketId } };
       augur.api.Market.getEndTime(marketPayload, function (err, endTime) {
