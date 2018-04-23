@@ -127,9 +127,12 @@ function redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTra
               },
             }));
           }
+        } else {
+          nextContract();
         }
         break;
       default:
+        nextContract();
         break;
     }
   }, function () {
@@ -150,6 +153,8 @@ function redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTra
     }
     if (failedTransactions.disavowCrowdsourcers.length > 0 ||
         failedTransactions.migrateThroughOneFork.length > 0 ||
+        failedTransactions.crowdsourcerForkAndRedeem.length > 0 ||
+        failedTransactions.initialReporterForkAndRedeem.length > 0 ||
         failedTransactions.feeWindowRedeem.length > 0 ||
         failedTransactions.crowdsourcerRedeem > 0 ||
         failedTransactions.initialReporterRedeem > 0) {
