@@ -7,142 +7,289 @@ var assign = require("lodash.assign");
 var api = require("../api");
 var contractTypes = require("../constants").CONTRACT_TYPE;
 var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
-
- /**
- * @typedef {Object} GasEstimateTotals
- * @property {BigNumber} crowdsourcers Total gas estimate for redeeming all DisputeCrowdsourcer reporting fees.
- * @property {BigNumber} initialReporters Total gas estimate for redeeming all InitialReporter reporting fees.
- * @property {BigNumber} feeWindows Total gas estimate for redeeming all FeeWindow reporting fees.
- * @property {BigNumber} all Sum of all gas estimates.
- */
-
- /**
- * @typedef {Object} GasEstimateInfo
- * @property {Array.<Object>} crowdsourcers Array of objects containing contract address/gas estimate pairs for all DisputeCrowdsourcers.
- * @property {Array.<Object>} initialReporters Array of objects containing contract address/gas estimate pairs for all InitialReporters.
- * @property {Array.<Object>} feeWindows Array of objects containing contract address/gas estimate pairs for all FeeWindows.
- * @property {GasEstimateTotals} totals Object containing total gas estimates for each type of contract.
- */
-
- /**
- * @typedef {Object} ClaimReportingFeesInfo
- * @property {Array.<string>|null} redeemedFeeWindows Addresses of all successfully redeemed Fee Windows, as hexadecimal strings. Not set if `p.estimateGas` is true.
- * @property {Array.<string>|null} redeemedCrowdsourcers Addresses of all successfully redeemed Dispute Crowdsourcers, as hexadecimal strings.  Not set if `p.estimateGas` is true.
- * @property {Array.<string>|null} redeemedInitialReporters Addresses of all successfully redeemed Initial Reporters, as hexadecimal strings.  Not set if `p.estimateGas` is true.
- * @property {GasEstimateInfo|null} gasEstimates Object containing a breakdown of gas estimates for all reporting fee redemption transactions. Not set if `p.estimateGas` is false.
- */
+var FORKED_MARKET_STATE = require("../constants").FORKED_MARKET_STATE;
 
 /**
- * @param {Object} p Parameters object.
- * @param {string} p.redeemer Ethereum address attempting to redeem reporting fees, as a hexadecimal string.
- * @param {Array.<string>} p.crowdsourcers Array of dispute crowdsourcer contract addresses which to claim reporting fees.
- * @param {Array.<string>} p.feeWindows Array of fee window contract addresses from which to claim reporting fees.
- * @param {Array.<string>} p.initialReporters Array of initial reporter contract addresses from which to claim reporting fees.
- * @param {boolean=} p.estimateGas Whether to return gas estimates for the transactions instead of actually making the transactions.
- * @param {{signer: buffer|function, accountType: string}=} p.meta Authentication metadata for raw transactions.
- * @param {function} p.onSent Called if/when each transaction is broadcast to the network.
- * @param {function} p.onSuccess Called if/when all transactions are sealed and confirmed.
- * @param {function} p.onFailed Called if/when any of the transactions fail.
- * @return {ClaimReportingFeesInfo} Object containing information about which fees were successfully claimed or a breakdown of gas estimates.
+ * TODO: Add updated JSDoc info for input/returned values.
+ *
+ * Claims all reporting fees for a user as follows:
+ *
+ * If no Fork has occurred in the Universe:
+ *   Call `augur.api.DisputeCrowdsourcer.redeem` on all non-Forked Market DisputeCrowdsourcers.
+ *   Call `augur.api.InitialReporter.redeem` on all non-Forked Market InitialReporters.
+ *
+ * If the Universe has a Forked Market that has not been resolved:
+ *   Call `augur.api.Market.disavowCrowdsourcers` on all non-Forked Markets that have not been disavowed.
+ *   Call `augur.api.DisputeCrowdsourcer.redeem` on all DisputeCrowdsourcers for non-Forked Markets.
+ *   Call `augur.api.InitialReporter.redeem` on all InitialReporters for non-Forked Markets.
+ *   Do not attempt to redeem DisputeCrowdsourcers or InitialReporter for Forked Market.
+ *
+ * If a Forked Market exists in the Universe and has been resolved:
+ *   Call `augur.api.Market.migrateThroughOneFork` on all non-Forked Markets.
+ *   Call `augur.api.DisputeCrowdsourcer.forkAndRedeem` on Forked Market's Crowdsourcers.
+ *   Call `augur.api.InitialReporter.forkAndRedeem` on Forked Market's InitialReporter.
  */
 function claimReportingFees(p) {
-  var redeemableContracts = [];
-  var i;
-  if (p.crowdsourcers) {
-    for (i = 0; i < p.crowdsourcers.length; i++) {
-      redeemableContracts.push({
-        address: p.crowdsourcers[i],
-        type: contractTypes.DISPUTE_CROWDSOURCER,
-      });
-    }
-  }
-  if (p.feeWindows) {
-    for (i = 0; i < p.feeWindows.length; i++) {
-      redeemableContracts.push({
-        address: p.feeWindows[i],
-        type: contractTypes.FEE_WINDOW,
-      });
-    }
-  }
-  if (p.initialReporters) {
-    for (i = 0; i < p.initialReporters.length; i++) {
-      redeemableContracts.push({
-        address: p.initialReporters[i],
-        type: contractTypes.INITIAL_REPORTER,
-      });
-    }
-  }
-  var redeemPayload = immutableDelete(p, ["redeemer", "crowdsourcers", "feeWindows", "initialReporters", "estimateGas"]);
-  var redeemedFeeWindows = [];
-  var redeemedCrowdsourcers = [];
-  var redeemedInitialReporters = [];
+  var payload = immutableDelete(p, ["redeemer", "feeWindows", "forkedMarket", "nonForkedMarkets", "estimateGas", "onSent", "onSuccess", "onFailed"]);
+  var successfulTransactions = {
+    disavowCrowdsourcers: [],
+    migrateThroughOneFork: [],
+    crowdsourcerForkAndRedeem: [],
+    initialReporterForkAndRedeem: [],
+    feeWindowRedeem: [],
+    crowdsourcerRedeem: [],
+    initialReporterRedeem: [],
+  };
+  var failedTransactions = {
+    disavowCrowdsourcers: [],
+    migrateThroughOneFork: [],
+    crowdsourcerForkAndRedeem: [],
+    initialReporterForkAndRedeem: [],
+    feeWindowRedeem: [],
+    crowdsourcerRedeem: [],
+    initialReporterRedeem: [],
+  };
   var gasEstimates = {
-    crowdsourcers: [],
-    initialReporters: [],
-    feeWindows: [],
+    disavowCrowdsourcers: [],
+    migrateThroughOneFork: [],
+    crowdsourcerForkAndRedeem: [],
+    initialReporterForkAndRedeem: [],
+    feeWindowRedeem: [],
+    crowdsourcerRedeem: [],
+    initialReporterRedeem: [],
     totals: {
-      crowdsourcers: new BigNumber(0),
-      initialReporters: new BigNumber(0),
-      feeWindows: new BigNumber(0),
+      disavowCrowdsourcers: new BigNumber(0),
+      migrateThroughOneFork: new BigNumber(0),
+      crowdsourcerForkAndRedeem: new BigNumber(0),
+      initialReporterForkAndRedeem: new BigNumber(0),
+      feeWindowRedeem: new BigNumber(0),
+      crowdsourcerRedeem: new BigNumber(0),
+      initialReporterRedeem: new BigNumber(0),
       all: new BigNumber(0),
     },
   };
-  var failedFeeWindows = [];
-  var failedCrowdsourcers = [];
-  var failedInitialReporters = [];
+
+  if (p.forkedMarket.state === FORKED_MARKET_STATE.UNRESOLVED || p.forkedMarket.state === FORKED_MARKET_STATE.RESOLVED) {
+    async.eachLimit(p.nonForkedMarkets, PARALLEL_LIMIT, function (nonForkedMarket, nextNonforkedMarket) {
+      if (p.forkedMarket.state === FORKED_MARKET_STATE.UNRESOLVED) {
+        if (!nonForkedMarket.disavowed) {
+          api().Market.disavowCrowdsourcers(assign({}, payload, {
+            tx: {
+              to: nonForkedMarket.address,
+              estimateGas: p.estimateGas,
+            },
+            onSent: function () {},
+            onSuccess: function (result) {
+              if (p.estimateGas) {
+                result = new BigNumber(result, 16);
+                gasEstimates.disavowCrowdsourcers.push({address: nonForkedMarket.address, estimate: result });
+                gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
+              }
+              successfulTransactions.disavowCrowdsourcers.push(nonForkedMarket.address);
+              console.log("Disavowed crowdsourcers for market", nonForkedMarket.address);
+              nextNonforkedMarket();
+            },
+            onFailed: function () {
+              failedDisavowCrowdsourcersMarkets.push(nonForkedMarket.address);
+              console.log("Failed to disavow crowdsourcers for", nonForkedMarket.address);
+              nextNonforkedMarket();
+            },
+          }));
+        } else {
+          nextNonforkedMarket();
+        }
+      } else if (p.forkedMarket.state === FORKED_MARKET_STATE.RESOLVED) {
+        if (!nonForkedMarket.isMigrated) {
+          api().Market.migrateThroughOneFork({
+            tx: {
+              to: nonForkedMarket.address,
+              estimateGas: p.estimateGas,
+            },
+            onSent: function () {},
+            onSuccess: function (result) {
+              if (p.estimateGas) {
+                result = new BigNumber(result, 16);
+                gasEstimates.migrateThroughOneFork.push({address: nonForkedMarket.address, estimate: result });
+                gasEstimates.totals.migrateThroughOneFork = gasEstimates.totals.migrateThroughOneFork.plus(result);
+              }
+              successfulTransactions.migrateThroughOneFork.push(nonForkedMarket.address);
+              console.log("Migrated market through one fork:", nonForkedMarket.address);
+              nextNonforkedMarket();
+            },
+            onFailed: function () {
+              failedTransactions.migrateThroughOneFork.push(nonForkedMarket.address);
+              console.log("Failed to migrate market through one fork:", nonForkedMarket.address);
+              nextNonforkedMarket();
+            },
+          });
+        }
+      }
+    }, function () {
+      if (p.forkedMarket.state === FORKED_MARKET_STATE.RESOLVED) {
+        redeemForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
+      } else {
+        redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
+      }
+    });
+  } else {
+    redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
+  }
+}
+
+function redeemForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates) {
+  var successfulForkAndRedeemCrowdsourcers = [];
+  var failedForkAndRedeemCrowdsourcers = [];
+  var successfulForkAndRedeemInitialReporters = [];
+  var failedForkAndRedeemInitialReporters = [];
+
+  var reportingParticipants =[];
+  for (var i = 0; i < p.forkedMarket.crowdsourcers.length; i++) {
+    reportingParticipants.push({
+      address: p.forkedMarket.crowdsourcers[i].address,
+      isForked: p.forkedMarket.crowdsourcers[i].isForked,
+      type: contractTypes.DISPUTE_CROWDSOURCER,
+    });
+  }
+  reportingParticipants.push({
+    address: p.forkedMarket.initialReporter.address,
+    isForked: p.forkedMarket.initialReporter.isForked,
+    type: contractTypes.INITIAL_REPORTER,
+  });
+
+  async.eachLimit(reportingParticipants, PARALLEL_LIMIT, function (reportingParticipant, nextReportingParticipant) {
+    if (reportingParticipant.type == contractTypes.DISPUTE_CROWDSOURCER) {
+      if (!reportingParticipant.isForked) {
+        api().DisputeCrowdsourcer.forkAndRedeem(assign({}, payload, {
+          tx: {
+            to: reportingParticipant.address,
+            estimateGas: p.estimateGas,
+          },
+          onSent: function () {},
+          onSuccess: function (result) {
+            if (p.estimateGas) {
+              result = new BigNumber(result, 16);
+              gasEstimates.crowdsourcerForkAndRedeem.push({address: reportingParticipant.address, estimate: result });
+              gasEstimates.totals.crowdsourcerForkAndRedeem = gasEstimates.totals.crowdsourcerForkAndRedeem.plus(result);
+            } else {
+              successfulTransactions.crowdsourcerForkAndRedeem.push(reportingParticipant.address);
+            }
+            console.log("Called forkAndRedeem on crowdsourcer", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+          onFailed: function () {
+            failedTransactions.crowdsourcerForkAndRedeem.push(reportingParticipant.address);
+            console.log("Failed to forkAndRedeem crowdsourcer", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+        }));
+      } else {
+        api().DisputeCrowdsourcer.redeem(assign({}, payload, {
+          _redeemer: p.redeemer,
+          tx: {
+            to: reportingParticipant.address,
+            estimateGas: p.estimateGas,
+          },
+          onSent: function () {},
+          onSuccess: function (result) {
+            if (p.estimateGas) {
+              result = new BigNumber(result, 16);
+              gasEstimates.crowdsourcerRedeem.push({address: reportingParticipant.address, estimate: result });
+              gasEstimates.totals.crowdsourcerRedeem = gasEstimates.totals.crowdsourcerRedeem.plus(result);
+            } else {
+              successfulTransactions.crowdsourcerRedeem.push(reportingParticipant.address);
+            }
+            console.log("Redeemed crowdsourcer", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+          onFailed: function () {
+            failedTransactions.crowdsourcerRedeem.push(reportingParticipant.address);
+            console.log("Failed to redeem crowdsourcer", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+        }));
+      }
+    } else if (reportingParticipant.type == contractTypes.INITIAL_REPORTER) {
+      if (!reportingParticipant.isForked) {
+        api().InitialReporter.forkAndRedeem(assign({}, payload, {
+          tx: {
+            to: reportingParticipant.address,
+            estimateGas: p.estimateGas,
+          },
+          onSent: function () {},
+          onSuccess: function (result) {
+            if (p.estimateGas) {
+              result = new BigNumber(result, 16);
+              gasEstimates.initialReporterForkAndRedeem.push({address: reportingParticipant.address, estimate: result });
+              gasEstimates.totals.initialReporterForkAndRedeem = gasEstimates.totals.initialReporterForkAndRedeem.plus(result);
+            } else {
+              successfulTransactions.initialReporterForkAndRedeem.push(reportingParticipant.address);
+            }
+            console.log("Called forkAndRedeem on initialReporter", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+          onFailed: function () {
+            failedTransactions.initialReporterForkAndRedeem.push(reportingParticipant.address);
+            console.log("Failed to forkAndRedeem initialReporter", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+        }));
+      } else {
+        api().InitialReporter.redeem(assign({}, payload, {
+          "": p.redeemer,
+          tx: {
+            to: reportingParticipant.address,
+            estimateGas: p.estimateGas,
+          },
+          onSent: function () {},
+          onSuccess: function (result) {
+            if (p.estimateGas) {
+              result = new BigNumber(result, 16);
+              gasEstimates.initialReporterRedeem.push({address: reportingParticipant.address, estimate: result });
+              gasEstimates.totals.initialReporterRedeem = gasEstimates.totals.initialReporterRedeem.plus(result);
+            } else {
+              successfulTransactions.initialReporterRedeem.push(reportingParticipant.address);
+            }
+            console.log("Redeemed initialReporter", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+          onFailed: function () {
+            failedTransactions.initialReporterRedeem.push(reportingParticipant.address);
+            console.log("Failed to redeemed initialReporter", reportingParticipant.address);
+            nextReportingParticipant();
+          },
+        }));
+      }
+    }
+  }, function () {
+    redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
+  });
+}
+
+function redeemNonForkedMarketFees(p, payload, successfulTransactions, failedTransactions, gasEstimates) {
+  var redeemableContracts = [];
+  for (var i = 0; i < p.feeWindows.length; i++) {
+    redeemableContracts.push({
+      address: p.feeWindows[i],
+      type: contractTypes.FEE_WINDOW,
+    });
+  }
+  for (var i = 0; i < p.nonForkedMarkets.length; i++) {
+    for (var j = 0; j < p.nonForkedMarkets[i].crowdsourcers.length; j++) {
+      redeemableContracts.push({
+        address: p.nonForkedMarkets[i].crowdsourcers[j],
+        type: contractTypes.DISPUTE_CROWDSOURCER,
+      });
+    }
+    redeemableContracts.push({
+      address: p.nonForkedMarkets[i].initialReporterAddress,
+      type: contractTypes.INITIAL_REPORTER,
+    });
+  }
 
   async.eachLimit(redeemableContracts, PARALLEL_LIMIT, function (contract, nextContract) {
     switch (contract.type) {
-      case contractTypes.DISPUTE_CROWDSOURCER:
-        api().DisputeCrowdsourcer.redeem(assign({}, redeemPayload, {
-          _redeemer: p.redeemer,
-          tx: {
-            to: contract.address,
-            estimateGas: p.estimateGas,
-          },
-          onSent: function () {},
-          onSuccess: function (result) {
-            if (p.estimateGas) {
-              result = new BigNumber(result, 16);
-              gasEstimates.crowdsourcers.push({address: contract.address, estimate: result });
-              gasEstimates.totals.crowdsourcers = gasEstimates.totals.crowdsourcers.plus(result);
-            } else {
-              redeemedCrowdsourcers.push(contract.address);
-            }
-            nextContract();
-          },
-          onFailed: function () {
-            failedCrowdsourcers.push(contract.address);
-            nextContract();
-          },
-        }));
-        break;
-      case contractTypes.INITIAL_REPORTER:
-        api().InitialReporter.redeem(assign({}, redeemPayload, {
-          "": p.redeemer,
-          tx: {
-            to: contract.address,
-            estimateGas: p.estimateGas,
-          },
-          onSent: function () {},
-          onSuccess: function (result) {
-            if (p.estimateGas) {
-              result = new BigNumber(result, 16);
-              gasEstimates.initialReporters.push({address: contract.address, estimate: result });
-              gasEstimates.totals.initialReporters = gasEstimates.totals.initialReporters.plus(result);
-            } else {
-              redeemedInitialReporters.push(contract.address);
-            }
-            nextContract();
-          },
-          onFailed: function () {
-            failedInitialReporters.push(contract.address);
-            nextContract();
-          },
-        }));
-        break;
       case contractTypes.FEE_WINDOW:
-        api().FeeWindow.redeem(assign({}, redeemPayload, {
+        api().FeeWindow.redeem(assign({}, payload, {
           _sender: p.redeemer,
           tx: {
             to: contract.address,
@@ -152,39 +299,116 @@ function claimReportingFees(p) {
           onSuccess: function (result) {
             if (p.estimateGas) {
               result = new BigNumber(result, 16);
-              gasEstimates.feeWindows.push({address: contract.address, estimate: result });
-              gasEstimates.totals.feeWindows = gasEstimates.totals.feeWindows.plus(result);
+              gasEstimates.feeWindowRedeem.push({address: contract.address, estimate: result });
+              gasEstimates.totals.feeWindowRedeem = gasEstimates.totals.feeWindowRedeem.plus(result);
             } else {
-              redeemedFeeWindows.push(contract.address);
+              successfulTransactions.feeWindowRedeem.push(contract.address);
             }
+            console.log("Redeemed feeWindow", contract.address);
             nextContract();
           },
           onFailed: function () {
-            failedFeeWindows.push(contract.address);
+            failedTransactions.feeWindowRedeem.push(contract.address);
+            console.log("Failed to redeem feeWindow", contract.address);
             nextContract();
           },
         }));
+        break;
+      case contractTypes.DISPUTE_CROWDSOURCER:
+        if (p.forkedMarket.state === FORKED_MARKET_STATE.NONE || p.forkedMarket.state === FORKED_MARKET_STATE.UNRESOLVED) {
+          if (contract.marketIsForked) {
+            console.log("Crowdsourcer " + contract.address + " with forked market should not be claimable when forkedMarket.state is none or not resolved.");
+            failedTransactions.crowdsourcerRedeem.push(contract.address);
+            nextContract();
+          } else {
+            api().DisputeCrowdsourcer.redeem(assign({}, payload, {
+              _redeemer: p.redeemer,
+              tx: {
+                to: contract.address,
+                estimateGas: p.estimateGas,
+              },
+              onSent: function () {},
+              onSuccess: function (result) {
+                if (p.estimateGas) {
+                  result = new BigNumber(result, 16);
+                  gasEstimates.crowdsourcerRedeem.push({address: contract.address, estimate: result });
+                  gasEstimates.totals.crowdsourcerRedeem = gasEstimates.totals.crowdsourcerRedeem.plus(result);
+                } else {
+                  successfulTransactions.crowdsourcerRedeem.push(contract.address);
+                }
+                console.log("Redeemed crowdsourcer", contract.address);
+                nextContract();
+              },
+              onFailed: function () {
+                failedTransactions.crowdsourcerRedeem.push(contract.address);
+                console.log("Failed to redeem crowdsourcer", contract.address);
+                nextContract();
+              },
+            }));
+          }
+        } else {
+          nextContract();
+        }
+        break;
+      case contractTypes.INITIAL_REPORTER:
+        if (p.forkedMarket.state === FORKED_MARKET_STATE.NONE || p.forkedMarket.state === FORKED_MARKET_STATE.UNRESOLVED) {
+          if (contract.marketIsForked) {
+            console.log("InitialReporter " + contract.address + " with forked market should not be claimable when forkedMarket.state is none or not resolved.");
+            failedTransactions.initialReporterRedeem.push(contract.address);
+            nextContract();
+          } else {
+            api().InitialReporter.redeem(assign({}, payload, {
+              "": p.redeemer,
+              tx: {
+                to: contract.address,
+                estimateGas: p.estimateGas,
+              },
+              onSent: function () {},
+              onSuccess: function (result) {
+                if (p.estimateGas) {
+                  result = new BigNumber(result, 16);
+                  gasEstimates.initialReporterRedeem.push({address: contract.address, estimate: result });
+                  gasEstimates.totals.initialReporterRedeem = gasEstimates.totals.initialReporterRedeem.plus(result);
+                } else {
+                  successfulTransactions.initialReporterRedeem.push(contract.address);
+                }
+                console.log("Redeemed initialReporter", contract.address);
+                nextContract();
+              },
+              onFailed: function () {
+                failedTransactions.initialReporterRedeem.push(contract.address);
+                console.log("Failed to redeemed initialReporter", contract.address);
+                nextContract();
+              },
+            }));
+          }
+        }
         break;
       default:
         break;
     }
   }, function () {
     var result = {
-      redeemedFeeWindows: redeemedFeeWindows,
-      redeemedCrowdsourcers: redeemedCrowdsourcers,
-      redeemedInitialReporters: redeemedInitialReporters,
+      successfulTransactions: successfulTransactions
     };
     if (p.estimateGas) {
-      gasEstimates.totals.all = gasEstimates.totals.crowdsourcers.plus(gasEstimates.totals.initialReporters).plus(gasEstimates.totals.feeWindows);
+      gasEstimates.totals.all = gasEstimates.totals.disavowCrowdsourcers
+                                .plus(gasEstimates.totals.migrateThroughOneFork)
+                                .plus(gasEstimates.totals.crowdsourcerForkAndRedeem)
+                                .plus(gasEstimates.totals.initialReporterForkAndRedeem)
+                                .plus(gasEstimates.totals.feeWindowRedeem)
+                                .plus(gasEstimates.totals.crowdsourcerRedeem)
+                                .plus(gasEstimates.totals.initialReporterRedeem);
       result = {
         gasEstimates: gasEstimates,
       };
     }
-
-    if (failedFeeWindows.length > 0 || failedCrowdsourcers > 0 || failedInitialReporters > 0) {
-      result.failedFeeWindows = failedFeeWindows;
-      result.failedCrowdsourcers = failedCrowdsourcers;
-      result.failedInitialReporters = failedInitialReporters;
+    if (failedTransactions.disavowCrowdsourcers.length > 0 ||
+        failedTransactions.migrateThroughOneFork.length > 0 ||
+        failedTransactions.feeWindowRedeem.length > 0 ||
+        failedTransactions.crowdsourcerRedeem > 0 ||
+        failedTransactions.initialReporterRedeem > 0) {
+      result.failedTransactions = failedTransactions;
       return p.onFailed(new Error("Not all transactions were successful.\n" + JSON.stringify(result)));
     }
     p.onSuccess(result);
