@@ -9,13 +9,6 @@ var multiple = ten.exponentiatedBy(18);
 var SECONDS_PER_DAY = 3600 * 24;
 
 module.exports = {
-
-  FORKED_MARKET_STATE: {
-    NONE: "NONE",
-    RESOLVED: "RESOLVED",
-    UNRESOLVED: "UNRESOLVED",
-  },
-
   REPORTING_STATE: {
     PRE_REPORTING: "PRE_REPORTING",
     DESIGNATED_REPORTING: "DESIGNATED_REPORTING",
