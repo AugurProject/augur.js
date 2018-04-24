@@ -107,9 +107,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
               nextContract();
             },
           }));
-        } else if ((contract.marketIsForked && contract.isForked) ||
-                  (p.forkedMarket.isFinalized && !contract.marketIsForked && contract.isFinalized) ||
-                  !p.forkedMarket.isFinalized) {
+        } else {
           api().DisputeCrowdsourcer.redeem(assign({}, payload, {
             _redeemer: p.redeemer,
             tx: {
@@ -134,8 +132,6 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
               nextContract();
             },
           }));
-        } else {
-          nextContract();
         }
         break;
       case contractTypes.INITIAL_REPORTER:
@@ -163,9 +159,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
               nextContract();
             },
           }));
-        } else if ((contract.marketIsForked && contract.isForked) ||
-                  (p.forkedMarket.isFinalized && !contract.marketIsForked && contract.isFinalized) ||
-                  !p.forkedMarket.isFinalized) {
+        } else {
           api().InitialReporter.redeem(assign({}, payload, {
             "": p.redeemer,
             tx: {
@@ -190,8 +184,6 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
               nextContract();
             },
           }));
-        } else {
-          nextContract();
         }
         break;
       default:
@@ -233,22 +225,23 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
  *
  * Claims all reporting fees for a user as follows:
  *
- * If the specified universe has a forked market:
- *   Call `augur.api.DisputeCrowdsourcer.redeem` on redeemable DisputeCrowdsourcers of the forked market that have had their `fork` function called.
- *   Call `augur.api.DisputeCrowdsourcer.forkAndRedeem` on redeemable DisputeCrowdsourcers of the forked market that have not had their `fork` function called.
- *   Call `augur.api.InitialReporter.redeem` on the InitialReporter of the forked market if the InitialReporter is redeemable by the specified user address and has had its `fork` function called.
- *   Call `augur.api.InitialReporter.forkAndRedeem` on the InitialReporter of the forked market if the InitialReporter is redeemable by the specified user address and has not had its `fork` function called.
- *   If the forked market has been finalized:
- *     Call `augur.api.Market.migrateThroughOneFork` on all non-forked, non-finalized non-migrated markets.
- *     Call `augur.api.DisputeCrowdsourcer.redeem` on all redeemable DisputeCrowdsourcers for finalized non-forked markets.
- *     Call `augur.api.InitialReporter.redeem` on all redeemable InitialReporters for finalized non-forked markets.
- *   Else:
- *     Call `augur.api.Market.disavowCrowdsourcers` on all non-forked, non-finalized, non-disavowed markets.
- *     Call `augur.api.DisputeCrowdsourcer.redeem` on all redeemable DisputeCrowdsourcers for finalized/finalizable non-forked markets.
- *     Call `augur.api.InitialReporter.redeem` on all redeemable InitialReporters for finalized/finalizable non-forked markets.
+ * If the forked market is finalized:
+ *   Call `Market.migrateThroughOneFork` for all non-forked, non-finalized non-migrated markets in the same universe as the forked market.
  * Else:
- *   Call `augur.api.DisputeCrowdsourcer.redeem` on all redeemable DisputeCrowdsourcers for finalized/finalizable markets.
- *   Call `augur.api.InitialReporter.redeem` on all redeemable InitialReporters for finalized/finalizable markets.
+ *   Call `Market.disavowCrowdsourcers` for all non-forked, non-finalized, non-disavowed markets in the same universe as the forked market.
+ *
+ * Once the above transactions are finished:
+ *   Call `FeeWindow.redeem` on all specified FeeWindows
+ *   For each DisputeCrowdsourcer the user unredeemed staked in:
+ *     If its market is forked and `DisputeCrowdsourcer.fork` has not been called:
+ *       Call `DisputeCrowdsourcer.forkAndRedeem`
+ *     Else:
+ *       Call `DisputeCrowdsourcer.redeem`
+ *   For each InitialReporter the user has unredeemed stake in:
+ *     If its market is forked and `InitialReporter.fork` has not been called:
+ *       Call `InitialReporter.forkAndRedeem`
+ *     Else:
+ *       Call `InitialReporter.redeem`
  */
 function claimReportingFees(p) {
   var payload = immutableDelete(p, ["redeemer", "feeWindows", "forkedMarket", "nonforkedMarkets", "estimateGas", "onSent", "onSuccess", "onFailed"]);
@@ -292,60 +285,64 @@ function claimReportingFees(p) {
 
   if (p.forkedMarket && p.forkedMarket.address) {
     async.eachLimit(p.nonforkedMarkets, PARALLEL_LIMIT, function (nonforkedMarket, nextNonforkedMarket) {
-      if (p.forkedMarket.isFinalized) {
-        if (nonforkedMarket.isFinalized || nonforkedMarket.isMigrated) {
-          nextNonforkedMarket();
+      if (nonforkedMarket.universeAddress === p.forkedMarket.universeAddress) {
+        if (p.forkedMarket.isFinalized) {
+          if (nonforkedMarket.isFinalized || nonforkedMarket.isMigrated) {
+            nextNonforkedMarket();
+          } else {
+            api().Market.migrateThroughOneFork({
+              tx: {
+                to: nonforkedMarket.address,
+                estimateGas: p.estimateGas,
+              },
+              onSent: function () {},
+              onSuccess: function (result) {
+                if (p.estimateGas) {
+                  result = new BigNumber(result, 16);
+                  gasEstimates.migrateThroughOneFork.push({address: nonforkedMarket.address, estimate: result });
+                  gasEstimates.totals.migrateThroughOneFork = gasEstimates.totals.migrateThroughOneFork.plus(result);
+                }
+                successfulTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
+                console.log("Migrated market through one fork:", nonforkedMarket.address);
+                nextNonforkedMarket();
+              },
+              onFailed: function () {
+                failedTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
+                console.log("Failed to migrate market through one fork:", nonforkedMarket.address);
+                nextNonforkedMarket();
+              },
+            });
+          }
         } else {
-          api().Market.migrateThroughOneFork({
-            tx: {
-              to: nonforkedMarket.address,
-              estimateGas: p.estimateGas,
-            },
-            onSent: function () {},
-            onSuccess: function (result) {
-              if (p.estimateGas) {
-                result = new BigNumber(result, 16);
-                gasEstimates.migrateThroughOneFork.push({address: nonforkedMarket.address, estimate: result });
-                gasEstimates.totals.migrateThroughOneFork = gasEstimates.totals.migrateThroughOneFork.plus(result);
-              }
-              successfulTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
-              console.log("Migrated market through one fork:", nonforkedMarket.address);
-              nextNonforkedMarket();
-            },
-            onFailed: function () {
-              failedTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
-              console.log("Failed to migrate market through one fork:", nonforkedMarket.address);
-              nextNonforkedMarket();
-            },
-          });
+          if (nonforkedMarket.isFinalized || nonforkedMarket.crowdsourcersAreDisavowed) {
+            nextNonforkedMarket();
+          } else {
+            api().Market.disavowCrowdsourcers(assign({}, payload, {
+              tx: {
+                to: nonforkedMarket.address,
+                estimateGas: p.estimateGas,
+              },
+              onSent: function () {},
+              onSuccess: function (result) {
+                if (p.estimateGas) {
+                  result = new BigNumber(result, 16);
+                  gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.address, estimate: result });
+                  gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
+                }
+                successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
+                console.log("Disavowed crowdsourcers for market", nonforkedMarket.address);
+                nextNonforkedMarket();
+              },
+              onFailed: function () {
+                failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
+                console.log("Failed to disavow crowdsourcers for", nonforkedMarket.address);
+                nextNonforkedMarket();
+              },
+            }));
+          }
         }
       } else {
-        if (nonforkedMarket.isFinalized || nonforkedMarket.crowdsourcersAreDisavowed) {
-          nextNonforkedMarket();
-        } else {
-          api().Market.disavowCrowdsourcers(assign({}, payload, {
-            tx: {
-              to: nonforkedMarket.address,
-              estimateGas: p.estimateGas,
-            },
-            onSent: function () {},
-            onSuccess: function (result) {
-              if (p.estimateGas) {
-                result = new BigNumber(result, 16);
-                gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.address, estimate: result });
-                gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
-              }
-              successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
-              console.log("Disavowed crowdsourcers for market", nonforkedMarket.address);
-              nextNonforkedMarket();
-            },
-            onFailed: function () {
-              failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
-              console.log("Failed to disavow crowdsourcers for", nonforkedMarket.address);
-              nextNonforkedMarket();
-            },
-          }));
-        }
+        nextNonforkedMarket();
       }
     }, function () {
       redeemContractFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
