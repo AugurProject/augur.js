@@ -10,7 +10,14 @@ var noop = require("../../../src/utils/noop");
 var sinon = require("sinon");
 
 describe.only("reporting/claim-reporting-fees", function () {
-  var claimReportingFees;
+  var feeWindowRedeemSpy = sinon.spy();
+  var disputeCrowdsourcerForkAndRedeemSpy = sinon.spy();
+  var disputeCrowdsourcerRedeemSpy = sinon.spy();
+  var initialReporterForkAndRedeemSpy = sinon.spy();
+  var initialReporterRedeemSpy = sinon.spy();
+  var marketDisavowCrowdsourcersSpy = sinon.spy();
+  var marketMigrateThroughOneForkSpy = sinon.spy();
+  var claimReportingFees = sinon.spy();
   var params = {
     redeemer: "REDEEMER_ADDRESS",
     feeWindows: [
@@ -84,9 +91,7 @@ describe.only("reporting/claim-reporting-fees", function () {
         },
       },
       FeeWindow: {
-        redeem: function (p) {
-          console.log(p);
-        },
+        redeem: feeWindowRedeemSpy,
       },
       InitialReporter: {
         forkAndRedeem: function (/*p*/) {
@@ -102,19 +107,12 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
     };
   };
-  var disputeCrowdsourcerForkAndRedeemSpy;
-  var disputeCrowdsourcerRedeemSpy;
-  // var feeWindowRedeemSpy;
-  var initialReporterForkAndRedeemSpy;
-  var initialReporterRedeemSpy;
-  var marketDisavowCrowdsourcersSpy;
-  var marketMigrateThroughOneForkSpy;
 
   describe("When a market in the parent universe is forked", function () {
     before(function () {
+      feeWindowRedeemSpy = sinon.spy();
       disputeCrowdsourcerForkAndRedeemSpy = sinon.spy(api().DisputeCrowdsourcer.forkAndRedeem);
       disputeCrowdsourcerRedeemSpy = sinon.spy(api().DisputeCrowdsourcer.redeem);
-      // feeWindowRedeemSpy = sinon.spy(api().FeeWindow.redeem);
       initialReporterForkAndRedeemSpy = sinon.spy(api().InitialReporter.forkAndRedeem);
       initialReporterRedeemSpy = sinon.spy(api().InitialReporter.disavowCrowdsourcers);
       marketDisavowCrowdsourcersSpy = sinon.spy(api().Market.disavowCrowdsourcers);
@@ -143,7 +141,7 @@ describe.only("reporting/claim-reporting-fees", function () {
 
     describe("FeeWindow.redeem", function () {
       it("should be called once", function () {
-        // assert(feeWindowRedeemSpy.callCount === 1);
+        assert(feeWindowRedeemSpy.callCount === 1);
       });
     });
 
