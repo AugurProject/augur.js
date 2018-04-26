@@ -104,7 +104,7 @@ describe.only("reporting/claim-reporting-fees", function () {
   };
   var disputeCrowdsourcerForkAndRedeemSpy;
   var disputeCrowdsourcerRedeemSpy;
-  var feeWindowRedeemSpy;
+  // var feeWindowRedeemSpy;
   var initialReporterForkAndRedeemSpy;
   var initialReporterRedeemSpy;
   var marketDisavowCrowdsourcersSpy;
@@ -114,7 +114,7 @@ describe.only("reporting/claim-reporting-fees", function () {
     before(function () {
       disputeCrowdsourcerForkAndRedeemSpy = sinon.spy(api().DisputeCrowdsourcer.forkAndRedeem);
       disputeCrowdsourcerRedeemSpy = sinon.spy(api().DisputeCrowdsourcer.redeem);
-      feeWindowRedeemSpy = sinon.spy(api().FeeWindow.redeem);
+      // feeWindowRedeemSpy = sinon.spy(api().FeeWindow.redeem);
       initialReporterForkAndRedeemSpy = sinon.spy(api().InitialReporter.forkAndRedeem);
       initialReporterRedeemSpy = sinon.spy(api().InitialReporter.disavowCrowdsourcers);
       marketDisavowCrowdsourcersSpy = sinon.spy(api().Market.disavowCrowdsourcers);
