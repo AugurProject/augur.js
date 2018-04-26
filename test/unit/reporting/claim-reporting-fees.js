@@ -3,7 +3,7 @@
 "use strict";
 
 var assert = require("chai").assert;
-var equal = require("chai").equal;
+// var equal = require("chai").equal;
 var assign = require("lodash.assign");
 var proxyquire = require("proxyquire").noPreserveCache();
 var noop = require("../../../src/utils/noop");
@@ -78,9 +78,9 @@ describe.only("reporting/claim-reporting-fees", function () {
   var api = function () {
     return {
       DisputeCrowdsourcer: {
-        forkAndRedeem: function (p) {
+        forkAndRedeem: function (/*p*/) {
         },
-        redeem: function (p) {
+        redeem: function (/*p*/) {
         },
       },
       FeeWindow: {
@@ -89,15 +89,15 @@ describe.only("reporting/claim-reporting-fees", function () {
         },
       },
       InitialReporter: {
-        forkAndRedeem: function (p) {
+        forkAndRedeem: function (/*p*/) {
         },
-        redeem: function (p) {
+        redeem: function (/*p*/) {
         },
       },
       Market: {
-        disavowCrowdsourcers: function (p) {
+        disavowCrowdsourcers: function (/*p*/) {
         },
-        migrateThroughOneFork: function (p) {
+        migrateThroughOneFork: function (/*p*/) {
         },
       },
     };
