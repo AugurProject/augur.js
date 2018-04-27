@@ -4,7 +4,6 @@
 
 var chalk = require("chalk");
 var getTime = require("./get-timestamp");
-var getPrivateKeyFromString = require("../dp/lib/get-private-key").getPrivateKeyFromString;
 var getRepTokens = require("./get-rep-tokens");
 var speedomatic = require("speedomatic");
 var displayTime = require("./display-time");
