@@ -1,5 +1,9 @@
 /* eslint-env mocha */
 
+/**
+ * @todo Create shared unit test files to reduce amount of redundant code for testing claimReportingFees.
+ */
+
 "use strict";
 
 var assert = require("chai").assert;
