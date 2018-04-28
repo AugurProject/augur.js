@@ -103,25 +103,23 @@ function disputeContribute(augur, args, auth, callback) {
     return callback(null);
   }
   var amount = args.opt.amount;
-  var userAuth = auth;
   var marketId = args.opt.marketId;
   var outcome = args.opt.outcome;
   var invalid = args.opt.invalid;
   if (amount == null) {
     var universe = augur.contracts.addresses[augur.rpc.getNetworkID()].Universe;
-    getBalance(augur, universe, userAuth.address, function (err, balances) {
+    getBalance(augur, universe, auth.address, function (err, balances) {
       if (err) {
         console.log(chalk.red(err));
         return callback(JSON.stringify(err));
       }
       amount = balances.reputation;
       console.log(chalk.yellow.dim("amount"), amount);
-      disputeContributeInternal(augur, marketId, outcome, amount, userAuth, invalid, auth, callback);
+      disputeContributeInternal(augur, marketId, outcome, amount, auth, invalid, auth, callback);
     });
-  } else {
-    console.log(chalk.yellow.dim("amount"), amount);
-    disputeContributeInternal(augur, marketId, outcome, amount, userAuth, invalid, auth, callback);
   }
+  console.log(chalk.yellow.dim("amount"), amount);
+  disputeContributeInternal(augur, marketId, outcome, amount, auth, invalid, auth, callback);
 }
 
 module.exports = disputeContribute;

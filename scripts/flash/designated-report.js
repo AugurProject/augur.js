@@ -25,7 +25,6 @@ function designateReport(augur, args, auth, callback) {
   }
   var amount = 10000;
   var marketId = args.opt.marketId;
-  var userAuth = auth;
   var outcome = args.opt.outcome;
   var invalid = args.opt.invalid;
   getRepTokens(augur, amount, auth, function (err) {
@@ -40,10 +39,6 @@ function designateReport(augur, args, auth, callback) {
         callback("Error");
       }
       var marketPayload = { tx: { to: marketId } };
-      // make sure we have the correct account to report with
-      if (userAuth.address !== market.designatedReporter && auth.address === market.designatedReporter) {
-        userAuth = auth;
-      }
       augur.api.Market.getEndTime(marketPayload, function (err, endTime) {
         console.log(chalk.red.dim("Market End Time"), chalk.red(endTime));
         getTime(augur, auth, function (err, timeResult) {
@@ -58,7 +53,7 @@ function designateReport(augur, args, auth, callback) {
               return callback(err);
             }
             var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
-            doInitialReport(augur, marketId, payoutNumerators, invalid, userAuth, function (err) {
+            doInitialReport(augur, marketId, payoutNumerators, invalid, auth, function (err) {
               if (err) {
                 return callback("Initial Report Failed");
               }

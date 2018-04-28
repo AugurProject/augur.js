@@ -24,7 +24,6 @@ function initialReport(augur, args, auth, callback) {
   }
   var marketId = args.opt.marketId;
   var outcome = args.opt.outcome;
-  var userAuth = auth;
   var invalid = args.opt.invalid;
   augur.markets.getMarketsInfo({ marketIds: [marketId] }, function (err, marketsInfo) {
     var market = marketsInfo[0];
@@ -45,7 +44,7 @@ function initialReport(augur, args, auth, callback) {
             return callback(err);
           }
           var payoutNumerators = getPayoutNumerators(market, outcome, invalid);
-          doInitialReport(augur, marketId, payoutNumerators, invalid, userAuth, function (err) {
+          doInitialReport(augur, marketId, payoutNumerators, invalid, auth, function (err) {
             if (err) {
               console.log(chalk.red(err));
               return callback(err);

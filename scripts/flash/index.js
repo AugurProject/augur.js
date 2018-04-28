@@ -260,10 +260,9 @@ if (require.main === module) {
     if (!method) {
       help();
       process.exit();
-    } else {
-      options.help(method.opts);
-      process.exit();
     }
+    options.help(method.opts);
+    process.exit();
   }
 
   if (!method) {
