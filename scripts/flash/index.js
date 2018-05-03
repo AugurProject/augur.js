@@ -47,7 +47,7 @@ var methods = {
     opts: {
       help: {flag: true, short: "h", help: "This help, REP is given to user if needed" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { short: "o", default: 0, help: "Outcome, needed if invalid flag isn't used, default is 0" },
+      outcome: { required: true, short: "o", help: "Outcome, needed if invalid flag isn't used" },
       invalid: { flag: true, short: "i", help: "Optional: amount of REP to dispute with" },
     },
   },
@@ -56,7 +56,7 @@ var methods = {
     opts: {
       help: {flag: true, short: "h", help: "This help, used for Open Reporting" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { short: "o", default: 0, help: "Outcome, needed if invalid flag isn't used, default is 0" },
+      outcome: { required: true, short: "o", help: "Outcome, needed if invalid flag isn't used" },
       invalid: { flag: true, short: "i", help: "Optional: amount of REP to dispute with" },
     },
   },
@@ -65,7 +65,7 @@ var methods = {
     opts: {
       help: {flag: true, short: "h", help: "This help, push time and dispute this market" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { short: "o", default: 0, help: "Outcome, needed if invalid flag isn't used, default is 0" },
+      outcome: { required: true, short: "o", help: "Outcome, needed if invalid flag isn't used" },
       amount: { short: "a", help: "Optional: amount of REP to dispute with" },
       invalid: { flag: true, short: "i", help: "Optional: amount of REP to dispute with" },
     },
