@@ -29,23 +29,6 @@ function callFinalize(augur, marketId, callback) {
   });
 }
 
-function callFinalize(augur, marketId, callback) {
-  augur.api.Market.finalize({ tx: { to: marketId  },
-    onSent: function (result) {
-      console.log(chalk.yellow.dim("Sent:"), chalk.yellow(JSON.stringify(result)));
-      console.log(chalk.yellow.dim("Waiting for reply ...."));
-    },
-    onSuccess: function (result) {
-      console.log(chalk.green.dim("Success:"), chalk.green(JSON.stringify(result)));
-      callback(null);
-    },
-    onFailed: function (err) {
-      console.log(chalk.red.dim("Failed:"), chalk.red(JSON.stringify(err)));
-      callback(err);
-    },
-  });
-}
-
 function finalizeMarket(augur, args, auth, callback) {
   if (args === "help" || args.opt.help) {
     help();
