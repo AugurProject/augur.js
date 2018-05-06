@@ -39,6 +39,7 @@ function designateReport(augur, args, auth, callback) {
         return callback(err);
       }
       var market = marketsInfo[0];
+      outcome = outcome.replace(/\"/g, "");
       if (market.marketType === "scalar" && (new BigNumber(market.minPrice).gt(new BigNumber(parseInt(outcome, 10))))) {
         console.log(chalk.red("Scalar price is below min price"));
         callback("Error");
