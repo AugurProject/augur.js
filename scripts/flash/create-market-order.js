@@ -2,7 +2,6 @@
 
 "use strict";
 
-var async = require("async");
 var chalk = require("chalk");
 var noop = require("../../src/utils/noop");
 var approveAugurEternalApprovalValue = require("../dp/lib/approve-augur-eternal-approval-value");
