@@ -21,16 +21,16 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
     if (p.forkedMarket.crowdsourcers) {
       for (i = 0; i < p.forkedMarket.crowdsourcers.length; i++) {
         redeemableContracts.push({
-          address: p.forkedMarket.crowdsourcers[i].address,
+          address: p.forkedMarket.crowdsourcers[i].crowdsourcerId,
           isForked: p.forkedMarket.crowdsourcers[i].isForked,
           marketIsForked: true,
           type: contractTypes.DISPUTE_CROWDSOURCER,
         });
       }
     }
-    if (p.forkedMarket.initialReporter && p.forkedMarket.initialReporter.address) {
+    if (p.forkedMarket.initialReporter && p.forkedMarket.initialReporter.initialReporterId) {
       redeemableContracts.push({
-        address: p.forkedMarket.initialReporter.address,
+        address: p.forkedMarket.initialReporter.initialReporterId,
         isForked: p.forkedMarket.initialReporter.isForked,
         marketIsForked: true,
         type: contractTypes.INITIAL_REPORTER,
@@ -47,7 +47,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
       });
     }
     redeemableContracts.push({
-      address: p.nonforkedMarkets[i].initialReporterAddress,
+      address: p.nonforkedMarkets[i].initialReporter,
       isFinalized: p.nonforkedMarkets[i].isFinalized,
       marketIsForked: false,
       type: contractTypes.INITIAL_REPORTER,
@@ -283,32 +283,32 @@ function claimReportingFees(p) {
     },
   };
 
-  if (p.forkedMarket && p.forkedMarket.address) {
+  if (p.forkedMarket && p.forkedMarket.marketId) {
     async.eachLimit(p.nonforkedMarkets, PARALLEL_LIMIT, function (nonforkedMarket, nextNonforkedMarket) {
-      if (nonforkedMarket.universeAddress === p.forkedMarket.universeAddress) {
+      if (nonforkedMarket.universe === p.forkedMarket.universe) {
         if (p.forkedMarket.isFinalized) {
           if (nonforkedMarket.isFinalized || nonforkedMarket.isMigrated) {
             nextNonforkedMarket();
           } else {
             api().Market.migrateThroughOneFork({
               tx: {
-                to: nonforkedMarket.address,
+                to: nonforkedMarket.marketId,
                 estimateGas: p.estimateGas,
               },
               onSent: function () {},
               onSuccess: function (result) {
                 if (p.estimateGas) {
                   result = new BigNumber(result, 16);
-                  gasEstimates.migrateThroughOneFork.push({address: nonforkedMarket.address, estimate: result });
+                  gasEstimates.migrateThroughOneFork.push({address: nonforkedMarket.marketId, estimate: result });
                   gasEstimates.totals.migrateThroughOneFork = gasEstimates.totals.migrateThroughOneFork.plus(result);
                 }
-                successfulTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
-                // console.log("Migrated market through one fork:", nonforkedMarket.address);
+                successfulTransactions.migrateThroughOneFork.push(nonforkedMarket.marketId);
+                // console.log("Migrated market through one fork:", nonforkedMarket.marketId);
                 nextNonforkedMarket();
               },
               onFailed: function () {
-                failedTransactions.migrateThroughOneFork.push(nonforkedMarket.address);
-                // console.log("Failed to migrate market through one fork:", nonforkedMarket.address);
+                failedTransactions.migrateThroughOneFork.push(nonforkedMarket.marketId);
+                // console.log("Failed to migrate market through one fork:", nonforkedMarket.marketId);
                 nextNonforkedMarket();
               },
             });
@@ -319,23 +319,23 @@ function claimReportingFees(p) {
           } else {
             api().Market.disavowCrowdsourcers(assign({}, payload, {
               tx: {
-                to: nonforkedMarket.address,
+                to: nonforkedMarket.marketId,
                 estimateGas: p.estimateGas,
               },
               onSent: function () {},
               onSuccess: function (result) {
                 if (p.estimateGas) {
                   result = new BigNumber(result, 16);
-                  gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.address, estimate: result });
+                  gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.marketId, estimate: result });
                   gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
                 }
-                successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
-                // console.log("Disavowed crowdsourcers for market", nonforkedMarket.address);
+                successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
+                // console.log("Disavowed crowdsourcers for market", nonforkedMarket.marketId);
                 nextNonforkedMarket();
               },
               onFailed: function () {
-                failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.address);
-                // console.log("Failed to disavow crowdsourcers for", nonforkedMarket.address);
+                failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
+                // console.log("Failed to disavow crowdsourcers for", nonforkedMarket.marketId);
                 nextNonforkedMarket();
               },
             }));

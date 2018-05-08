@@ -13,7 +13,7 @@ var proxyquire = require("proxyquire").noPreserveCache();
 var noop = require("../../../src/utils/noop");
 var sinon = require("sinon");
 
-describe("reporting/claim-reporting-fees", function () {
+describe.only("reporting/claim-reporting-fees", function () {
   var claimReportingFees;
   var disputeCrowdsourcerForkAndRedeemStub;
   var disputeCrowdsourcerRedeemStub;
@@ -38,28 +38,28 @@ describe("reporting/claim-reporting-fees", function () {
       "0xfeeAdd0000000000000000000000000000000001",
     ],
     forkedMarket: {
-      address: "0xfAdd000000000000000000000000000000000000",
-      universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+      marketId: "0xfAdd000000000000000000000000000000000000",
+      universe: FORKED_MARKET_UNIVERSE_ADDRESS,
       isFinalized: false,
       crowdsourcers: [
         {
-          address: "0xfcAdd00000000000000000000000000000000001",
+          crowdsourcerId: "0xfcAdd00000000000000000000000000000000001",
           isForked: true,
         },
         {
-          address: "0xfcAdd00000000000000000000000000000000002",
+          crowdsourcerId: "0xfcAdd00000000000000000000000000000000002",
           isForked: false,
         },
       ],
       initialReporter: {
-        address: "0xf1Add00000000000000000000000000000000000",
+        initialReporterId: "0xf1Add00000000000000000000000000000000000",
         isForked: true,
       },
     },
     nonforkedMarkets: [
       {
-        address: "0x0fAdd00000000000000000000000000000000001",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000001",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: false,
@@ -67,11 +67,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000001",
           "0x0fcAdd0000000000000000000000000000000002",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000001",
+        initialReporter: "0x0f1Add0000000000000000000000000000000001",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000002",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000002",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: false,
@@ -79,11 +79,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000003",
           "0x0fcAdd0000000000000000000000000000000004",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000002",
+        initialReporter: "0x0f1Add0000000000000000000000000000000002",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000003",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000003",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: false,
@@ -91,11 +91,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000005",
           "0x0fcAdd0000000000000000000000000000000006",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000003",
+        initialReporter: "0x0f1Add0000000000000000000000000000000003",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000004",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000004",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: true,
@@ -103,11 +103,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000007",
           "0x0fcAdd0000000000000000000000000000000008",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000004",
+        initialReporter: "0x0f1Add0000000000000000000000000000000004",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000005",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000005",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: false,
@@ -115,11 +115,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000009",
           "0x0fcAdd0000000000000000000000000000000010",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000005",
+        initialReporter: "0x0f1Add0000000000000000000000000000000005",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000006",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000006",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: true,
@@ -127,11 +127,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000011",
           "0x0fcAdd0000000000000000000000000000000012",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000006",
+        initialReporter: "0x0f1Add0000000000000000000000000000000006",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000007",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000007",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: true,
@@ -139,11 +139,11 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000013",
           "0x0fcAdd0000000000000000000000000000000014",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000007",
+        initialReporter: "0x0f1Add0000000000000000000000000000000007",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000008",
-        universeAddress: FORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000008",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: true,
@@ -151,103 +151,7 @@ describe("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000015",
           "0x0fcAdd0000000000000000000000000000000016",
         ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000008",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000009",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: false,
-        isMigrated: false,
-        isFinalized: false,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000017",
-          "0x0fcAdd0000000000000000000000000000000018",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000009",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000010",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: true,
-        isMigrated: false,
-        isFinalized: false,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000019",
-          "0x0fcAdd0000000000000000000000000000000020",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000010",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000011",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: false,
-        isMigrated: true,
-        isFinalized: false,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000021",
-          "0x0fcAdd0000000000000000000000000000000022",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000011",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000012",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: false,
-        isMigrated: false,
-        isFinalized: true,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000023",
-          "0x0fcAdd0000000000000000000000000000000024",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000012",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000013",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: true,
-        isMigrated: true,
-        isFinalized: false,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000025",
-          "0x0fcAdd0000000000000000000000000000000026",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000013",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000014",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: false,
-        isMigrated: true,
-        isFinalized: true,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000027",
-          "0x0fcAdd0000000000000000000000000000000028",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000014",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000015",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: true,
-        isMigrated: false,
-        isFinalized: true,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000029",
-          "0x0fcAdd0000000000000000000000000000000030",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000015",
-      },
-      {
-        address: "0x0fAdd00000000000000000000000000000000016",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
-        crowdsourcersAreDisavowed: true,
-        isMigrated: true,
-        isFinalized: true,
-        crowdsourcers: [
-          "0x0fcAdd0000000000000000000000000000000031",
-          "0x0fcAdd0000000000000000000000000000000032",
-        ],
-        initialReporterAddress: "0x0f1Add0000000000000000000000000000000016",
+        initialReporter: "0x0f1Add0000000000000000000000000000000008",
       },
     ],
     estimateGas: true,
@@ -324,7 +228,7 @@ describe("reporting/claim-reporting-fees", function () {
 
         describe("DisputeCrowdsourcer.redeem", function () {
           it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
-            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 33);
+            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 17);
           });
           it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
             var expectedDisputeCrowdsourcerRedeemAddresses = [
@@ -345,22 +249,6 @@ describe("reporting/claim-reporting-fees", function () {
               "0x0fcAdd0000000000000000000000000000000014",
               "0x0fcAdd0000000000000000000000000000000015",
               "0x0fcAdd0000000000000000000000000000000016",
-              "0x0fcAdd0000000000000000000000000000000017",
-              "0x0fcAdd0000000000000000000000000000000018",
-              "0x0fcAdd0000000000000000000000000000000019",
-              "0x0fcAdd0000000000000000000000000000000020",
-              "0x0fcAdd0000000000000000000000000000000021",
-              "0x0fcAdd0000000000000000000000000000000022",
-              "0x0fcAdd0000000000000000000000000000000023",
-              "0x0fcAdd0000000000000000000000000000000024",
-              "0x0fcAdd0000000000000000000000000000000025",
-              "0x0fcAdd0000000000000000000000000000000026",
-              "0x0fcAdd0000000000000000000000000000000027",
-              "0x0fcAdd0000000000000000000000000000000028",
-              "0x0fcAdd0000000000000000000000000000000029",
-              "0x0fcAdd0000000000000000000000000000000030",
-              "0x0fcAdd0000000000000000000000000000000031",
-              "0x0fcAdd0000000000000000000000000000000032",
             ];
             for (var i = 0; i < expectedDisputeCrowdsourcerRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -403,7 +291,7 @@ describe("reporting/claim-reporting-fees", function () {
 
         describe("InitialReporter.redeem", function () {
           it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
-            sinon.assert.callCount(initialReporterRedeemStub, 17);
+            sinon.assert.callCount(initialReporterRedeemStub, 9);
           });
           it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
             var expectedInitialReportRedeemAddresses = [
@@ -416,14 +304,6 @@ describe("reporting/claim-reporting-fees", function () {
               "0x0f1Add0000000000000000000000000000000006",
               "0x0f1Add0000000000000000000000000000000007",
               "0x0f1Add0000000000000000000000000000000008",
-              "0x0f1Add0000000000000000000000000000000009",
-              "0x0f1Add0000000000000000000000000000000010",
-              "0x0f1Add0000000000000000000000000000000011",
-              "0x0f1Add0000000000000000000000000000000012",
-              "0x0f1Add0000000000000000000000000000000013",
-              "0x0f1Add0000000000000000000000000000000014",
-              "0x0f1Add0000000000000000000000000000000015",
-              "0x0f1Add0000000000000000000000000000000016",
             ];
             for (var i = 0; i < expectedInitialReportRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -610,7 +490,7 @@ describe("reporting/claim-reporting-fees", function () {
 
         describe("DisputeCrowdsourcer.redeem", function () {
           it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
-            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 33);
+            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 17);
           });
           it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
             var expectedDisputeCrowdsourcerRedeemAddresses = [
@@ -631,22 +511,6 @@ describe("reporting/claim-reporting-fees", function () {
               "0x0fcAdd0000000000000000000000000000000014",
               "0x0fcAdd0000000000000000000000000000000015",
               "0x0fcAdd0000000000000000000000000000000016",
-              "0x0fcAdd0000000000000000000000000000000017",
-              "0x0fcAdd0000000000000000000000000000000018",
-              "0x0fcAdd0000000000000000000000000000000019",
-              "0x0fcAdd0000000000000000000000000000000020",
-              "0x0fcAdd0000000000000000000000000000000021",
-              "0x0fcAdd0000000000000000000000000000000022",
-              "0x0fcAdd0000000000000000000000000000000023",
-              "0x0fcAdd0000000000000000000000000000000024",
-              "0x0fcAdd0000000000000000000000000000000025",
-              "0x0fcAdd0000000000000000000000000000000026",
-              "0x0fcAdd0000000000000000000000000000000027",
-              "0x0fcAdd0000000000000000000000000000000028",
-              "0x0fcAdd0000000000000000000000000000000029",
-              "0x0fcAdd0000000000000000000000000000000030",
-              "0x0fcAdd0000000000000000000000000000000031",
-              "0x0fcAdd0000000000000000000000000000000032",
             ];
             for (var i = 0; i < expectedDisputeCrowdsourcerRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -689,7 +553,7 @@ describe("reporting/claim-reporting-fees", function () {
 
         describe("InitialReporter.redeem", function () {
           it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
-            sinon.assert.callCount(initialReporterRedeemStub, 17);
+            sinon.assert.callCount(initialReporterRedeemStub, 9);
           });
           it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
             var expectedInitialReportRedeemAddresses = [
@@ -702,14 +566,6 @@ describe("reporting/claim-reporting-fees", function () {
               "0x0f1Add0000000000000000000000000000000006",
               "0x0f1Add0000000000000000000000000000000007",
               "0x0f1Add0000000000000000000000000000000008",
-              "0x0f1Add0000000000000000000000000000000009",
-              "0x0f1Add0000000000000000000000000000000010",
-              "0x0f1Add0000000000000000000000000000000011",
-              "0x0f1Add0000000000000000000000000000000012",
-              "0x0f1Add0000000000000000000000000000000013",
-              "0x0f1Add0000000000000000000000000000000014",
-              "0x0f1Add0000000000000000000000000000000015",
-              "0x0f1Add0000000000000000000000000000000016",
             ];
             for (var i = 0; i < expectedInitialReportRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -785,22 +641,6 @@ describe("reporting/claim-reporting-fees", function () {
                   "0x0fcAdd0000000000000000000000000000000014",
                   "0x0fcAdd0000000000000000000000000000000015",
                   "0x0fcAdd0000000000000000000000000000000016",
-                  "0x0fcAdd0000000000000000000000000000000017",
-                  "0x0fcAdd0000000000000000000000000000000018",
-                  "0x0fcAdd0000000000000000000000000000000019",
-                  "0x0fcAdd0000000000000000000000000000000020",
-                  "0x0fcAdd0000000000000000000000000000000021",
-                  "0x0fcAdd0000000000000000000000000000000022",
-                  "0x0fcAdd0000000000000000000000000000000023",
-                  "0x0fcAdd0000000000000000000000000000000024",
-                  "0x0fcAdd0000000000000000000000000000000025",
-                  "0x0fcAdd0000000000000000000000000000000026",
-                  "0x0fcAdd0000000000000000000000000000000027",
-                  "0x0fcAdd0000000000000000000000000000000028",
-                  "0x0fcAdd0000000000000000000000000000000029",
-                  "0x0fcAdd0000000000000000000000000000000030",
-                  "0x0fcAdd0000000000000000000000000000000031",
-                  "0x0fcAdd0000000000000000000000000000000032",
                 ],
                 initialReporterRedeem: [
                   "0xf1Add00000000000000000000000000000000000",
@@ -812,14 +652,6 @@ describe("reporting/claim-reporting-fees", function () {
                   "0x0f1Add0000000000000000000000000000000006",
                   "0x0f1Add0000000000000000000000000000000007",
                   "0x0f1Add0000000000000000000000000000000008",
-                  "0x0f1Add0000000000000000000000000000000009",
-                  "0x0f1Add0000000000000000000000000000000010",
-                  "0x0f1Add0000000000000000000000000000000011",
-                  "0x0f1Add0000000000000000000000000000000012",
-                  "0x0f1Add0000000000000000000000000000000013",
-                  "0x0f1Add0000000000000000000000000000000014",
-                  "0x0f1Add0000000000000000000000000000000015",
-                  "0x0f1Add0000000000000000000000000000000016",
                 ],
               },
             };
