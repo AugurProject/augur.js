@@ -20,7 +20,7 @@ function escapeHatch(augur, args, auth, callback) {
     onFailed: function (result) {
       console.log(chalk.red(result));
       callback(result, null);
-    }
+    },
   });
 }
 
