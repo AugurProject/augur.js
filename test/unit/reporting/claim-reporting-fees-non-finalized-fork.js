@@ -13,7 +13,7 @@ var proxyquire = require("proxyquire").noPreserveCache();
 var noop = require("../../../src/utils/noop");
 var sinon = require("sinon");
 
-describe.only("reporting/claim-reporting-fees", function () {
+describe("reporting/claim-reporting-fees", function () {
   var claimReportingFees;
   var disputeCrowdsourcerForkAndRedeemStub;
   var disputeCrowdsourcerRedeemStub;
@@ -59,7 +59,7 @@ describe.only("reporting/claim-reporting-fees", function () {
     nonforkedMarkets: [
       {
         marketId: "0x0fAdd00000000000000000000000000000000001",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: false,
@@ -71,7 +71,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000002",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: false,
@@ -83,7 +83,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000003",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: false,
@@ -95,7 +95,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000004",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: true,
@@ -107,7 +107,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000005",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: false,
@@ -119,7 +119,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000006",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: true,
@@ -131,7 +131,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000007",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: true,
@@ -143,7 +143,7 @@ describe.only("reporting/claim-reporting-fees", function () {
       },
       {
         marketId: "0x0fAdd00000000000000000000000000000000008",
-        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        universe: FORKED_MARKET_UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: true,
@@ -152,6 +152,102 @@ describe.only("reporting/claim-reporting-fees", function () {
           "0x0fcAdd0000000000000000000000000000000016",
         ],
         initialReporter: "0x0f1Add0000000000000000000000000000000008",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000009",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: false,
+        isMigrated: false,
+        isFinalized: false,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000017",
+          "0x0fcAdd0000000000000000000000000000000018",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000009",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000010",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: true,
+        isMigrated: false,
+        isFinalized: false,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000019",
+          "0x0fcAdd0000000000000000000000000000000020",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000010",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000011",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: false,
+        isMigrated: true,
+        isFinalized: false,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000021",
+          "0x0fcAdd0000000000000000000000000000000022",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000011",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000012",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: false,
+        isMigrated: false,
+        isFinalized: true,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000023",
+          "0x0fcAdd0000000000000000000000000000000024",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000012",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000013",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: true,
+        isMigrated: true,
+        isFinalized: false,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000025",
+          "0x0fcAdd0000000000000000000000000000000026",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000013",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000014",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: false,
+        isMigrated: true,
+        isFinalized: true,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000027",
+          "0x0fcAdd0000000000000000000000000000000028",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000014",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000015",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: true,
+        isMigrated: false,
+        isFinalized: true,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000029",
+          "0x0fcAdd0000000000000000000000000000000030",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000015",
+      },
+      {
+        marketId: "0x0fAdd00000000000000000000000000000000016",
+        universe: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        crowdsourcersAreDisavowed: true,
+        isMigrated: true,
+        isFinalized: true,
+        crowdsourcers: [
+          "0x0fcAdd0000000000000000000000000000000031",
+          "0x0fcAdd0000000000000000000000000000000032",
+        ],
+        initialReporter: "0x0f1Add0000000000000000000000000000000016",
       },
     ],
     estimateGas: true,
@@ -228,7 +324,7 @@ describe.only("reporting/claim-reporting-fees", function () {
 
         describe("DisputeCrowdsourcer.redeem", function () {
           it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
-            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 17);
+            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 33);
           });
           it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
             var expectedDisputeCrowdsourcerRedeemAddresses = [
@@ -249,6 +345,22 @@ describe.only("reporting/claim-reporting-fees", function () {
               "0x0fcAdd0000000000000000000000000000000014",
               "0x0fcAdd0000000000000000000000000000000015",
               "0x0fcAdd0000000000000000000000000000000016",
+              "0x0fcAdd0000000000000000000000000000000017",
+              "0x0fcAdd0000000000000000000000000000000018",
+              "0x0fcAdd0000000000000000000000000000000019",
+              "0x0fcAdd0000000000000000000000000000000020",
+              "0x0fcAdd0000000000000000000000000000000021",
+              "0x0fcAdd0000000000000000000000000000000022",
+              "0x0fcAdd0000000000000000000000000000000023",
+              "0x0fcAdd0000000000000000000000000000000024",
+              "0x0fcAdd0000000000000000000000000000000025",
+              "0x0fcAdd0000000000000000000000000000000026",
+              "0x0fcAdd0000000000000000000000000000000027",
+              "0x0fcAdd0000000000000000000000000000000028",
+              "0x0fcAdd0000000000000000000000000000000029",
+              "0x0fcAdd0000000000000000000000000000000030",
+              "0x0fcAdd0000000000000000000000000000000031",
+              "0x0fcAdd0000000000000000000000000000000032",
             ];
             for (var i = 0; i < expectedDisputeCrowdsourcerRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -291,7 +403,7 @@ describe.only("reporting/claim-reporting-fees", function () {
 
         describe("InitialReporter.redeem", function () {
           it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
-            sinon.assert.callCount(initialReporterRedeemStub, 9);
+            sinon.assert.callCount(initialReporterRedeemStub, 17);
           });
           it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
             var expectedInitialReportRedeemAddresses = [
@@ -304,6 +416,14 @@ describe.only("reporting/claim-reporting-fees", function () {
               "0x0f1Add0000000000000000000000000000000006",
               "0x0f1Add0000000000000000000000000000000007",
               "0x0f1Add0000000000000000000000000000000008",
+              "0x0f1Add0000000000000000000000000000000009",
+              "0x0f1Add0000000000000000000000000000000010",
+              "0x0f1Add0000000000000000000000000000000011",
+              "0x0f1Add0000000000000000000000000000000012",
+              "0x0f1Add0000000000000000000000000000000013",
+              "0x0f1Add0000000000000000000000000000000014",
+              "0x0f1Add0000000000000000000000000000000015",
+              "0x0f1Add0000000000000000000000000000000016",
             ];
             for (var i = 0; i < expectedInitialReportRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -490,7 +610,7 @@ describe.only("reporting/claim-reporting-fees", function () {
 
         describe("DisputeCrowdsourcer.redeem", function () {
           it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
-            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 17);
+            sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 33);
           });
           it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
             var expectedDisputeCrowdsourcerRedeemAddresses = [
@@ -511,6 +631,22 @@ describe.only("reporting/claim-reporting-fees", function () {
               "0x0fcAdd0000000000000000000000000000000014",
               "0x0fcAdd0000000000000000000000000000000015",
               "0x0fcAdd0000000000000000000000000000000016",
+              "0x0fcAdd0000000000000000000000000000000017",
+              "0x0fcAdd0000000000000000000000000000000018",
+              "0x0fcAdd0000000000000000000000000000000019",
+              "0x0fcAdd0000000000000000000000000000000020",
+              "0x0fcAdd0000000000000000000000000000000021",
+              "0x0fcAdd0000000000000000000000000000000022",
+              "0x0fcAdd0000000000000000000000000000000023",
+              "0x0fcAdd0000000000000000000000000000000024",
+              "0x0fcAdd0000000000000000000000000000000025",
+              "0x0fcAdd0000000000000000000000000000000026",
+              "0x0fcAdd0000000000000000000000000000000027",
+              "0x0fcAdd0000000000000000000000000000000028",
+              "0x0fcAdd0000000000000000000000000000000029",
+              "0x0fcAdd0000000000000000000000000000000030",
+              "0x0fcAdd0000000000000000000000000000000031",
+              "0x0fcAdd0000000000000000000000000000000032",
             ];
             for (var i = 0; i < expectedDisputeCrowdsourcerRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -553,7 +689,7 @@ describe.only("reporting/claim-reporting-fees", function () {
 
         describe("InitialReporter.redeem", function () {
           it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
-            sinon.assert.callCount(initialReporterRedeemStub, 9);
+            sinon.assert.callCount(initialReporterRedeemStub, 17);
           });
           it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
             var expectedInitialReportRedeemAddresses = [
@@ -566,6 +702,14 @@ describe.only("reporting/claim-reporting-fees", function () {
               "0x0f1Add0000000000000000000000000000000006",
               "0x0f1Add0000000000000000000000000000000007",
               "0x0f1Add0000000000000000000000000000000008",
+              "0x0f1Add0000000000000000000000000000000009",
+              "0x0f1Add0000000000000000000000000000000010",
+              "0x0f1Add0000000000000000000000000000000011",
+              "0x0f1Add0000000000000000000000000000000012",
+              "0x0f1Add0000000000000000000000000000000013",
+              "0x0f1Add0000000000000000000000000000000014",
+              "0x0f1Add0000000000000000000000000000000015",
+              "0x0f1Add0000000000000000000000000000000016",
             ];
             for (var i = 0; i < expectedInitialReportRedeemAddresses[i]; i++) {
               var expectedInput = {
@@ -641,6 +785,22 @@ describe.only("reporting/claim-reporting-fees", function () {
                   "0x0fcAdd0000000000000000000000000000000014",
                   "0x0fcAdd0000000000000000000000000000000015",
                   "0x0fcAdd0000000000000000000000000000000016",
+                  "0x0fcAdd0000000000000000000000000000000017",
+                  "0x0fcAdd0000000000000000000000000000000018",
+                  "0x0fcAdd0000000000000000000000000000000019",
+                  "0x0fcAdd0000000000000000000000000000000020",
+                  "0x0fcAdd0000000000000000000000000000000021",
+                  "0x0fcAdd0000000000000000000000000000000022",
+                  "0x0fcAdd0000000000000000000000000000000023",
+                  "0x0fcAdd0000000000000000000000000000000024",
+                  "0x0fcAdd0000000000000000000000000000000025",
+                  "0x0fcAdd0000000000000000000000000000000026",
+                  "0x0fcAdd0000000000000000000000000000000027",
+                  "0x0fcAdd0000000000000000000000000000000028",
+                  "0x0fcAdd0000000000000000000000000000000029",
+                  "0x0fcAdd0000000000000000000000000000000030",
+                  "0x0fcAdd0000000000000000000000000000000031",
+                  "0x0fcAdd0000000000000000000000000000000032",
                 ],
                 initialReporterRedeem: [
                   "0xf1Add00000000000000000000000000000000000",
@@ -652,6 +812,14 @@ describe.only("reporting/claim-reporting-fees", function () {
                   "0x0f1Add0000000000000000000000000000000006",
                   "0x0f1Add0000000000000000000000000000000007",
                   "0x0f1Add0000000000000000000000000000000008",
+                  "0x0f1Add0000000000000000000000000000000009",
+                  "0x0f1Add0000000000000000000000000000000010",
+                  "0x0f1Add0000000000000000000000000000000011",
+                  "0x0f1Add0000000000000000000000000000000012",
+                  "0x0f1Add0000000000000000000000000000000013",
+                  "0x0f1Add0000000000000000000000000000000014",
+                  "0x0f1Add0000000000000000000000000000000015",
+                  "0x0f1Add0000000000000000000000000000000016",
                 ],
               },
             };

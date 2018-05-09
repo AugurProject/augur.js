@@ -232,12 +232,12 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
  *
  * Once the above transactions are finished:
  *   Call `FeeWindow.redeem` on all specified FeeWindows
- *   For each DisputeCrowdsourcer the user unredeemed staked in:
+ *   For each DisputeCrowdsourcer in the current universe that the user has unredeemed staked in:
  *     If its market is forked and `DisputeCrowdsourcer.fork` has not been called:
  *       Call `DisputeCrowdsourcer.forkAndRedeem`
  *     Else:
  *       Call `DisputeCrowdsourcer.redeem`
- *   For each InitialReporter the user has unredeemed stake in:
+ *   For each InitialReporter in the current universe that the user has unredeemed stake in:
  *     If its market is forked and `InitialReporter.fork` has not been called:
  *       Call `InitialReporter.forkAndRedeem`
  *     Else:
