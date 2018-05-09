@@ -21,14 +21,12 @@ describe("reporting/claim-reporting-fees", function () {
   var initialReporterForkAndRedeemStub;
   var initialReporterRedeemStub;
   var marketDisavowCrowdsourcersStub;
-  var marketMigrateThroughOneForkStub;
   var DISPUTE_CROWDSOURCER_FORK_AND_REDEEM_GAS_ESTIMATE = "0x5318";
   var DISPUTE_CROWDSOURCER_REDEEM_GAS_ESTIMATE = "0x5418";
   var FEE_WINDOW_REDEEM_GAS_ESTIMATE = "0x5418";
   var INITIAL_REPORTER_FORK_AND_REDEEM_GAS_ESTIMATE = "0x5318";
   var INITIAL_REPORTER_REDEEM_GAS_ESTIMATE = "0x5418";
   var MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE = "0x5318";
-  var MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE = "0x5318";
   var FORKED_MARKET_UNIVERSE_ADDRESS = "0xfAdd000000000000000000000000000000000000";
   var NONFORKED_MARKET_UNIVERSE_ADDRESS = "0x0fAdd00000000000000000000000000000000000";
   var REDEEMER_ADDRESS = "0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb";
@@ -268,7 +266,6 @@ describe("reporting/claim-reporting-fees", function () {
       },
       Market: {
         disavowCrowdsourcers: marketDisavowCrowdsourcersStub,
-        migrateThroughOneFork: marketMigrateThroughOneForkStub,
       },
     };
   };
@@ -283,7 +280,6 @@ describe("reporting/claim-reporting-fees", function () {
           initialReporterForkAndRedeemStub = sinon.stub(api().InitialReporter, "forkAndRedeem").callsFake(function (p) { p.onSuccess(INITIAL_REPORTER_FORK_AND_REDEEM_GAS_ESTIMATE); });
           initialReporterRedeemStub = sinon.stub(api().InitialReporter, "redeem").callsFake(function (p) { p.onSuccess(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE); });
           marketDisavowCrowdsourcersStub = sinon.stub(api().Market, "disavowCrowdsourcers").callsFake(function (p) { p.onSuccess(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE); });
-          marketMigrateThroughOneForkStub = sinon.stub(api().Market, "migrateThroughOneFork").callsFake(function (p) { p.onSuccess(MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE); });
           claimReportingFees = proxyquire("../../../src/reporting/claim-reporting-fees", {
             "../api": api,
           });
@@ -303,7 +299,6 @@ describe("reporting/claim-reporting-fees", function () {
           initialReporterForkAndRedeemStub = null;
           initialReporterRedeemStub = null;
           marketDisavowCrowdsourcersStub = null;
-          marketMigrateThroughOneForkStub = null;
         });
 
         describe("DisputeCrowdsourcer.forkAndRedeem", function () {
@@ -446,32 +441,9 @@ describe("reporting/claim-reporting-fees", function () {
           });
         });
 
-        describe("Market.migrateThroughOneFork", function () {
-          it("should be called once for every non-forked, non-finalized, non-migrated market in the same universe as the forked market", function () {
-            sinon.assert.callCount(marketMigrateThroughOneForkStub, 2);
-          });
-          it("should receive the expected input parameters for each call to Market.migrateThroughOneFork", function () {
-            for (var i = 0; i < marketMigrateThroughOneForkStub.callCount; i++) {
-              var expectedMarketMigrateThroughOneForkAddresses = [
-                "0x0fAdd00000000000000000000000000000000001",
-                "0x0fAdd00000000000000000000000000000000002",
-              ];
-              var expectedInput = {
-                tx: {
-                  to: expectedMarketMigrateThroughOneForkAddresses[i],
-                  estimateGas: true,
-                },
-              };
-              var actualInput = marketMigrateThroughOneForkStub.args[i][0];
-              assert.deepEqual(expectedInput.tx, actualInput.tx);
-            }
-          });
-        });
-
         describe("returned object", function () {
           it("should contain the expected gas estimates", function () {
             var disavowCrowdsourcersTotal = new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16).multipliedBy(marketDisavowCrowdsourcersStub.callCount);
-            var migrateThroughOneForkTotal = new BigNumber(MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE, 16).multipliedBy(marketMigrateThroughOneForkStub.callCount);
             var crowdsourcerForkAndRedeemTotal = new BigNumber(DISPUTE_CROWDSOURCER_FORK_AND_REDEEM_GAS_ESTIMATE, 16).multipliedBy(disputeCrowdsourcerForkAndRedeemStub.callCount);
             var initialReporterForkAndRedeemTotal = new BigNumber(INITIAL_REPORTER_FORK_AND_REDEEM_GAS_ESTIMATE, 16).multipliedBy(initialReporterForkAndRedeemStub.callCount);
             var feeWindowRedeemTotal = new BigNumber(FEE_WINDOW_REDEEM_GAS_ESTIMATE, 16).multipliedBy(feeWindowRedeemStub.callCount);
@@ -480,10 +452,6 @@ describe("reporting/claim-reporting-fees", function () {
             var expectedResult = {
               gasEstimates: {
                 disavowCrowdsourcers: [],
-                migrateThroughOneFork: [
-                  { address: "0x0fAdd00000000000000000000000000000000001", estimate: new BigNumber(MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE, 16) },
-                  { address: "0x0fAdd00000000000000000000000000000000002", estimate: new BigNumber(MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE, 16) },
-                ],
                 crowdsourcerForkAndRedeem: [
                   { address: "0xfcAdd00000000000000000000000000000000002", estimate: new BigNumber(DISPUTE_CROWDSOURCER_FORK_AND_REDEEM_GAS_ESTIMATE, 16) },
                 ],
@@ -547,14 +515,12 @@ describe("reporting/claim-reporting-fees", function () {
                 ],
                 totals: {
                   disavowCrowdsourcers: disavowCrowdsourcersTotal,
-                  migrateThroughOneFork: migrateThroughOneForkTotal,
                   crowdsourcerForkAndRedeem: crowdsourcerForkAndRedeemTotal,
                   initialReporterForkAndRedeem: initialReporterForkAndRedeemTotal,
                   feeWindowRedeem: feeWindowRedeemTotal,
                   crowdsourcerRedeem: crowdsourcerRedeemTotal,
                   initialReporterRedeem: initialReporterRedeemTotal,
                   all: disavowCrowdsourcersTotal
-                      .plus(migrateThroughOneForkTotal)
                       .plus(crowdsourcerForkAndRedeemTotal)
                       .plus(initialReporterForkAndRedeemTotal)
                       .plus(feeWindowRedeemTotal)
@@ -577,7 +543,6 @@ describe("reporting/claim-reporting-fees", function () {
           initialReporterForkAndRedeemStub = sinon.stub(api().InitialReporter, "forkAndRedeem").callsFake(function (p) { p.onSuccess(INITIAL_REPORTER_FORK_AND_REDEEM_GAS_ESTIMATE); });
           initialReporterRedeemStub = sinon.stub(api().InitialReporter, "redeem").callsFake(function (p) { p.onSuccess(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE); });
           marketDisavowCrowdsourcersStub = sinon.stub(api().Market, "disavowCrowdsourcers").callsFake(function (p) { p.onSuccess(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE); });
-          marketMigrateThroughOneForkStub = sinon.stub(api().Market, "migrateThroughOneFork").callsFake(function (p) { p.onSuccess(MARKET_MIGRATE_THROUGH_ONE_FORK_GAS_ESTIMATE); });
           claimReportingFees = proxyquire("../../../src/reporting/claim-reporting-fees", {
             "../api": api,
           });
@@ -730,37 +695,11 @@ describe("reporting/claim-reporting-fees", function () {
           });
         });
 
-        describe("Market.migrateThroughOneFork", function () {
-          it("should be called once for every non-forked, non-finalized, non-migrated market in the same universe as the forked market", function () {
-            sinon.assert.callCount(marketMigrateThroughOneForkStub, 2);
-          });
-          it("should receive the expected input parameters for each call to Market.migrateThroughOneFork", function () {
-            for (var i = 0; i < marketMigrateThroughOneForkStub.callCount; i++) {
-              var expectedMarketMigrateThroughOneForkAddresses = [
-                "0x0fAdd00000000000000000000000000000000001",
-                "0x0fAdd00000000000000000000000000000000002",
-              ];
-              var expectedInput = {
-                tx: {
-                  to: expectedMarketMigrateThroughOneForkAddresses[i],
-                  estimateGas: false,
-                },
-              };
-              var actualInput = marketMigrateThroughOneForkStub.args[i][0];
-              assert.deepEqual(expectedInput.tx, actualInput.tx);
-            }
-          });
-        });
-
         describe("returned object", function () {
           it("should contain the expected gas estimates", function () {
             var expectedResult = {
               successfulTransactions: {
                 disavowCrowdsourcers: [],
-                migrateThroughOneFork: [
-                  "0x0fAdd00000000000000000000000000000000001",
-                  "0x0fAdd00000000000000000000000000000000002",
-                ],
                 crowdsourcerForkAndRedeem: ["0xfcAdd00000000000000000000000000000000002"],
                 initialReporterForkAndRedeem: [],
                 feeWindowRedeem: ["0xfeeAdd0000000000000000000000000000000001"],
