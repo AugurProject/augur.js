@@ -8,6 +8,38 @@ var api = require("../api");
 var contractTypes = require("../constants").CONTRACT_TYPE;
 var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
 
+/**
+ * @typedef {Object} ForkedMarket
+ * @property {string} address Ethereum contract address of the Forked Market, as a hexadecimal string.
+ * @property {string} universeAddress Ethereum contract address of Universe to which the Forked Market belongs, as a hexadecimal string.
+ * @property {boolen} isFinalized Whether the Forked Market has been Finalized (i.e., the function Market.finalize` has been called on it successfully).
+ * @property {Array.<CrowdsourcerState>} crowdsourcers Array of objects containing information about the Forked Market’s DisputeCrowdsourcers.
+ * @property {InitialReporterState|null} initialReporter Object containing information about the Forked Market’s InitialReporter.
+ */
+
+/**
+ * @typedef {Object} CrowdsourcerState
+ * @property {string} crowdsourcerId Ethereum contract address of a DisputeCrowdsourcer belonging to a Forked Market, as a hexadecimal string.
+ * @property {boolean} isForked Whether the DisputeCrowdsourcer has been forked (i.e., has had its DisputeCrowdsourcer.fork function called successfully).
+ */
+
+/**
+ * @typedef {Object} InitialReporterState
+ * @property {string} initialReporterId Ethereum contract address of the InitialReporter belonging to a Forked Market, as a hexadecimal string.
+ * @property {boolean} isForked Whether the InitialReporter has been forked (i.e., has had its InitialReporter.fork function called successfully).
+ */
+
+ /**
+ * @typedef {Object} NonforkedMarket
+ * @property {string} marketId Ethereum contract address of the non-Forked Market, as a hexadecimal string.
+ * @property {string} universe Ethereum contract address of Universe to which the non-Forked Market belongs, as a hexadecimal string.
+ * @property {boolean} crowdsourcersAreDisavowed Whether the non-Forked Market's DisputeCrowdsourcers have been disavowed (i.e., its `Market.disavowCrowdsourcers` function has been called successfully).
+ * @property {boolean} isMigrated Whether the non-Forked Market has been migrated to the Child Universe of its original Universe (i.e., its `Market.isMigrated` function has been called successfully).
+ * @property {boolean} isFinalized Whether the non-Forked Market has been Finalized (i.e., its `Market.finalize` function has been called successfully).
+ * @property {Array.<string>} crowdsourcers Array of Ethereum contract addresses of the non-Forked Market's DisputeCrowdsourcers, as hexadecimal strings.
+ * @property {string|null} initialReporter Ethereum contract address of the non-Forked Market's InitialReporter, as a hexadecimal string.
+ */
+
 function redeemContractFees(p, payload, successfulTransactions, failedTransactions, gasEstimates) {
   var redeemableContracts = [];
   var i;
@@ -221,8 +253,6 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
 }
 
 /**
- * TODO: Add updated JSDoc info for input/returned values.
- *
  * Claims all reporting fees for a user as follows:
  *
  * If the forked market is finalized:
@@ -242,6 +272,17 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
  *       Call `InitialReporter.forkAndRedeem`
  *     Else:
  *       Call `InitialReporter.redeem`
+ *
+ * @param {Object} p Parameters object.
+ * @param {string} p.redeemer Ethereum address attempting to redeem reporting fees, as a hexadecimal string.
+ * @param {Array.<string>} p.feeWindows Array of FeeWindow contract addresses which to claim reporting fees, as hexadecimal strings.
+ * @param {ForkedMarket} p.forkedMarket Object containing information about the Forked Market in which the user has unclaimed fees in the Parent Universe(if there is one).
+ * @param {Array.<NonforkedMarket>} p.nonforkedMarkets Array containing objects with information about the non-Forked Markets in which the user has unclaimed fees.
+ * @param {boolean} p.estimateGas Whether to return gas estimates for the transactions instead of actually making the transactions.
+ * @param {{signer: buffer|function, accountType: string}=} p.meta Authentication metadata for raw transactions.
+ * @param {function} p.onSent Called if/when the transactions are broadcast to the network. (Currently used as a placeholder and not actually used by this function.)
+ * @param {function} p.onSuccess Called if/when all transactions are sealed and confirmed.
+ * @param {function} p.onFailed Called if/when all transactions have been attempted and at least one transaction has failed. Error message shows which transactions succeeded and which ones failed.
  */
 function claimReportingFees(p) {
   var payload = immutableDelete(p, ["redeemer", "feeWindows", "forkedMarket", "nonforkedMarkets", "estimateGas", "onSent", "onSuccess", "onFailed"]);
