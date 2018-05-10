@@ -176,7 +176,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("DisputeCrowdsourcer.redeem", function () {
-        it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
+        it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function called", function () {
           sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 16);
         });
         it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
@@ -232,7 +232,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("InitialReporter.redeem", function () {
-        it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
+        it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function called", function () {
           sinon.assert.callCount(initialReporterRedeemStub, 8);
         });
         it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
@@ -344,7 +344,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("DisputeCrowdsourcer.redeem", function () {
-        it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function caled", function () {
+        it("should be called once for every dispute crowdsourcer belonging to a non-forked market or belonging to the forked market and having had its DisputeCrowdsourcer.fork function called", function () {
           sinon.assert.callCount(disputeCrowdsourcerRedeemStub, 16);
         });
         it("should receive the expected input parameters for each call to DisputeCrowdsourcer.redeem", function () {
@@ -400,7 +400,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("InitialReporter.redeem", function () {
-        it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function caled", function () {
+        it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function called", function () {
           sinon.assert.callCount(initialReporterRedeemStub, 8);
         });
         it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
