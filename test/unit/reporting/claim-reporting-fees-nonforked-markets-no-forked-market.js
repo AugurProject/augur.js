@@ -149,7 +149,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
     };
   };
 
-  describe("When a forked market does not exist in the parent universe", function () {
+  describe("When a user wants to claim fees on non-forked markets and a forked market does not exist in the same universe", function () {
     describe("and estimateGas is true", function () {
       before(function () {
         disputeCrowdsourcerRedeemStub = sinon.stub(api().DisputeCrowdsourcer, "redeem").callsFake(function (p) { p.onSuccess(DISPUTE_CROWDSOURCER_REDEEM_GAS_ESTIMATE); });

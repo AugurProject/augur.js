@@ -62,7 +62,7 @@ describe("reporting/claim-reporting-fees-forked-market", function () {
     };
   };
 
-  describe("When a forked market exists in the current universe", function () {
+  describe("When a user wants to claim fees on a forked market with an initial reporter that does not need to be forked", function () {
     describe("and estimateGas is true", function () {
       before(function () {
         disputeCrowdsourcerForkAndRedeemStub = sinon.stub(api().DisputeCrowdsourcer, "forkAndRedeem").callsFake(function (p) { p.onSuccess(DISPUTE_CROWDSOURCER_FORK_AND_REDEEM_GAS_ESTIMATE); });
