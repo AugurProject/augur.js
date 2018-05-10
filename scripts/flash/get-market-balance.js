@@ -62,6 +62,7 @@ function getMarketBalance(augur, args, auth, callback) {
         console.log(chalk.yellow.dim("numTicks"), chalk.yellow(numTicks));
 
         if (showMarketWinningBalance) {
+          console.log(chalk.yellow.dim("Market State"), chalk.yellow(market.reportingState));
           showWinningBalance(augur, marketId, address, function (err, value) {
             if (!err) {
               console.log(chalk.yellow.dim("Account Winning Balance"));
