@@ -13,7 +13,7 @@ var proxyquire = require("proxyquire").noPreserveCache();
 var noop = require("../../../src/utils/noop");
 var sinon = require("sinon");
 
-describe.only("reporting/claim-reporting-fees-forked-market", function () {
+describe("reporting/claim-reporting-fees-forked-market", function () {
   var claimReportingFees;
   var disputeCrowdsourcerForkAndRedeemStub;
   var disputeCrowdsourcerRedeemStub;
