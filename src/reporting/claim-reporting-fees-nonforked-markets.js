@@ -11,15 +11,26 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
 /**
  * @typedef {Object} CrowdsourcerState
  * @property {string} crowdsourcerId Ethereum contract address of a DisputeCrowdsourcer belonging to a Forked Market, as a hexadecimal string.
- * @property {boolean} isForked Whether the DisputeCrowdsourcer has been forked (i.e., has had its DisputeCrowdsourcer.fork function called successfully).
+ * @property {boolean} needsFork Whether `DisputeCrowdsourcer.fork` has been called successfully on the DisputeCrowdsourcer.
+ * @property {BigNumber} unclaimedEthFees Amount of unclaimed ETH the user can redeem from the DisputeCrowdsourcer.
  * @property {BigNumber} unclaimedRepStaked Amount of unclaimed REP the user has staked in the DisputeCrowdsourcer.
  */
 
 /**
  * @typedef {Object} InitialReporterState
  * @property {string} initialReporterId Ethereum contract address of the InitialReporter belonging to a Forked Market, as a hexadecimal string.
- * @property {boolean} isForked Whether the InitialReporter has been forked (i.e., has had its InitialReporter.fork function called successfully).
- * @property {BigNumber} unclaimedRepStaked Amount of unclaimed REP the user has staked in the IntialReporter.
+ * @property {boolean} needsFork Whether `InitialReporter.fork` has been called successfully on the InitialReporter.
+ * @property {BigNumber} unclaimedEthFees Amount of unclaimed ETH the user can redeem from the InitialReporter.
+ * @property {BigNumber} unclaimedRepStaked Amount of unclaimed REP the user has staked in the InitialReporter.
+ */
+
+/**
+ * @typedef {Object} ForkedMarket
+ * @property {string} marketId Ethereum contract address of the Forked Market, as a hexadecimal string.
+ * @property {string} universeAddress Ethereum contract address of Universe to which the Forked Market belongs, as a hexadecimal string.
+ * @property {boolen} isFinalized Whether the Forked Market has been Finalized (i.e., the function `Market.finalize` has been called on it successfully).
+ * @property {Array.<CrowdsourcerState>} crowdsourcers Array of objects containing information about the Forked Market’s DisputeCrowdsourcers.
+ * @property {InitialReporterState|null} initialReporter Object containing information about the Forked Market’s InitialReporter.
  */
 
  /**
@@ -30,7 +41,7 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  * @property {boolean} isMigrated Whether the non-Forked Market has been migrated to the Child Universe of its original Universe (i.e., its `Market.isMigrated` function has been called successfully).
  * @property {boolean} isFinalized Whether the non-Forked Market has been Finalized (i.e., its `Market.finalize` function has been called successfully).
  * @property {Array.<string>} crowdsourcers Array of Ethereum contract addresses of the non-Forked Market's DisputeCrowdsourcers, as hexadecimal strings.
- * @property {string|null} initialReporter Ethereum contract address of the non-Forked Market's InitialReporter, as a hexadecimal string.
+ * @property {string|null} initialReporterId Ethereum contract address of the non-Forked Market's InitialReporter, as a hexadecimal string.
  */
 
 function redeemContractFees(p, payload, successfulTransactions, failedTransactions, gasEstimates) {
@@ -46,15 +57,11 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
     for (var j = 0; j < p.nonforkedMarkets[i].crowdsourcers.length; j++) {
       redeemableContracts.push({
         address: p.nonforkedMarkets[i].crowdsourcers[j],
-        isFinalized: p.nonforkedMarkets[i].isFinalized,
-        marketIsForked: false,
         type: contractTypes.DISPUTE_CROWDSOURCER,
       });
     }
     redeemableContracts.push({
       address: p.nonforkedMarkets[i].initialReporter,
-      isFinalized: p.nonforkedMarkets[i].isFinalized,
-      marketIsForked: false,
       type: contractTypes.INITIAL_REPORTER,
     });
   }
