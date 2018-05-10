@@ -60,10 +60,19 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
         type: contractTypes.DISPUTE_CROWDSOURCER,
       });
     }
-    redeemableContracts.push({
-      address: p.nonforkedMarkets[i].initialReporter,
-      type: contractTypes.INITIAL_REPORTER,
-    });
+    if (p.forkedMarket) {
+      if (p.nonforkedMarkets[i].isFinalized) {
+        redeemableContracts.push({
+          address: p.nonforkedMarkets[i].initialReporter,
+          type: contractTypes.INITIAL_REPORTER,
+        });
+      }
+    } else {
+      redeemableContracts.push({
+        address: p.nonforkedMarkets[i].initialReporter,
+        type: contractTypes.INITIAL_REPORTER,
+      });
+    }
   }
 
   async.eachLimit(redeemableContracts, PARALLEL_LIMIT, function (contract, nextContract) {
@@ -184,7 +193,13 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
  * Once the above has been completed:
  *   Call `FeeWindow.redeem` on all fee windows in the current universe where the user has unclaimed participation tokens
  *   For reporting participants of non-forked markets:
- *     Call `DisputeCrowdsourcer.redeem`/`InitialReporter.redeem`
+ *     Call `DisputeCrowdsourcer.redeem`
+ *     For initial reporters belonging to non-forked markets:
+ *       If a forked market exists in the current universe:
+ *         If the initial reporter belongs to a finalized market:
+ *           Call `InitialReporter.redeem`
+ *       Else:
+ *         Call `InitialReporter.redeem`
  *
  * @param {Object} p Parameters object.
  * @param {string} p.redeemer Ethereum address attempting to redeem reporting fees, as a hexadecimal string.

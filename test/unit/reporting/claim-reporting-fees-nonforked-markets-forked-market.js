@@ -251,15 +251,11 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
 
       describe("InitialReporter.redeem", function () {
         it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function called", function () {
-          sinon.assert.callCount(initialReporterRedeemStub, 8);
+          sinon.assert.callCount(initialReporterRedeemStub, 4);
         });
         it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
           var expectedInitialReportRedeemAddresses = [
-            "0x0f1Add0000000000000000000000000000000009",
-            "0x0f1Add0000000000000000000000000000000010",
-            "0x0f1Add0000000000000000000000000000000011",
             "0x0f1Add0000000000000000000000000000000012",
-            "0x0f1Add0000000000000000000000000000000013",
             "0x0f1Add0000000000000000000000000000000014",
             "0x0f1Add0000000000000000000000000000000015",
             "0x0f1Add0000000000000000000000000000000016",
@@ -339,11 +335,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
                 { address: "0x0fcAdd0000000000000000000000000000000032", estimate: new BigNumber(DISPUTE_CROWDSOURCER_REDEEM_GAS_ESTIMATE, 16) },
               ],
               initialReporterRedeem: [
-                { address: "0x0f1Add0000000000000000000000000000000009", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
-                { address: "0x0f1Add0000000000000000000000000000000010", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
-                { address: "0x0f1Add0000000000000000000000000000000011", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
                 { address: "0x0f1Add0000000000000000000000000000000012", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
-                { address: "0x0f1Add0000000000000000000000000000000013", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
                 { address: "0x0f1Add0000000000000000000000000000000014", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
                 { address: "0x0f1Add0000000000000000000000000000000015", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
                 { address: "0x0f1Add0000000000000000000000000000000016", estimate: new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16) },
@@ -442,15 +434,11 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
 
       describe("InitialReporter.redeem", function () {
         it("should be called once for every initial reporter belonging to a non-forked market or belonging to the forked market and having had its InitialReporter.fork function called", function () {
-          sinon.assert.callCount(initialReporterRedeemStub, 8);
+          sinon.assert.callCount(initialReporterRedeemStub, 4);
         });
         it("should receive the expected input parameters for each call to InitialReport.redeem", function () {
           var expectedInitialReportRedeemAddresses = [
-            "0x0f1Add0000000000000000000000000000000009",
-            "0x0f1Add0000000000000000000000000000000010",
-            "0x0f1Add0000000000000000000000000000000011",
             "0x0f1Add0000000000000000000000000000000012",
-            "0x0f1Add0000000000000000000000000000000013",
             "0x0f1Add0000000000000000000000000000000014",
             "0x0f1Add0000000000000000000000000000000015",
             "0x0f1Add0000000000000000000000000000000016",
@@ -524,11 +512,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
                 "0x0fcAdd0000000000000000000000000000000032",
               ],
               initialReporterRedeem: [
-                "0x0f1Add0000000000000000000000000000000009",
-                "0x0f1Add0000000000000000000000000000000010",
-                "0x0f1Add0000000000000000000000000000000011",
                 "0x0f1Add0000000000000000000000000000000012",
-                "0x0f1Add0000000000000000000000000000000013",
                 "0x0f1Add0000000000000000000000000000000014",
                 "0x0f1Add0000000000000000000000000000000015",
                 "0x0f1Add0000000000000000000000000000000016",
