@@ -23,18 +23,36 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
   var FEE_WINDOW_REDEEM_GAS_ESTIMATE = "0x5418";
   var INITIAL_REPORTER_REDEEM_GAS_ESTIMATE = "0x5418";
   var MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE = "0x5318";
-  var NONFORKED_MARKET_UNIVERSE_ADDRESS = "0x0fAdd00000000000000000000000000000000000";
+  var UNIVERSE_ADDRESS = "0x0fAdd00000000000000000000000000000000000";
   var REDEEMER_ADDRESS = "0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb";
   var params = {
     redeemer: REDEEMER_ADDRESS,
     feeWindows: [
       "0xfeeAdd0000000000000000000000000000000001",
     ],
-    forkedMarket: null,
+    forkedMarket: {
+      marketId: "0xfAdd000000000000000000000000000000000000",
+      universe: UNIVERSE_ADDRESS,
+      isFinalized: true,
+      crowdsourcers: [
+        {
+          crowdsourcerId: "0xfcAdd00000000000000000000000000000000001",
+          needsFork: false,
+        },
+        {
+          crowdsourcerId: "0xfcAdd00000000000000000000000000000000002",
+          needsFork: true,
+        },
+      ],
+      initialReporter: {
+        initialReporterId: "0xf1Add00000000000000000000000000000000000",
+        needsFork: true,
+      },
+    },
     nonforkedMarkets: [
       {
-        address: "0x0fAdd00000000000000000000000000000000009",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000009",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: false,
@@ -45,8 +63,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000009",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000010",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000010",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: false,
@@ -57,8 +75,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000010",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000011",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000011",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: false,
@@ -69,8 +87,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000011",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000012",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000012",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: false,
         isFinalized: true,
@@ -81,8 +99,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000012",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000013",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000013",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: false,
@@ -93,8 +111,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000013",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000014",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000014",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: false,
         isMigrated: true,
         isFinalized: true,
@@ -105,8 +123,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000014",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000015",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000015",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: false,
         isFinalized: true,
@@ -117,8 +135,8 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         initialReporter: "0x0f1Add0000000000000000000000000000000015",
       },
       {
-        address: "0x0fAdd00000000000000000000000000000000016",
-        universeAddress: NONFORKED_MARKET_UNIVERSE_ADDRESS,
+        marketId: "0x0fAdd00000000000000000000000000000000016",
+        universe: UNIVERSE_ADDRESS,
         crowdsourcersAreDisavowed: true,
         isMigrated: true,
         isFinalized: true,
@@ -149,7 +167,7 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
     };
   };
 
-  describe("When a forked market does not exist in the parent universe", function () {
+  describe("When a forked market exists in the current universe", function () {
     describe("and estimateGas is true", function () {
       before(function () {
         disputeCrowdsourcerRedeemStub = sinon.stub(api().DisputeCrowdsourcer, "redeem").callsFake(function (p) { p.onSuccess(DISPUTE_CROWDSOURCER_REDEEM_GAS_ESTIMATE); });
@@ -262,20 +280,43 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("Market.disavowCrowdsourcers", function () {
-        it("should not be called", function () {
-          sinon.assert.notCalled(marketDisavowCrowdsourcersStub);
+        it("should be called once for every non-forked, non-finalized market in the same universe as the forked market", function () {
+          sinon.assert.callCount(marketDisavowCrowdsourcersStub, 4);
+        });
+        it("should receive the expected input parameters for each call to Market.disavowCrowdsourcers", function () {
+          var expectedMarketDisavowCrowdsourcersAddresses = [
+            "0x0fAdd00000000000000000000000000000000009",
+            "0x0fAdd00000000000000000000000000000000010",
+            "0x0fAdd00000000000000000000000000000000011",
+            "0x0fAdd00000000000000000000000000000000013",
+          ];
+          for (var i = 0; i < expectedMarketDisavowCrowdsourcersAddresses[i]; i++) {
+            var expectedInput = {
+              tx: {
+                to: expectedMarketDisavowCrowdsourcersAddresses[i],
+                estimateGas: true,
+              },
+            };
+            var actualInput = marketDisavowCrowdsourcersStub.args[i][0];
+            assert.deepEqual(expectedInput.tx, actualInput.tx);
+          }
         });
       });
 
       describe("returned object", function () {
         it("should contain the expected gas estimates", function () {
-          var disavowCrowdsourcersTotal = new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16).multipliedBy(marketDisavowCrowdsourcersStub.callCount);
+          var disavowCrowdsourcersTotal = new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16).multipliedBy(marketDisavowCrowdsourcersStub.callCount);
           var feeWindowRedeemTotal = new BigNumber(FEE_WINDOW_REDEEM_GAS_ESTIMATE, 16).multipliedBy(feeWindowRedeemStub.callCount);
           var crowdsourcerRedeemTotal = new BigNumber(DISPUTE_CROWDSOURCER_REDEEM_GAS_ESTIMATE, 16).multipliedBy(disputeCrowdsourcerRedeemStub.callCount);
           var initialReporterRedeemTotal = new BigNumber(INITIAL_REPORTER_REDEEM_GAS_ESTIMATE, 16).multipliedBy(initialReporterRedeemStub.callCount);
           var expectedResult = {
             gasEstimates: {
-              disavowCrowdsourcers: [],
+              disavowCrowdsourcers: [
+                { address: "0x0fAdd00000000000000000000000000000000009", estimate: new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16) },
+                { address: "0x0fAdd00000000000000000000000000000000010", estimate: new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16) },
+                { address: "0x0fAdd00000000000000000000000000000000011", estimate: new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16) },
+                { address: "0x0fAdd00000000000000000000000000000000013", estimate: new BigNumber(MARKET_DISAVOW_CROWDSOURCERS_GAS_ESTIMATE, 16) },
+              ],
               feeWindowRedeem: [
                 { address: "0xfeeAdd0000000000000000000000000000000001", estimate: new BigNumber(FEE_WINDOW_REDEEM_GAS_ESTIMATE, 16) },
               ],
@@ -430,8 +471,26 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
       });
 
       describe("Market.disavowCrowdsourcers", function () {
-        it("should not be called", function () {
-          sinon.assert.notCalled(marketDisavowCrowdsourcersStub);
+        it("should be called once for every non-forked, non-finalized market in the same universe as the forked market", function () {
+          sinon.assert.callCount(marketDisavowCrowdsourcersStub, 4);
+        });
+        it("should receive the expected input parameters for each call to Market.disavowCrowdsourcers", function () {
+          var expectedMarketDisavowCrowdsourcersAddresses = [
+            "0x0fAdd00000000000000000000000000000000009",
+            "0x0fAdd00000000000000000000000000000000010",
+            "0x0fAdd00000000000000000000000000000000011",
+            "0x0fAdd00000000000000000000000000000000013",
+          ];
+          for (var i = 0; i < expectedMarketDisavowCrowdsourcersAddresses[i]; i++) {
+            var expectedInput = {
+              tx: {
+                to: expectedMarketDisavowCrowdsourcersAddresses[i],
+                estimateGas: false,
+              },
+            };
+            var actualInput = marketDisavowCrowdsourcersStub.args[i][0];
+            assert.deepEqual(expectedInput.tx, actualInput.tx);
+          }
         });
       });
 
@@ -439,7 +498,12 @@ describe("reporting/claim-reporting-fees-nonforked-markets", function () {
         it("should contain the expected gas estimates", function () {
           var expectedResult = {
             successfulTransactions: {
-              disavowCrowdsourcers: [],
+              disavowCrowdsourcers: [
+                "0x0fAdd00000000000000000000000000000000009",
+                "0x0fAdd00000000000000000000000000000000010",
+                "0x0fAdd00000000000000000000000000000000011",
+                "0x0fAdd00000000000000000000000000000000013",
+              ],
               feeWindowRedeem: ["0xfeeAdd0000000000000000000000000000000001"],
               crowdsourcerRedeem: [
                 "0x0fcAdd0000000000000000000000000000000017",

@@ -41,8 +41,6 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  *     Call `DisputeCrowdsourcer.forkAndRedeem`/`InitialReporter.forkAndRedeem`
  *   Else:
  *     Call `DisputeCrowdsourcer.redeem`/`InitialReporter.redeem`
- * For all other reporting participants:
- *   Call `DisputeCrowdsourcer.redeem`/`InitialReporter.redeem`
  *
  * @param {Object} p Parameters object.
  * @param {string} p.redeemer Ethereum address attempting to redeem reporting fees, as a hexadecimal string.
