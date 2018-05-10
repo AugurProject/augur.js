@@ -261,12 +261,12 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
  *
  * Once the above has been completed:
  *   Call `FeeWindow.redeem` on all fee windows in the current universe where the user has unclaimed participation tokens
- *   For each market participant of the forked market in which the user has unclaimed fees:
+ *   For each reporting participant of the forked market in which the user has unclaimed fees:
  *     If `DisputeCrowdsourcer.fork`/`InitialReporter.fork` has not been called:
  *       Call `DisputeCrowdsourcer.forkAndRedeem`/`InitialReporter.forkAndRedeem`
  *     Else:
  *       Call `DisputeCrowdsourcer.redeem`/`InitialReporter.redeem`
- *   For all other market participants:
+ *   For all other reporting participants:
  *     Call `DisputeCrowdsourcer.redeem`/`InitialReporter.redeem`
  *
  * @param {Object} p Parameters object.
