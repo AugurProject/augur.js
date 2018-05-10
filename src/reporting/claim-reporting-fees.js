@@ -21,12 +21,14 @@ var PARALLEL_LIMIT = require("../constants").PARALLEL_LIMIT;
  * @typedef {Object} CrowdsourcerState
  * @property {string} crowdsourcerId Ethereum contract address of a DisputeCrowdsourcer belonging to a Forked Market, as a hexadecimal string.
  * @property {boolean} isForked Whether the DisputeCrowdsourcer has been forked (i.e., has had its DisputeCrowdsourcer.fork function called successfully).
+ * @property {BigNumber} unclaimedRepStaked Amount of unclaimed REP the user has staked in the DisputeCrowdsourcer.
  */
 
 /**
  * @typedef {Object} InitialReporterState
  * @property {string} initialReporterId Ethereum contract address of the InitialReporter belonging to a Forked Market, as a hexadecimal string.
  * @property {boolean} isForked Whether the InitialReporter has been forked (i.e., has had its InitialReporter.fork function called successfully).
+ * @property {BigNumber} unclaimedRepStaked Amount of unclaimed REP the user has staked in the IntialReporter.
  */
 
  /**
@@ -99,7 +101,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
           onSuccess: function (result) {
             if (p.estimateGas) {
               result = new BigNumber(result, 16);
-              gasEstimates.feeWindowRedeem.push({address: contract.address, estimate: result });
+              gasEstimates.feeWindowRedeem.push({address: contract.address, estimate: result});
               gasEstimates.totals.feeWindowRedeem = gasEstimates.totals.feeWindowRedeem.plus(result);
             } else {
               successfulTransactions.feeWindowRedeem.push(contract.address);
@@ -125,7 +127,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
             onSuccess: function (result) {
               if (p.estimateGas) {
                 result = new BigNumber(result, 16);
-                gasEstimates.crowdsourcerForkAndRedeem.push({address: contract.address, estimate: result });
+                gasEstimates.crowdsourcerForkAndRedeem.push({address: contract.address, estimate: result});
                 gasEstimates.totals.crowdsourcerForkAndRedeem = gasEstimates.totals.crowdsourcerForkAndRedeem.plus(result);
               } else {
                 successfulTransactions.crowdsourcerForkAndRedeem.push(contract.address);
@@ -150,7 +152,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
             onSuccess: function (result) {
               if (p.estimateGas) {
                 result = new BigNumber(result, 16);
-                gasEstimates.crowdsourcerRedeem.push({address: contract.address, estimate: result });
+                gasEstimates.crowdsourcerRedeem.push({address: contract.address, estimate: result});
                 gasEstimates.totals.crowdsourcerRedeem = gasEstimates.totals.crowdsourcerRedeem.plus(result);
               } else {
                 successfulTransactions.crowdsourcerRedeem.push(contract.address);
@@ -177,7 +179,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
             onSuccess: function (result) {
               if (p.estimateGas) {
                 result = new BigNumber(result, 16);
-                gasEstimates.initialReporterForkAndRedeem.push({address: contract.address, estimate: result });
+                gasEstimates.initialReporterForkAndRedeem.push({address: contract.address, estimate: result});
                 gasEstimates.totals.initialReporterForkAndRedeem = gasEstimates.totals.initialReporterForkAndRedeem.plus(result);
               } else {
                 successfulTransactions.initialReporterForkAndRedeem.push(contract.address);
@@ -202,7 +204,7 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
             onSuccess: function (result) {
               if (p.estimateGas) {
                 result = new BigNumber(result, 16);
-                gasEstimates.initialReporterRedeem.push({address: contract.address, estimate: result });
+                gasEstimates.initialReporterRedeem.push({address: contract.address, estimate: result});
                 gasEstimates.totals.initialReporterRedeem = gasEstimates.totals.initialReporterRedeem.plus(result);
               } else {
                 successfulTransactions.initialReporterRedeem.push(contract.address);
@@ -253,10 +255,9 @@ function redeemContractFees(p, payload, successfulTransactions, failedTransactio
 /**
  * Claims all reporting fees for a user as follows:
  *
- * If an unfinalized forked market exists in the current universe:
- *   For all non-finalized markets in current universe where the user has unclaimed fees in the market participants:
+ * If a forked market exists in the current universe:
+ *   For all non-finalized markets in current universe where the user has unclaimed fees in the reporting participants:
  *     Call `Market.disavowCrowdsourcers`
- * (If a finalized forked market exists in the current universe, `Market.disavowCrowdsourcers` does not need to be called because it is called automatically when the forked market is finalized.)
  *
  * Once the above has been completed:
  *   Call `FeeWindow.redeem` on all fee windows in the current universe where the user has unclaimed participation tokens
@@ -317,35 +318,31 @@ function claimReportingFees(p) {
 
   if (p.forkedMarket) {
     async.eachLimit(p.nonforkedMarkets, PARALLEL_LIMIT, function (nonforkedMarket, nextNonforkedMarket) {
-      if (p.forkedMarket) {
-        if (nonforkedMarket.isFinalized || nonforkedMarket.crowdsourcersAreDisavowed) {
-          nextNonforkedMarket();
-        } else {
-          api().Market.disavowCrowdsourcers(assign({}, payload, {
-            tx: {
-              to: nonforkedMarket.marketId,
-              estimateGas: p.estimateGas,
-            },
-            onSent: function () {},
-            onSuccess: function (result) {
-              if (p.estimateGas) {
-                result = new BigNumber(result, 16);
-                gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.marketId, estimate: result });
-                gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
-              }
-              successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
-              // console.log("Disavowed crowdsourcers for market", nonforkedMarket.marketId);
-              nextNonforkedMarket();
-            },
-            onFailed: function () {
-              failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
-              // console.log("Failed to disavow crowdsourcers for", nonforkedMarket.marketId);
-              nextNonforkedMarket();
-            },
-          }));
-        }
-      } else {
+      if (nonforkedMarket.isFinalized) {
         nextNonforkedMarket();
+      } else {
+        api().Market.disavowCrowdsourcers(assign({}, payload, {
+          tx: {
+            to: nonforkedMarket.marketId,
+            estimateGas: p.estimateGas,
+          },
+          onSent: function () {},
+          onSuccess: function (result) {
+            if (p.estimateGas) {
+              result = new BigNumber(result, 16);
+              gasEstimates.disavowCrowdsourcers.push({address: nonforkedMarket.marketId, estimate: result});
+              gasEstimates.totals.disavowCrowdsourcers = gasEstimates.totals.disavowCrowdsourcers.plus(result);
+            }
+            successfulTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
+            // console.log("Disavowed crowdsourcers for market", nonforkedMarket.marketId);
+            nextNonforkedMarket();
+          },
+          onFailed: function () {
+            failedTransactions.disavowCrowdsourcers.push(nonforkedMarket.marketId);
+            // console.log("Failed to disavow crowdsourcers for", nonforkedMarket.marketId);
+            nextNonforkedMarket();
+          },
+        }));
       }
     }, function () {
       redeemContractFees(p, payload, successfulTransactions, failedTransactions, gasEstimates);
