@@ -3,9 +3,6 @@
 "use strict";
 
 var chalk = require("chalk");
-var theGetBalance = require("../dp/lib/get-balances");
-var speedomatic = require("speedomatic");
-var displayTime = require("./display-time");
 
 function help() {
   console.log(chalk.red("Transfer REP or ETH to specific account"));
