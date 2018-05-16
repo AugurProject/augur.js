@@ -17,6 +17,12 @@ function help() {
 function showWinningBalance(augur, marketId, address, callback) {
   var winningPayload = {marketIds: [marketId], account: address };
   augur.augurNode.submitRequest("getWinningBalance", winningPayload, function (err, value) {
+    if (err) {
+      console.log(chalk.red(err));
+      return callback(err);
+    }
+    console.log(chalk.yellow.dim("Account Winning Balance"));
+    console.log(chalk.yellow.dim("Balance: "), chalk.yellow(JSON.stringify(value)));
     callback(err, value);
   });
 }
@@ -102,15 +108,12 @@ function getMarketBalance(augur, args, auth, callback) {
         });
       },
       showWinningBalance: function (next) {
-        if (showMarketWinningBalance) {
+        if (address && showMarketWinningBalance) {
           console.log(chalk.yellow.dim("Market State"), chalk.yellow(market.reportingState));
-          showWinningBalance(augur, marketId, address, function (err, value) {
+          showWinningBalance(augur, marketId, address, function (err) {
             if (err) {
               console.log(chalk.red(err));
-              next(err);
             }
-            console.log(chalk.yellow.dim("Account Winning Balance"));
-            console.log(chalk.yellow.dim("Balance: "), chalk.yellow(JSON.stringify(value)));
             next(null);
           });
         } else {
