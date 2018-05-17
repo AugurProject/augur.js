@@ -44,7 +44,7 @@ function forceFinalize(augur, args, auth, callback) {
           displayTime("Current Time", timeResult.timestamp);
           var priceOrOutcome = market.marketType === "scalar" ? market.minPrice : 0;
           var payoutNumerators = getPayoutNumerators(market, priceOrOutcome, false);
-          if (timeResult.timestamp > endTime) {
+          if (parseInt(timeResult.timestamp, 10) > endTime) {
             doInitialReport(augur, marketId, payoutNumerators, false, auth, function (err) {
               if (err) {
                 console.log(chalk.red(err));
