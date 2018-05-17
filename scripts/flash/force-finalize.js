@@ -41,7 +41,7 @@ function forceFinalize(augur, args, auth, callback) {
           }
           var day = 108000; // day
           endTime = parseInt(endTime, 10) + (day * 3); // push time after designated reporter time
-          displayTime("Move time to ", endTime);
+          displayTime("Current Time", timeResult.timestamp);
           var priceOrOutcome = market.marketType === "scalar" ? market.minPrice : 0;
           var payoutNumerators = getPayoutNumerators(market, priceOrOutcome, false);
           if (timeResult.timestamp > endTime) {
@@ -53,6 +53,7 @@ function forceFinalize(augur, args, auth, callback) {
               finalizeMarket(augur, args, auth, callback);
             });
           } else {
+            displayTime("Move time to ", endTime);
             setTimestamp(augur, endTime, timeResult.timeAddress, auth, function (err) {
               if (err) {
                 console.log(chalk.red(err));
