@@ -234,10 +234,13 @@ function claimReportingFeesNonforkedMarkets(p) {
   };
 
   if (p.forkedMarket) {
+    var marketsDisavowed = {};
     async.eachLimit(p.nonforkedMarkets, PARALLEL_LIMIT, function (nonforkedMarket, nextNonforkedMarket) {
       if (nonforkedMarket.isFinalized) {
         nextNonforkedMarket();
       } else {
+        if (marketsDisavowed[nonforkedMarket.marketId]) nextNonforkedMarket();
+        marketsDisavowed[nonforkedMarket.marketId] = true;
         api().Market.disavowCrowdsourcers(assign({}, payload, {
           tx: {
             to: nonforkedMarket.marketId,
