@@ -87,7 +87,7 @@ function disputeContribute(augur, args, auth, callback) {
             augur.api.FeeWindow.getStartTime(feeWindowPayload, function (err, feeWindowStartTime) {
               if (err) {
                 console.log(chalk.red(err));
-                callback("Could not get Fee Window");
+                return callback("Could not get Fee Window");
               }
 
               getTime(augur, auth, function (err, timeResult) {
@@ -121,11 +121,11 @@ function disputeContribute(augur, args, auth, callback) {
                         }
 
                         console.log(chalk.green("Market contribute Done"));
-                        callback(null);
+                        return callback(null);
                       });
                     } else {
                       console.log(chalk.red("Fee Window isn't active"));
-                      callback("Fee Window isn't active");
+                      return callback("Fee Window isn't active");
                     }
                   });
                 });
