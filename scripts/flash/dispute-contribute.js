@@ -66,7 +66,7 @@ function disputeContribute(augur, args, auth, callback) {
               return callback("Market contribute Failed");
             }
             console.log(chalk.green("Market contribute Done"));
-            callback(null);
+            return callback(null);
           });
 
         } else {
