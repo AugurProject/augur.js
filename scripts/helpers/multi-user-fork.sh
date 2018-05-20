@@ -83,31 +83,5 @@ npx flash push-timestamp -c 1 -w
 sleep 4
 ETHEREUM_PRIVATE_KEY=$USER_KEY_7 npx flash dispute-contribute -m $MARKET_ID -o 1 -i -n -a 1000000
 sleep $LONG_REST
-npx flash push-timestamp -c 1 -w
-sleep 4
-ETHEREUM_PRIVATE_KEY=$USER_KEY_2 npx flash dispute-contribute -m $MARKET_ID -o 0 -n -a 1000000
-sleep $LONG_REST
-npx flash push-timestamp -c 1 -w
-sleep 4
-ETHEREUM_PRIVATE_KEY=$USER_KEY_3 npx flash dispute-contribute -m $MARKET_ID -o 1 -n -a 1000000
-sleep $LONG_REST
-npx flash push-timestamp -c 1 -w
-sleep 4
-ETHEREUM_PRIVATE_KEY=$USER_KEY_4 npx flash dispute-contribute -m $MARKET_ID -o 1 -i -n -a 1000000
-sleep $LONG_REST
-npx flash push-timestamp -c 1 -w
-sleep 4
-ETHEREUM_PRIVATE_KEY=$USER_KEY_5 npx flash dispute-contribute -m $MARKET_ID -o 0 -n -a 1000000
-## sleep $LONG_REST
-## npx flash push-timestamp -c 1 -w
-## sleep 4
-## ETHEREUM_PRIVATE_KEY=$USER_KEY_6 npx flash dispute-contribute -m $MARKET_ID -o 1 -n -a 1000000
-## sleep $LONG_REST
-## npx flash push-timestamp -c 1 -w
-## sleep 4
-## ETHEREUM_PRIVATE_KEY="cfa5622e09afac03fb5dfa5cb54e52c9d37e06a5b07d5598850b62304639b815" flash dispute-contribute -m $MARKET_ID -o 1 -i -n -a 1000000
-## sleep $LONG_REST
-## npx flash push-timestamp -c 1 -w
-## sleep 4
 
 
