@@ -21,7 +21,8 @@ function createMarketOrder(augur, args, auth, callback) {
   var outcome = args.opt.outcome;
   var direction = orderType === "buy" ? 1 : 0;
   var price = args.opt.price;
-  var shares = args.opt.shares;
+  var useShares = args.opt.useShares;
+  var amount = args.opt.amount;
   augur.markets.getMarketsInfo({ marketIds: [marketId] }, function (err, marketInfos) {
     if (err) {
       console.log(chalk.red("Error "), chalk.red(err));
@@ -44,11 +45,12 @@ function createMarketOrder(augur, args, auth, callback) {
 
       augur.trading.placeTrade({
         meta: auth,
-        amount: shares,
+        amount: !useShares ? amount : "0",
         limitPrice: price,
         numTicks: market.numTicks,
         minPrice: market.minPrice,
         maxPrice: market.maxPrice,
+        sharesProvided: useShares ? amount : "0",
         _direction: direction,
         _market: marketId,
         _outcome: outcome,
