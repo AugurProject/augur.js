@@ -41,7 +41,7 @@ function createMarketOrder(augur, args, auth, callback) {
       var marketId = market.id;
       console.log(chalk.yellow.dim("user"), chalk.yellow(auth.address));
       console.log(chalk.yellow.dim("outcome:"), chalk.yellow(outcome), chalk.yellow.dim("order type:"), chalk.yellow(orderType));
-      console.log(chalk.green.dim("price:"), chalk.green(price), chalk.green.dim("Shares"), chalk.green(shares));
+      console.log(chalk.green.dim("price:"), chalk.green(price), chalk.green.dim("Shares"), chalk.green(amount), chalk.green("Use Shares"), chalk.green(useShares ? true : false));
 
       augur.trading.placeTrade({
         meta: auth,
