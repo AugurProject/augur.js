@@ -4,6 +4,7 @@
 
 var chalk = require("chalk");
 var speedomatic = require("speedomatic");
+var BigNumber = require("bignumber.js");
 
 function help() {
   console.log(chalk.red("Puts cash on the next fee window"));
@@ -11,6 +12,7 @@ function help() {
 }
 
 function showCashBalance(augur, address, callback) {
+  console.log("showCashBalance");
   augur.api.Cash.balanceOf({ _owner: address }, function (err, cashBalance) {
     if (err) {
       console.log(chalk.red(err));
@@ -23,26 +25,46 @@ function showCashBalance(augur, address, callback) {
   });
 }
 
-function publicSellCompleteSets(augur, contract, marketId, amount, auth, callback) {
-  augur.rpc.eth.getBalance([address, "latest"], function (err, attoEthBalance) {
-    if (err) {
-      console.log(chalk.red(err));
-      return callback(err);
-    }
-    var bnCashBalance = speedomatic.bignum(attoEthBalance);
-    var totalCashBalance = speedomatic.unfix(bnCashBalance, "string");
-    console.log(chalk.green.dim("Total ETH balance:"), chalk.green(totalCashBalance));
-    callback(null);
+function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
+  console.log("publicSellCompleteSets");
+  augur.api.CompleteSets.publicSellCompleteSets({
+    meta: auth,
+    tx: { to: contract, value: value },
+    _amount: amount,
+    _market: marketId,
+    onSent: function () {
+      console.log(chalk.yellow.dim("Waiting for reply SELL Complete Sets...."));
+    },
+    onSuccess: function (result) {
+      console.log(chalk.green.dim("Success:"), chalk.green(JSON.stringify(result)));
+      callback(null, result);
+    },
+    onFailed: function (result) {
+      console.log(chalk.red.dim("Failed:"), chalk.red(JSON.stringify(result)));
+      callback(result, null);
+    },
   });
 }
 
-function publicBuyCompleteSets(augur, contract, marketId, amount, auth, callback) {
-  augur.api.CompleteSets.publicBuyCompleteSets({ tx: { to: universe } }, function (err, reputationTokenAddress) {
-  showCashBalance(augur, address, label, function (err) {
-    if (err) {
-      console.log(chalk.red(err));
-    }
-    showEthBalance(augur, address, label, callback);
+function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
+  console.log("publicBuyCompleteSets");
+  augur.api.CompleteSets.publicBuyCompleteSets({
+    meta: auth,
+    tx: { to: contract, value: value },
+    _sender: auth.address,
+    _amount: amount,
+    _market: marketId,
+    onSent: function () {
+      console.log(chalk.yellow.dim("Waiting for reply BUY Complete Sets...."));
+    },
+    onSuccess: function (result) {
+      console.log(chalk.green.dim("Success:"), chalk.green(JSON.stringify(result)));
+      callback(null, result);
+    },
+    onFailed: function (result) {
+      console.log(chalk.red.dim("Failed:"), chalk.red(JSON.stringify(result)));
+      callback(result, null);
+    },
   });
 }
 
@@ -56,7 +78,7 @@ function getFirstMarket(augur, universe, marketId, callback) {
         return callback(err);
       }
       if (marketsInfo.length === 0) return callback("Market Info not found");
-      return callback(marketsInfo[0]);
+      return callback(null, marketsInfo[0]);
     });
   });
 }
@@ -71,22 +93,26 @@ function tradeCompleteSets(augur, args, auth, callback) {
   var amount = args.opt.amount;
   var marketId = args.opt.marketId;
   console.log(chalk.cyan.dim("universe:"), chalk.green(universe));
-  console.log(chalk.cyan.dim("marketId:"), chalk.green(marketId));
-  console.log(chalk.cyan.dim("amount:"), chalk.green(amount));
-
   getFirstMarket(augur, universe, marketId, function (err, market) {
     if (err) {
       console.log(chalk.red(err));
       return callback(err);
     }
+    console.log("hello");
     var numTicks = market.numTicks;
-    publicBuyCompleteSets(augur, completeSets, market.id, amount, auth, function (err, result) {
+    console.log("numTicks", numTicks);
+    var totalAmount = new BigNumber(amount, 10).times(new BigNumber(numTicks, 10));
+    var value = speedomatic.fix(totalAmount, "hex");
+    console.log(chalk.cyan.dim("marketId:"), chalk.green(marketId));
+    console.log(chalk.cyan.dim("amount:"), chalk.green(amount));
+    console.log(chalk.cyan.dim("amounts:"), chalk.green(totalAmount.toNumber()), chalk.green(amount));
+    publicBuyCompleteSets(augur, completeSets, market.id, value, amount, auth, function (err, result) {
       if (err) {
         console.log(chalk.red(err));
         return callback(err);
       }
       if (!result) callback("Complete Sets Buy failed");
-      publicSellCompleteSets(augur, completeSets, market.id, amount, auth, function (err, result) {
+      publicSellCompleteSets(augur, completeSets, market.id, value, amount, auth, function (err, result) {
         if (err) {
           console.log(chalk.red(err));
           return callback(err);
@@ -97,6 +123,7 @@ function tradeCompleteSets(augur, args, auth, callback) {
             console.log(chalk.red(err));
             return callback(err);
           }
+          console.log(chalk.cyan.dim("nextFeeWindow:"), chalk.green(nextFeeWindow));
           showCashBalance(augur, nextFeeWindow, callback);
         });
       });

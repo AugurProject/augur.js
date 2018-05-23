@@ -30,7 +30,7 @@ var forceDispute = require("./force-dispute");
 var forceFinalize = require("./force-finalize");
 var escapeHatch = require("./escape-hatch");
 var transferAssets = require("./transfer-assets");
-var tradeCompleteSets = require("./transfer-assets");
+var tradeCompleteSets = require("./trade-complete-sets");
 
 var NETWORKS = ["aura", "clique", "environment", "rinkeby", "ropsten"];
 var methods = {
