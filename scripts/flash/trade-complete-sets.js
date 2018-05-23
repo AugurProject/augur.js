@@ -27,13 +27,16 @@ function showCashBalance(augur, address, callback) {
 
 function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
   console.log("publicSellCompleteSets");
-  augur.api.CompleteSets.publicSellCompleteSets({
+  var payload = {
     meta: auth,
-    tx: { to: contract, value: value },
+    tx: { to: contract,
+      value: augur.utils.convertBigNumberToHexString(value),
+      gas: "0x5e3918",
+    },
     _amount: amount,
     _market: marketId,
     onSent: function () {
-      console.log(chalk.yellow.dim("Waiting for reply SELL Complete Sets...."));
+      console.log(chalk.yellow.dim("Waiting for reply BUY Complete Sets...."));
     },
     onSuccess: function (result) {
       console.log(chalk.green.dim("Success:"), chalk.green(JSON.stringify(result)));
@@ -43,14 +46,18 @@ function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, 
       console.log(chalk.red.dim("Failed:"), chalk.red(JSON.stringify(result)));
       callback(result, null);
     },
-  });
+  };
+  console.log(JSON.stringify(payload, null, 2));
+  augur.api.CompleteSets.publicSellCompleteSets(payload);
 }
 
 function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
-  console.log("publicBuyCompleteSets");
-  augur.api.CompleteSets.publicBuyCompleteSets({
+  var payload = {
     meta: auth,
-    tx: { to: contract, value: value },
+    tx: { to: contract,
+      value: value,
+      gas: "0x5e3918",
+    },
     _sender: auth.address,
     _amount: amount,
     _market: marketId,
@@ -65,7 +72,8 @@ function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, c
       console.log(chalk.red.dim("Failed:"), chalk.red(JSON.stringify(result)));
       callback(result, null);
     },
-  });
+  };
+  augur.api.CompleteSets.publicBuyCompleteSets(payload);
 }
 
 function getFirstMarket(augur, universe, marketId, callback) {
@@ -102,7 +110,7 @@ function tradeCompleteSets(augur, args, auth, callback) {
     var numTicks = market.numTicks;
     console.log("numTicks", numTicks);
     var totalAmount = new BigNumber(amount, 10).times(new BigNumber(numTicks, 10));
-    var value = speedomatic.fix(totalAmount, "hex");
+    var value = totalAmount.toNumber();
     console.log(chalk.cyan.dim("marketId:"), chalk.green(marketId));
     console.log(chalk.cyan.dim("amount:"), chalk.green(amount));
     console.log(chalk.cyan.dim("amounts:"), chalk.green(totalAmount.toNumber()), chalk.green(amount));
