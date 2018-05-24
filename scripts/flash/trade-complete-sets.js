@@ -40,7 +40,7 @@ function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, 
     tx: { to: contract,
       gas: "0x5e3918",
     },
-    _amount: amount,
+    _amount: new BigNumber(amount).toString(16),
     _market: marketId,
     onSent: function () {
       console.log(chalk.yellow.dim("Waiting for reply SELL Complete Sets...."));
@@ -58,13 +58,14 @@ function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, 
 }
 
 function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
+  console.log(amount)
   var payload = {
     meta: auth,
     tx: { to: contract,
       value: value,
       gas: "0x60E4B0",
     },
-    _amount: amount,
+    _amount: new BigNumber(amount).toString(16),
     _market: marketId,
     onSent: function () {
       console.log(chalk.yellow.dim("Waiting for reply BUY Complete Sets...."));
