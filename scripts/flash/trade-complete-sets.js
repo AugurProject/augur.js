@@ -61,7 +61,7 @@ function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, c
   var payload = {
     meta: auth,
     tx: { to: contract,
-      value: speedomatic.fix(value, "hex"),
+      value: value,
       gas: "0x60E4B0",
     },
     _amount: amount,
