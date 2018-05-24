@@ -58,7 +58,6 @@ function publicSellCompleteSets(augur, contract, marketId, value, amount, auth, 
 }
 
 function publicBuyCompleteSets(augur, contract, marketId, value, amount, auth, callback) {
-  console.log(amount)
   var payload = {
     meta: auth,
     tx: { to: contract,
