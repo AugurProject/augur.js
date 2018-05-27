@@ -37,7 +37,7 @@ function listMarkets(augur, args, auth, callback) {
           var date = new Date(endTime * 1000);
           var ended = date - currentTime > 0 ? "NO" : "YES";
           console.log(chalk.cyan("endTime:"), chalk.cyan(endTime), chalk.red(date), ended ? chalk.yellow(ended) : chalk.red(ended), chalk.white(marketInfo.marketType), chalk.blue(marketInfo.reportingState), chalk.red("DR:"), chalk.red(marketInfo.designatedReporter));
-          console.log(chalk.green.dim("ID:"), chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description));
+          console.log(chalk.green.dim("ID:"), chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description), "\n");
         });
         displayTime("Current Time", timestamp);
         callback(null);
