@@ -17,7 +17,6 @@ function listMarkets(augur, args, auth, callback) {
   }
   var universe = augur.contracts.addresses[augur.rpc.getNetworkID()].Universe;
   augur.api.Controller.getTimestamp(function (err, timestamp) {
-    var currentTime = new Date(timestamp * 1000);
     augur.markets.getMarkets({ universe: universe, sortBy: "endTime", isSortDescending: true }, function (err, marketIds) {
       if (!marketIds || marketIds.length === 0) {
         console.log(chalk.red("No markets available"));
