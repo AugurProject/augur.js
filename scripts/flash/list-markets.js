@@ -34,8 +34,8 @@ function listMarkets(augur, args, auth, callback) {
         infos.forEach(function (marketInfo) {
           var endTime = marketInfo.endTime;
           var date = new Date(endTime * 1000);
-          console.log(chalk.cyan("endTime:"), chalk.cyan(endTime), chalk.red(date), chalk.white(marketInfo.marketType), chalk.blue(marketInfo.reportingState), chalk.red("DR:"), chalk.red(marketInfo.designatedReporter));
-          console.log(chalk.green.dim("ID:"), chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description), "\n");
+          console.log(chalk.green.dim("ID:"), chalk.green.dim(marketInfo.id), chalk.green(marketInfo.description));
+          console.log(chalk.cyan("endTime:"), chalk.cyan(endTime), chalk.red(date), chalk.white(marketInfo.marketType), chalk.blue(marketInfo.reportingState), chalk.red("DR:"), chalk.red(marketInfo.designatedReporter), "\n");
         });
         displayTime("Current Time", timestamp);
         callback(null);
