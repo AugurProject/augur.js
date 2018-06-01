@@ -39,6 +39,12 @@ function getMarketCreationCostBreakdown(p, callback) {
         next(null, speedomatic.unfix(validityBond, "string"));
       });
     },
+    ReportingFeeDivisor: function (next) {
+      api().Universe.getOrCacheReportingFeeDivisor(universePayload, function (err, reportingFeeDivisor) {
+        if (err) return next(err);
+        next(null, speedomatic.unfix(reportingFeeDivisor, "string"));
+      });
+    },
   }, callback);
 }
 
