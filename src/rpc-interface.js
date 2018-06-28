@@ -28,7 +28,7 @@ var createRpcInterface = function (ethrpc) {
   };
 };
 
-var ethrpc = createRpcInterface(require("ethrpc"));
+var ethrpc = createRpcInterface(require("ethrpc").ethrpcFactory());
 ethrpc.createRpcInterface = createRpcInterface;
 
 module.exports = ethrpc;

@@ -2,7 +2,7 @@
 
 var assign = require("lodash").assign;
 var async = require("async");
-var ethrpc = require("ethrpc");
+var ethrpcFactory = require("ethrpc").ethrpcFactory;
 var connectToEthereum = require("./connect-to-ethereum");
 var contractsForAllNetworks = require("../contracts");
 var api = require("../api");
@@ -77,6 +77,7 @@ function connect(connectOptions, callback) {
     },
     ethereumNode: function (next) {
       console.log("connecting to ethereum-node:", JSON.stringify(connectOptions.ethereumNode));
+      var ethrpc = ethrpcFactory();
       if (!connectOptions.ethereumNode) return next(null);
       connectToEthereum(ethrpc, ethereumNodeConnectOptions, function (err, contracts, functionsAbi, eventsAbi) {
         if (err) {
