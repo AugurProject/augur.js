@@ -51,7 +51,6 @@ describe("create-market/get-market-creation-cost-breakdown", function () {
       assert.deepEqual(marketCreationCostBreakdown, {
         designatedReportNoShowReputationBond: "1",
         reportingFeeDivisor: "1",
-        targetReporterGasCosts: "1.2",
         validityBond: "3",
       });
     },
