@@ -58,7 +58,7 @@ function tradeUntilAmountIsZero(p) {
   var payloadArgs = assign({}, immutableDelete(p, ["doNotCreateOrders", "numTicks", "minPrice", "maxPrice", "sharesProvided"]), {
     tx: assign({ value: convertBigNumberToHexString(cost) }, p.tx),
     _fxpAmount: convertBigNumberToHexString(onChainAmount),
-    _price: convertBigNumberToHexString(onChainPrice)
+    _price: convertBigNumberToHexString(onChainPrice),
   });
 
   var tradeOnSuccess = function (res) {
