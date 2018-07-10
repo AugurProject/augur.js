@@ -86,17 +86,24 @@ function tradeUntilAmountIsZero(p) {
     });
   };
 
-  var tradePayload = assign({onSuccess: tradeOnSuccess}, payloadArgs);
+  var tradePayload = assign({}, payloadArgs, {onSuccess: tradeOnSuccess});
   var tradeFunction = p.doNotCreateOrders ? api().Trade.publicFillBestOrder : api().Trade.publicTrade;
 
   var estimateGasOnSuccess = function (gasEstimate) {
-    tradeFunction(assign({tx: { gas: gasEstimate}}, tradePayload));
+    var tradePayloadOnSuccess = assign({}, tradePayload, {tx: assign({}, tradePayload.tx, {gas: gasEstimate})});
+    tradeFunction(tradePayloadOnSuccess);
   };
   var estimateGasOnFailed = function () {
-    tradeFunction(tradePayload);
+    var tradePayloadOnFailure = assign({}, tradePayload, {tx: assign({}, tradePayload.tx, {gas: speedomatic.prefixHex(calculateTradeGas().toString(16))})});
+    tradeFunction(tradePayloadOnFailure);
   };
 
-  var estimateGasPayload = assign({onSuccess: estimateGasOnSuccess, onFailed: estimateGasOnFailed, tx: {estimateGas: true}, _loopLimit: convertBigNumberToHexString(100)}, payloadArgs);
+  var estimateGasPayload = assign({}, payloadArgs, {
+    _loopLimit: convertBigNumberToHexString(100),
+    onSent: noop,
+    onSuccess: estimateGasOnSuccess,
+    onFailed: estimateGasOnFailed,
+    tx: assign({}, payloadArgs.tx, { estimateGas: true })});
   var estimateGasFunction = p.doNotCreateOrders ? api().Trade.publicFillBestOrderWithLimit : api().Trade.publicTradeWithLimit;
 
   estimateGasFunction(estimateGasPayload);
