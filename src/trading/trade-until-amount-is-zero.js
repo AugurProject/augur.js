@@ -58,7 +58,7 @@ function tradeUntilAmountIsZero(p) {
   var payloadArgs = assign({}, immutableDelete(p, ["doNotCreateOrders", "numTicks", "minPrice", "maxPrice", "sharesProvided"]), {
     tx: assign({ value: convertBigNumberToHexString(cost) }, p.tx),
     _fxpAmount: convertBigNumberToHexString(onChainAmount),
-    _price: convertBigNumberToHexString(onChainPrice),
+    _price: convertBigNumberToHexString(onChainPrice)
   });
 
   var tradeOnSuccess = function (res) {
@@ -92,10 +92,6 @@ function tradeUntilAmountIsZero(p) {
   var estimateGasOnSuccess = function (gasEstimate) {
     var tradePayloadOnSuccess = assign({}, tradePayload, {tx: assign({}, tradePayload.tx, {gas: gasEstimate})});
     tradeFunction(tradePayloadOnSuccess);
-  };
-  var estimateGasOnFailed = function () {
-    var tradePayloadOnFailure = assign({}, tradePayload, {tx: assign({}, tradePayload.tx, {gas: speedomatic.prefixHex(calculateTradeGas().toString(16))})});
-    tradeFunction(tradePayloadOnFailure);
   };
 
   var estimateGasPayload = assign({}, payloadArgs, {
