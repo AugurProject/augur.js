@@ -856,6 +856,7 @@ module.exports={
   "Controller": "0xb3337164e91b9f05c87c7662c7ac684e8e0ff3e7",
   "Universe": "0xe991247b78f937d7b69cfc00f1a487a293557677",
   "Augur": "0x75228dce4d82566d93068a8d5d49435216551599",
+  "OrdersFinder": "0x01f2aba090b5fa26a64ea9e5afd32f6aab6ba3df",
   "LegacyReputationToken": "0xe94327d07fc17907b4db788e5adf2ed424addff6",
   "CancelOrder": "0x3448209268e97652bb67ea12777d4dfba81e3aaf",
   "Cash": "0xd5524179cb7ae012f5b642c1d6d700bbaa76b96b",
@@ -34785,7 +34786,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.0",
-      "/private/var/folders/cs/vvjt3v5s1t900wr51g7jps980000gn/T/tmp.CvlAjamk/augur.js"
+      "/home/alex/Work/augur.js"
     ]
   ],
   "_from": "elliptic@6.4.0",
@@ -34811,7 +34812,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
   "_spec": "6.4.0",
-  "_where": "/private/var/folders/cs/vvjt3v5s1t900wr51g7jps980000gn/T/tmp.CvlAjamk/augur.js",
+  "_where": "/home/alex/Work/augur.js",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
