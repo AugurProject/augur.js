@@ -9,7 +9,7 @@ var noop = require("../utils/noop");
 /**
  * Start listening for events emitted by augur-node.
  * @param {Object.<function>} eventCallbacks Callbacks to fire when events are received, keyed by event name.
- * @param {function=} onSetupComplete Called when all listeners are successfully set up, or when an error is encountered while setting up the listeners.
+ * @param {function=} onSetupComplete Called when all listeners are successfully set up, or if a callback in `eventCallbacks` is not an actual function.
  */
 function startAugurNodeEventListeners(eventCallbacks, onSetupComplete) {
   if (!isFunction(onSetupComplete)) onSetupComplete = noop;
