@@ -12,6 +12,33 @@ var SECONDS_PER_DAY = 3600 * 24;
 // being completely filled with Transfer transactions
 var MAX_LOG_BYTES_PER_BLOCK = 160000;
 
+var SubscriptionEventNames;
+(function (SubscriptionEventNames) {
+  SubscriptionEventNames.FeeWindowOpened = "FeeWindowOpened";
+  SubscriptionEventNames.CompleteSetsPurchased = "CompleteSetsPurchased";
+  SubscriptionEventNames.CompleteSetsSold = "CompleteSetsSold";
+  SubscriptionEventNames.DisputeCrowdsourcerCompleted = "DisputeCrowdsourcerCompleted";
+  SubscriptionEventNames.DisputeCrowdsourcerContribution = "DisputeCrowdsourcerContribution";
+  SubscriptionEventNames.DisputeCrowdsourcerCreated = "DisputeCrowdsourcerCreated";
+  SubscriptionEventNames.DisputeCrowdsourcerRedeemedLog = "DisputeCrowdsourcerRedeemedLog";
+  SubscriptionEventNames.FeeWindowClosed = "FeeWindowClosed";
+  SubscriptionEventNames.FeeWindowCreated = "FeeWindowCreated";
+  SubscriptionEventNames.FeeWindowRedeemed = "FeeWindowRedeemed";
+  SubscriptionEventNames.InitialReportSubmitted = "InitialReportSubmitted";
+  SubscriptionEventNames.InitialReporterRedeemed = "InitialReporterRedeemed";
+  SubscriptionEventNames.InitialReporterTransferred = "InitialReporterTransferred";
+  SubscriptionEventNames.MarketCreated = "MarketCreated";
+  SubscriptionEventNames.MarketState = "MarketState";
+  SubscriptionEventNames.OrderCanceled = "OrderCanceled";
+  SubscriptionEventNames.OrderCreated = "OrderCreated";
+  SubscriptionEventNames.OrderFilled = "OrderFilled";
+  SubscriptionEventNames.ReportingParticipantDisavowed = "ReportingParticipantDisavowed";
+  SubscriptionEventNames.SyncFinished = "SyncFinished";
+  SubscriptionEventNames.TokensTransferred = "TokensTransferred";
+  SubscriptionEventNames.TradingProceedsClaimed = "TradingProceedsClaimed";
+  SubscriptionEventNames.UniverseCreated = "UniverseCreated";
+}(SubscriptionEventNames || (SubscriptionEventNames = {})));
+
 module.exports = {
   AUGUR_UPLOAD_BLOCK_NUMBER: "0x1",
 
@@ -122,31 +149,6 @@ module.exports = {
     ALL: "ALL",
     UNCLAIMED: "UNCLAIMED",
     UNFINALIZED: "UNFINALIZED",
-  },
-
-  SUBSCRIPTION_EVENT_NAMES: {
-    CompleteSetsPurchased: "CompleteSetsPurchased",
-    CompleteSetsSold: "CompleteSetsSold",
-    DisputeCrowdsourcerCompleted: "DisputeCrowdsourcerCompleted",
-    DisputeCrowdsourcerContribution: "DisputeCrowdsourcerContribution",
-    DisputeCrowdsourcerCreated: "DisputeCrowdsourcerCreated",
-    DisputeCrowdsourcerRedeemedLog: "DisputeCrowdsourcerRedeemedLog",
-    FeeWindowClosed: "FeeWindowClosed",
-    FeeWindowCreated: "FeeWindowCreated",
-    FeeWindowRedeemed: "FeeWindowRedeemed",
-    InitialReportSubmitted: "InitialReportSubmitted",
-    InitialReporterRedeemed: "InitialReporterRedeemed",
-    InitialReporterTransferred: "InitialReporterTransferred",
-    MarketCreated: "MarketCreated",
-    MarketState: "MarketState",
-    OrderCanceled: "OrderCanceled",
-    OrderCreated: "OrderCreated",
-    OrderFilled: "OrderFilled",
-    ReportingParticipantDisavowed: "ReportingParticipantDisavowed",
-    SyncFinished: "SyncFinished",
-    TokensTransferred: "TokensTransferred",
-    TradingProceedsClaimed: "TradingProceedsClaimed",
-    UniverseCreated: "UniverseCreated",
   },
 
   TRADE_GAS_BUFFER: new BigNumber("100000", 10),
