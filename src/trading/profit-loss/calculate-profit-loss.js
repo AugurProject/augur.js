@@ -26,7 +26,7 @@ var ZERO = constants.ZERO;
  * @param {Object} p Parameters object.
  * @param {Object[]} p.trades Trades for a single outcome {type, amount, price, maker}.
  * @param {string=} p.lastPrice Price of this outcome's most recent trade, as a base-10 string (default: 0).
- * @return {Object} Realized and unrealized P/L {position, realized, unrealized}.
+ * @return {ProfitLoss} Realized and unrealized P/L {position, realized, unrealized}.
  */
 function calculateProfitLoss(p) {
   var PL = {
