@@ -93,8 +93,6 @@ module.exports = {
 
   MINIMUM_TRADE_SIZE: new BigNumber("0.0001", 10),
 
-  MINIMUM_TRADE_VALUE: new BigNumber(1, 10).dividedBy(10000),
-
   ORDER_STATE: {
     ALL: "ALL",
     OPEN: "OPEN",
