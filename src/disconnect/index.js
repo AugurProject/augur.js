@@ -1,17 +1,16 @@
 "use strict";
 
+var ethrpc = require("ethrpc");
 var disconnectFromEthereum = require("./disconnect-from-ethereum");
 
 /**
  * @param callback {function=} Callback function.
  */
 function disconnect(callback) {
-  disconnectFromEthereum(function (err) {
-    if (err) {
-      console.warn("could not disconnect from ethereum-node at", JSON.stringify(connectOptions.ethereumNode), err);
-      return null;
-    }
+  disconnectFromEthereum(ethrpc, function (err) {
+    if (err) return callback(err);
     console.log("disconnected from ethereum");
+    callback(null);
   });
 }
 
