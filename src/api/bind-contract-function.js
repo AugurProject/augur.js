@@ -37,7 +37,15 @@ function bindContractFunction(functionAbi) {
       signer = (params[0].meta || {}).signer;
       accountType = (params[0].meta || {}).accountType;
     }
-    ethrpc.transact(payload, signer, accountType, onSent, onSuccess, onFailed);
+    var transact = function () { ethrpc.transact(payload, signer, accountType, onSent, onSuccess, onFailed); };
+    if (params[0].gasPrice == null && self.getGasPrice) {
+      self.getGasPrice(function (gasPrice) {
+        payload.gasPrice = gasPrice;
+        transact();
+      });
+      return;
+    }
+    transact();
   };
 }
 
