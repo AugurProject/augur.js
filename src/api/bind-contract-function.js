@@ -5,6 +5,7 @@ var encodeTransactionInputs = require("./encode-transaction-inputs");
 var ethrpc = require("../rpc-interface");
 var isFunction = require("../utils/is-function");
 var isObject = require("../utils/is-object");
+var getGasPrice = require("../get-gas-price");
 
 function bindContractFunction(functionAbi) {
   return function () {
@@ -38,8 +39,8 @@ function bindContractFunction(functionAbi) {
       accountType = (params[0].meta || {}).accountType;
     }
     var transact = function () { ethrpc.transact(payload, signer, accountType, onSent, onSuccess, onFailed); };
-    if (params[0].gasPrice == null && self.getGasPrice) {
-      self.getGasPrice(function (gasPrice) {
+    if (params[0].gasPrice == null && getGasPrice.get()) {
+      getGasPrice.get()(function (gasPrice) {
         payload.gasPrice = gasPrice;
         transact();
       });
