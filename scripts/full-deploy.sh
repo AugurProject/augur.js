@@ -22,6 +22,17 @@ function preflightCheck()
     npm whoami 2> /dev/null || ((echo "npm auth failed."\nYou need to authorize this machine using `npm adduser`; exit 1))
 }
 
+function gitAddPackageFiles() {
+	for file in package.json package-lock.json yarn.lock
+		do
+			if [[ -f "$file" ]]
+			then
+				echo git add "$file"
+			fi
+		done
+}
+
+
 function checkSolidityVersion()
 {
 	if [ -z "$1" ]; then
