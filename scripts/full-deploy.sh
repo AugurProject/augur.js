@@ -51,7 +51,7 @@ function deployAugurCore()
 	git clone git@github.com:AugurProject/augur-core
 	cd augur-core
 	npm install
-	git add package*
+	gitAddPackageFiles
 	git commit -m "Updated dependencies" || true
 	git checkout -b version-bump
 	npm version $NPM_VERSION
@@ -71,13 +71,13 @@ function deployAugurJsAndUploadContracts()
 	git clone git@github.com:AugurProject/augur.js
 	cd augur.js
 	npm install
-	git add package.json package-lock.json
+	gitAddPackageFiles
 	git commit -m "Updated dependencies" || true
 	if [ "$BUMP_AUGUR_CORE" == true ]; then
 		AUGUR_CORE_VERSION=$($GET_VERSION $TMP_DIR/augur-core/package.json)
 		git checkout -b augur-core@$AUGUR_CORE_VERSION
 		npm install --save-exact augur-core@$AUGUR_CORE_VERSION
-		git add package.json package-lock.json
+		gitAddPackageFiles
 		git commit -m augur-core@$AUGUR_CORE_VERSION
 		npm run docker:build-and-push
 		git commit src/ -m 'geth-pop containers'
