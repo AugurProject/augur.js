@@ -9,4 +9,4 @@ function disconnect() {
 }
 
 
-module.exports = connect;
+module.exports = disconnect;
