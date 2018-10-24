@@ -106,12 +106,12 @@ function connect(connectOptions, callback) {
       });
     },
   }, function (_, connectionResults) {
-    if (connectionOptions.augurNode && !connectionResults.augurNode) {
+    if (connectOptions.augurNode && !connectionResults.augurNode) {
       if (connectionResults.ethereumNode) ethrpc.disconnect();
       return callback(new Error("Connection to Augur Node Failed"));
     }
 
-    if (connectionOptions.ethereumNode && !connectionResults.ethereumNode) {
+    if (connectOptions.ethereumNode && !connectionResults.ethereumNode) {
       if (connectionResults.augurNode) augurNode.disconnect();
       return callback(new Error("Connection to Ethereum Node Failed"));
     }
