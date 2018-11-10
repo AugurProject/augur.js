@@ -51,8 +51,8 @@ function getAllAugurLogs(p, batchCallback, finalCallback) {
           try {
             return parseLogMessage(contractName, eventName, log, eventsAbi[contractName][eventName].inputs);
           } catch (exc) {
-            console.error("parseLogMessage error", exc);
             console.log(contractName, eventName, log, eventsAbi[contractName], chunkOfBlocks);
+            throw new Error(exc);
           }
         }
       });
