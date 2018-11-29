@@ -25,7 +25,7 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
     var orderDisplayPrice = new BigNumber(matchingAsk.fullPrecisionPrice, 10);
     var sharePriceShort = maxPrice.minus(orderDisplayPrice);
     var sharePriceLong = orderDisplayPrice.minus(minPrice);
-    var takerSharesAvailable = calculateNearlyCompleteSets(outcome, takerDesiredShares, shareBalances);
+    var takerSharesAvailable = calculateNearlyCompleteSets(outcome, takerDesiredShares, shareBalances, takerSharesDepleted);
     sharesToCover = sharesToCover.minus(takerDesiredShares);
     sharesFilled = sharesFilled.plus(takerDesiredShares);
 
@@ -51,7 +51,6 @@ function simulateFillAskOrder(sharesToCover, minPrice, maxPrice, marketCreatorFe
 
     // maker is opening a short, taker is closing a short
     if (takerSharesAvailable.gt(PRECISION.zero) && takerDesiredShares.gt(PRECISION.zero)) {
-      takerSharesAvailable = takerSharesAvailable.minus(takerSharesDepleted);
       var tokensRequiredToCoverMaker = takerSharesAvailable.times(sharePriceShort);
       makerTokensDepleted = makerTokensDepleted.plus(tokensRequiredToCoverMaker);
       takerSharesDepleted = takerSharesDepleted.plus(takerSharesAvailable);
