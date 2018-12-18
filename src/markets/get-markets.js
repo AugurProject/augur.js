@@ -9,7 +9,7 @@ var augurNode = require("../augur-node");
  * @param {string=} p.sortBy Field name by which to sort the markets.
  * @param {boolean=} p.isSortDescending Whether to sort the markets in descending order by sortBy field.
  * @param {string=} p.limit Maximum number of markets to return.
- * @param {string=} p.offset Number of markts to truncate from the beginning of the results.
+ * @param {string=} p.offset Number of markets to truncate from the beginning of the results.
  * @param {function} callback Called after the markets have been retrieved.
  * @return {string[]} Array of market addresses in the universe, as hexadecimal strings.
  */
