@@ -32,10 +32,11 @@ describe("events/get-all-augur-logs", function () {
     params: {
       fromBlock: 10,
       toBlock: 21,
+      blocksPerChunk: 10,
     },
     mock: {
       constants: {
-        BLOCKS_PER_CHUNK: 10,
+        BLOCKS_PER_CHUNK: 20,
       },
       contracts: {
         addresses: {

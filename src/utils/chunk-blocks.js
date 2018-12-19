@@ -1,22 +1,20 @@
 "use strict";
 
-var BLOCKS_PER_CHUNK = require("../constants").BLOCKS_PER_CHUNK;
-
-function chunkBlocks(fromBlock, toBlock) {
+function chunkBlocks(fromBlock, toBlock, blocksPerChunk) {
   var toBlockChunk, fromBlockChunk, chunks;
   if (fromBlock < 1) fromBlock = 1;
   if (toBlock < fromBlock) return [];
   toBlockChunk = toBlock;
-  fromBlockChunk = toBlock - BLOCKS_PER_CHUNK;
+  fromBlockChunk = toBlock - blocksPerChunk;
   chunks = [];
   while (toBlockChunk >= fromBlock) {
     if (fromBlockChunk < fromBlock) {
       fromBlockChunk = fromBlock;
     }
     chunks.push({ fromBlock: fromBlockChunk, toBlock: toBlockChunk });
-    fromBlockChunk -= BLOCKS_PER_CHUNK;
-    toBlockChunk -= BLOCKS_PER_CHUNK;
-    if (toBlockChunk === toBlock - BLOCKS_PER_CHUNK) {
+    fromBlockChunk -= blocksPerChunk;
+    toBlockChunk -= blocksPerChunk;
+    if (toBlockChunk === toBlock - blocksPerChunk) {
       toBlockChunk--;
     }
   }
