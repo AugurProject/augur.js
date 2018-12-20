@@ -11,6 +11,7 @@ var listContracts = require("../utils/list-contracts");
 var mapContractAddressesToNames = require("../utils/map-contract-addresses-to-names");
 var mapEventSignaturesToNames = require("../utils/map-event-signatures-to-names");
 var constants = require("../constants");
+var BLOCKS_PER_CHUNK = require("../constants").BLOCKS_PER_CHUNK;
 
 /**
  * @param {Object} p Parameters object.
@@ -31,10 +32,11 @@ function getAllAugurLogs(p, batchCallback, finalCallback) {
   var fromBlock = p.fromBlock ? encodeNumberAsJSNumber(p.fromBlock) : constants.AUGUR_UPLOAD_BLOCK_NUMBER;
   var currentBlock = parseInt(ethrpc.getCurrentBlock().number, 16);
   var toBlock = p.toBlock ? encodeNumberAsJSNumber(p.toBlock) : currentBlock;
+  var blocksPerChunk = p.blocksPerChunk ? p.blocksPerChunk : BLOCKS_PER_CHUNK;
   if (fromBlock > currentBlock || toBlock > currentBlock) {
     return finalCallback(new Error("Block range " + fromBlock + " to " + toBlock + " exceeds currentBlock " + currentBlock));
   }
-  async.eachSeries(chunkBlocks(fromBlock, toBlock).reverse(), function (chunkOfBlocks, nextChunkOfBlocks) {
+  async.eachSeries(chunkBlocks(fromBlock, toBlock, blocksPerChunk).reverse(), function (chunkOfBlocks, nextChunkOfBlocks) {
     ethrpc.getLogs(assign({}, filterParams, chunkOfBlocks), function (err, logs) {
       if (err) return nextChunkOfBlocks(err);
       if (!Array.isArray(logs)) return nextChunkOfBlocks(null);
