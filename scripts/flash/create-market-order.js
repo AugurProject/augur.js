@@ -53,7 +53,7 @@ function createMarketOrder(augur, args, auth, callback) {
         sharesProvided: useShares ? amount : "0",
         _direction: direction,
         _market: marketId,
-        _outcome: outcome,
+        _outcome: parseInt(outcome, 10),
         _tradeGroupId: augur.trading.generateTradeGroupId(),
         doNotCreateOrders: false,
         onSent: noop,

@@ -68,7 +68,7 @@ function fillMarketOrder(augur, args, auth, callback) {
             sharesProvided: "0",
             _direction: direction,
             _market: marketId,
-            _outcome: outcome,
+            _outcome: parseInt(outcome, 10),
             _tradeGroupId: augur.trading.generateTradeGroupId(),
             doNotCreateOrders: true,
             onSent: noop,
