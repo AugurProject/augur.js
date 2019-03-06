@@ -79,7 +79,7 @@ function connect(connectOptions, callback) {
         });
         console.log("connected to augur");
         next(null, connectOptions.augurNode);
-      });
+      }, connectOptions.useWebsocketToConnectAugurNode);
     },
     ethereumNode: function (next) {
       console.log("connecting to ethereum-node:", JSON.stringify(connectOptions.ethereumNode));
