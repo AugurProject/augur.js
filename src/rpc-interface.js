@@ -23,6 +23,7 @@ var createRpcInterface = function (ethrpc) {
     excludeFromTransactionRelay: ethrpc.excludeFromTransactionRelay,
     registerTransactionRelay: ethrpc.registerTransactionRelay,
     setDebugOptions: ethrpc.setDebugOptions,
+    HttpTransport: ethrpc.HttpTransport,
     WsTransport: ethrpc.WsTransport,
     publish: ethrpc.publish,
     sha3: ethrpc.sha3,
