@@ -4,12 +4,9 @@
  * @typedef {Object} AccountTransaction
  * @property {Action} action
  * @property {string} coin
- * @property {string} costBasis
  * @property {string} details
  * @property {string} fee
  * @property {string} marketDescription
- * @property {string} marketId
- * @property {string} outcome
  * @property {string} outcomeDescription
  * @property {string} quantity
  * @property {number} timestamp
