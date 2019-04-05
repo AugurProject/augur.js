@@ -23,7 +23,7 @@ function depositCashToAddress(augur, args, auth, callback) {
     tx: { to: cash, value: augur.utils.convertBigNumberToHexString(amount) },
     _to: address,
     onSent: result => {
-      console.log(chalk.yellow.dim("Sent ETH to Cash contract:"), chalk.yellow(JSON.stringify(result)));
+      console.log(chalk.yellow.dim("Deposit Cash to address:"), chalk.yellow(JSON.stringify(result)));
       console.log(chalk.yellow.dim("Waiting for reply ...."));
     },
     onSuccess: function (result) {
@@ -31,7 +31,7 @@ function depositCashToAddress(augur, args, auth, callback) {
       callback(null);
     },
     onFailed: function (result) {
-      console.log(chalk.red.dim("Failed Dispute:"), chalk.red(JSON.stringify(result)));
+      console.log(chalk.red.dim("Failed Deposit:"), chalk.red(JSON.stringify(result)));
       callback(result);
     },
   };
