@@ -11,7 +11,7 @@ var options = require("options-parser");
 var NetworkConfiguration = require("augur-core").NetworkConfiguration;
 var getBalance = require("./get-balance");
 var getMarketBalance = require("./get-market-balance");
-var listMarkets  = require("./list-markets");
+var listMarkets = require("./list-markets");
 var designatedReport = require("./designated-report");
 var initialReport = require("./initial-report");
 var disputeContribute = require("./dispute-contribute");
@@ -31,13 +31,22 @@ var forceFinalize = require("./force-finalize");
 var escapeHatch = require("./escape-hatch");
 var transferAssets = require("./transfer-assets");
 var tradeCompleteSets = require("./trade-complete-sets");
+var depositCashToAddress = require("./deposit-cash-to-address");
 
 var NETWORKS = ["aura", "clique", "environment", "rinkeby", "ropsten"];
 var methods = {
+  "deposit-cash": {
+    method: depositCashToAddress,
+    opts: {
+      help: { flag: true, short: "h", help: "This help, deposit CASH to address" },
+      address: { required: true, short: "t", help: "address to get the CASH" },
+      amount: { required: true, short: "a", help: "amount to deposit" },
+    },
+  },
   "trade-complete-sets": {
     method: tradeCompleteSets,
     opts: {
-      help: {flag: true, short: "h", help: "This help, transfer ETH or REP" },
+      help: { flag: true, short: "h", help: "This help, transfer ETH or REP" },
       marketId: { short: "m", help: "Optional, will just grab one if not provided" },
       amount: { required: true, short: "a", help: "amount of asset to transfer" },
     },
@@ -45,7 +54,7 @@ var methods = {
   "transfer-assets": {
     method: transferAssets,
     opts: {
-      help: {flag: true, short: "h", help: "This help, transfer ETH or REP" },
+      help: { flag: true, short: "h", help: "This help, transfer ETH or REP" },
       ether: { flag: true, short: "e", help: "indicates ETH" },
       rep: { flag: true, short: "r", help: "indicates REP" },
       to: { required: true, short: "t", help: "account address sending assets to" },
@@ -55,14 +64,14 @@ var methods = {
   "get-balance": {
     method: getBalance,
     opts: {
-      help: {flag: true, short: "h", help: "This help, get this accounts balances" },
+      help: { flag: true, short: "h", help: "This help, get this accounts balances" },
       account: { required: true, short: "a", help: "account address" },
     },
   },
   "get-market-balance": {
     method: getMarketBalance,
     opts: {
-      help: {flag: true, short: "h", help: "This help, get this accounts balances" },
+      help: { flag: true, short: "h", help: "This help, get this accounts balances" },
       marketId: { required: true, short: "m", help: "Required market id" },
       account: { short: "a", help: "account address" },
     },
@@ -70,15 +79,19 @@ var methods = {
   "list-markets": {
     method: listMarkets,
     opts: {
-      help: {flag: true, short: "h", help: "This help, list all markets, show endTime and description" },
+      help: { flag: true, short: "h", help: "This help, list all markets, show endTime and description" },
     },
   },
   "designate-report": {
     method: designatedReport,
     opts: {
-      help: {flag: true, short: "h", help: "This help, REP is given to user if needed" },
+      help: { flag: true, short: "h", help: "This help, REP is given to user if needed" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { required: true, short: "o", help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"" },
+      outcome: {
+        required: true,
+        short: "o",
+        help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"",
+      },
       invalid: { flag: true, short: "i", help: "Overrides outcome to pass invalid" },
       noPush: { short: "n", flag: true, default: false, help: "normally time is used, no pushing" },
     },
@@ -86,9 +99,13 @@ var methods = {
   "initial-report": {
     method: initialReport,
     opts: {
-      help: {flag: true, short: "h", help: "This help, used for Open Reporting" },
+      help: { flag: true, short: "h", help: "This help, used for Open Reporting" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { required: true, short: "o", help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"" },
+      outcome: {
+        required: true,
+        short: "o",
+        help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"",
+      },
       invalid: { flag: true, short: "i", help: "Overrides outcome to pass invalid" },
       noPush: { short: "n", flag: true, default: false, help: "normally time is used, no pushing" },
     },
@@ -96,89 +113,103 @@ var methods = {
   "dispute-contribute": {
     method: disputeContribute,
     opts: {
-      help: {flag: true, short: "h", help: "This help, push time and dispute this market" },
+      help: { flag: true, short: "h", help: "This help, push time and dispute this market" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      outcome: { required: true, short: "o", help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"" },
+      outcome: {
+        required: true,
+        short: "o",
+        help: "Outcome, sets outcome to use, can be overridden by invalid flag, negative outcome use \\\"-10\\\"",
+      },
       amount: { short: "a", help: "Optional: amount of REP to dispute with" },
       invalid: { flag: true, short: "i", help: "Overrides outcome to pass invalid" },
-      noPush: { short: "n", flag: true, default: false, help: "normally time is pushed to dispute contribute on market, simply don't push time" },
+      noPush: {
+        short: "n",
+        flag: true,
+        default: false,
+        help: "normally time is pushed to dispute contribute on market, simply don't push time",
+      },
     },
   },
   "finalize-market": {
     method: finalizeMarket,
     opts: {
-      help: {flag: true, short: "h", help: "This help, finalize the market, it's in the correct state" },
+      help: { flag: true, short: "h", help: "This help, finalize the market, it's in the correct state" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      noPush: { short: "n", flag: true, default: false, help: "normally time is pushed to finalize market, to finalize forking market don't push time" },
+      noPush: {
+        short: "n",
+        flag: true,
+        default: false,
+        help: "normally time is pushed to finalize market, to finalize forking market don't push time",
+      },
     },
   },
   "push-time": {
     method: pushTime,
     opts: {
-      help: {flag: true, short: "h", help: "This help, push-time has been dep. use push-timestamp or set-timestamp" },
+      help: { flag: true, short: "h", help: "This help, push-time has been dep. use push-timestamp or set-timestamp" },
     },
   },
   "market-info": {
     method: marketInfo,
     opts: {
-      help: {flag: true, short: "h", help: "This help, show attributes of this market" },
+      help: { flag: true, short: "h", help: "This help, show attributes of this market" },
       marketId: { required: true, short: "m", help: "Required market id" },
     },
   },
   "show-initial-reporter": {
     method: showInitialReporter,
     opts: {
-      help: {flag: true, short: "h", help: "This help, show initial reporter address" },
+      help: { flag: true, short: "h", help: "This help, show initial reporter address" },
       marketId: { required: true, short: "m", help: "Required market id" },
     },
   },
-  "fork": {
+  fork: {
     method: fork,
     opts: {
-      help: {flag: true, short: "h", help: "This help, dispute this market all the way to fork" },
+      help: { flag: true, short: "h", help: "This help, dispute this market all the way to fork" },
       marketId: { required: true, short: "m", help: "Required market id" },
-      stopsBefore: { short: "s", help: "Number of rounds to stop short of a fork"},
+      stopsBefore: { short: "s", help: "Number of rounds to stop short of a fork" },
     },
   },
-  "approval": {
+  approval: {
     method: approval,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       account: { required: true, short: "a", help: "account address to be approved to trade" },
     },
   },
   "list-market-orders": {
     method: listMarketOrders,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       marketId: { required: true, short: "m", help: "Required market id" },
     },
   },
   "fill-market-orders": {
     method: fillMarketOrders,
     opts: {
-      help: {flag: true, short: "h", help: "This help, script approves user if needed" },
+      help: { flag: true, short: "h", help: "This help, script approves user if needed" },
       marketId: { required: true, short: "m", help: "Required market id" },
       outcome: { required: true, short: "o", help: "Outcome to fill order on, negative outcome use \\\"-10\\\"" },
-      orderType: {required: true, short: "t", help: "Order type ('buy' | 'sell')"},
+      orderType: { required: true, short: "t", help: "Order type ('buy' | 'sell')" },
     },
   },
   "create-market-order": {
     method: createMarketOrder,
     opts: {
-      help: {flag: true, short: "h", help: "This help, script approves user if needed" },
+      help: { flag: true, short: "h", help: "This help, script approves user if needed" },
       marketId: { required: true, short: "m", help: "Required market id" },
       outcome: { required: true, short: "o", help: "Outcome to fill order on, negative outcome use \\\"-10\\\"" },
-      orderType: {required: true, short: "t", help: "Order type ('buy' | 'sell')"},
-      price: {required: true, short: "p", help: "Price of the order"},
-      amount: {required: true, short: "a", help: "amount of shares to purchase with eth"},
-      useShares: {flag: true, short: "s", help: "use existing shares for the order"},
+      orderType: { required: true, short: "t", help: "Order type ('buy' | 'sell')" },
+      price: { required: true, short: "p", help: "Price of the order" },
+      amount: { required: true, short: "a", help: "amount of shares to purchase with eth" },
+      useShares: { flag: true, short: "s", help: "use existing shares for the order" },
     },
   },
   "push-timestamp": {
     method: pushTimestamp,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       days: { flag: true, short: "d", help: "push days" },
       weeks: { flag: true, short: "w", help: "push weeks" },
       seconds: { flag: true, short: "s", help: "push seconds, default" },
@@ -188,14 +219,14 @@ var methods = {
   "set-timestamp": {
     method: setTimestamp,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       timestamp: { required: true, short: "t", help: "Required actual timestamp to set" },
     },
   },
   "force-dispute": {
     method: forceDispute,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       marketId: { required: true, short: "m", help: "Required market id" },
       rounds: { default: 10, short: "r", help: "Number or rounds to dispute, default is 10" },
     },
@@ -203,14 +234,14 @@ var methods = {
   "force-finalize": {
     method: forceFinalize,
     opts: {
-      help: {flag: true, short: "h", help: "This help" },
+      help: { flag: true, short: "h", help: "This help" },
       marketId: { required: true, short: "m", help: "Required market id" },
     },
   },
   "escape-hatch": {
     method: escapeHatch,
     opts: {
-      help: {flag: true, short: "h", help: "This help, turn the escape hatch on" },
+      help: { flag: true, short: "h", help: "This help, turn the escape hatch on" },
     },
   },
 };
@@ -227,21 +258,23 @@ function runCommandWithArgs(commandName, method, args, network, callback) {
   augur.rpc.setDebugOptions(debugOptions);
   var auth = process.env.ETHEREUM_PRIVATE_KEY ? getPrivateKeyFromEnv() : getPrivateKeyFromString(config.privateKey);
   var augurWs = process.env.AUGUR_WS ? process.env.AUGUR_WS : "http://localhost:9001";
-  augur.connect({ ethereumNode: { http: config.http, pollingIntervalMilliseconds: 500 }, augurNode: augurWs }, function (err) {
-    if (err) {
-      console.log(chalk.red("Error "), chalk.red(err));
-      return callback(err);
+  augur.connect(
+    { ethereumNode: { http: config.http, pollingIntervalMilliseconds: 500 }, augurNode: augurWs },
+    function (err) {
+      if (err) {
+        console.log(chalk.red("Error "), chalk.red(err));
+        return callback(err);
+      }
+      method.method(augur, args, auth, function (err) {
+        if (err) console.log(chalk.red("Error "), chalk.red(err));
+        console.log(chalk.green("Finished Execution"));
+        process.exit(0);
+      });
     }
-    method.method(augur, args, auth, function (err) {
-      if (err) console.log(chalk.red("Error "), chalk.red(err));
-      console.log(chalk.green("Finished Execution"));
-      process.exit(0);
-    });
-  });
+  );
 }
 
 function help() {
-
   console.log("                                  ");
   console.log("      Welcome to FLASH ......>    ");
   console.log("                                  ");
@@ -260,46 +293,62 @@ function help() {
   console.log(chalk.underline("\nConfiguration"));
   console.log("Set the same " + chalk.bold("environment variables") + " used in dp for deployment process");
   console.log("ex: ETHEREUM_PRIVATE_KEY=<owner priv key>");
-  console.log("ex: ETHEREUM_PRIVATE_KEY is used to change time and needs to be same account as used to upload contracts");
+  console.log(
+    "ex: ETHEREUM_PRIVATE_KEY is used to change time and needs to be same account as used to upload contracts"
+  );
 
   console.log(chalk.underline("\nNetwork (when using 'environment' for the network)"));
-  console.log(columnify([{
-    env: "ETHEREUM_HTTP",
-    Description: "The http(s) address of your ethereum endpoint (default: http://localhost:8545)",
-  }, {
-    env: "ETHEREUM_PRIVATE_KEY",
-    Description: "HEX Private Key of OWNER of contracts and used to move TIME on eth node",
-  }, {
-    env: "GAS_PRICE_IN_NANOETH",
-    Description: "The transaction gas price to use, specified in nanoeth (default: varies)",
-  }, {
-    env: "AUGUR_WS",
-    Description: "The http endpoint for augur-node, (default: http://localhost:9001) ",
-  }], {
-    columnSplitter: " - ",
-    minWidth: 20,
-    maxWidth: 80,
-    showHeaders: false,
-  }));
+  console.log(
+    columnify(
+      [
+        {
+          env: "ETHEREUM_HTTP",
+          Description: "The http(s) address of your ethereum endpoint (default: http://localhost:8545)",
+        },
+        {
+          env: "ETHEREUM_PRIVATE_KEY",
+          Description: "HEX Private Key of OWNER of contracts and used to move TIME on eth node",
+        },
+        {
+          env: "GAS_PRICE_IN_NANOETH",
+          Description: "The transaction gas price to use, specified in nanoeth (default: varies)",
+        },
+        {
+          env: "AUGUR_WS",
+          Description: "The http endpoint for augur-node, (default: http://localhost:9001) ",
+        },
+      ],
+      {
+        columnSplitter: " - ",
+        minWidth: 20,
+        maxWidth: 80,
+        showHeaders: false,
+      }
+    )
+  );
 
   console.log("               ");
-  console.log(chalk.underline("\Method descriptions"));
+  console.log(chalk.underline("Method descriptions"));
   console.log("               ");
-  Object.keys(methods).sort().map(function (name) {
-    console.log(chalk.underline(name));
-    methods[name].method(null, "help", null, function () { });
-    console.log("               ");
-  });
+  Object.keys(methods)
+    .sort()
+    .map(function (name) {
+      console.log(chalk.underline(name));
+      methods[name].method(null, "help", null, function () {});
+      console.log("               ");
+    });
 }
 
 if (require.main === module) {
   var opts = {
-    help: {flag: true, short: "h", help: "This help" },
-    network: { short: "n", default: ["environment"], help: "Network to run command against"},
+    help: { flag: true, short: "h", help: "This help" },
+    network: { short: "n", default: ["environment"], help: "Network to run command against" },
   };
   var args;
   try {
-    args = options.parse(opts, process.argv, function () { return true;});
+    args = options.parse(opts, process.argv, function () {
+      return true;
+    });
     args.opt.command = args.args[2];
     args.opt.params = args.args[3];
   } catch (error) {
@@ -332,7 +381,7 @@ if (require.main === module) {
       process.exit();
     });
   } catch (error) {
+    console.log("error", error);
     options.help(method.opts);
   }
-
 }
