@@ -39,8 +39,10 @@ var methods = {
     method: depositCashToAddress,
     opts: {
       help: { flag: true, short: "h", help: "This help, deposit CASH to address" },
-      address: { required: true, short: "t", help: "address to get the CASH" },
-      amount: { required: true, short: "a", help: "amount to deposit" },
+      address: { short: "t", help: "address to get the CASH" },
+      amount: { short: "a", help: "amount to deposit" },
+      current: { flag: true, short: "c", help: "deposit on current fee window" },
+      next: { flag: true, short: "n", help: "deposit on next fee window" },
     },
   },
   "trade-complete-sets": {
