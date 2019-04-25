@@ -22,8 +22,9 @@ jobs:
 
     - script: |
         whoami
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         sudo apt update
-        sudo apt install ubuntu-toolchain-r-test gcc-4.8 g++-4.8
+        sudo apt install gcc-4.8 g++-4.8
       displayName: 'install ubuntu packages'
 
     - script: npm install
