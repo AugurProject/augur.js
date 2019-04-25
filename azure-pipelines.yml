@@ -5,7 +5,7 @@ trigger:
   branches:
     include:
       - master
-      - azure-*
+      - azure/*
   tags:
     include:
       - v*
@@ -34,7 +34,7 @@ jobs:
       displayName: 'lint'
 
     - script: |
-        istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min && \
+        npx istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min && \
         cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && \
         rm -rf ./coverage
       displayName: 'istanbul coverage'
