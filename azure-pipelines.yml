@@ -21,8 +21,9 @@ jobs:
         versionSpec: $(NODE_JS_VERSION)
 
     - script: |
-        apt update
-        apt install ubuntu-toolchain-r-test gcc-4.8 g++-4.8
+        whoami
+        sudo apt update
+        sudo apt install ubuntu-toolchain-r-test gcc-4.8 g++-4.8
       displayName: 'install ubuntu packages'
 
     - script: npm install
