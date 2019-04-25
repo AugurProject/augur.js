@@ -1,19 +1,80 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+variables:
+  NODE_JS_VERSION: 10.15
 
 trigger:
-- master
+  branches:
+    include:
+      - master
+      - azure-*
+  tags:
+    include:
+      - v*
 
-pool:
-  vmImage: 'Ubuntu-16.04'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+jobs:
+  - job: test
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_JS_VERSION)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - script: |
+        apt update
+        apt install ubuntu-toolchain-r-test gcc-4.8 g++-4.8
+      displayName: 'install ubuntu packages'
+
+    - script: npm install
+      displayName: 'npm install'
+
+    - script: npm run lint
+      displayName: 'lint'
+
+    - script: |
+        istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min && \
+        cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && \
+        rm -rf ./coverage
+      displayName: 'istanbul coverage'
+
+
+  - job: tag
+    displayName: build tag
+    dependsOn:
+      - test
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: $(NODE_JS_VERSION)
+      - bash: |
+          set -euo pipefail
+          current_tag=$(git describe --exact-match --tags)
+          if [[ -n $current_tag ]]; then
+            echo "${current_tag}"
+            LATEST_VERSION_REGEX="^[vV]?(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+            DEV_VERSION_REGEX="^[vV]?(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+            if [[ $current_tag =~ $LATEST_VERSION_REGEX ]]; then
+              echo "##vso[task.setvariable variable=npm_tag]latest"
+            elif [[ $current_tag =~ $DEV_VERSION_REGEX ]]; then
+              echo "##vso[task.setvariable variable=npm_tag]dev"
+            else
+              # we should never get here
+              echo "tag ${current_tag} doesn't match semver"
+              echo "##vso[task.setvariable variable=npm_tag]random"
+            fi
+          fi
+        displayName: set npm tag
+      - task: Npm@1
+        inputs:
+          command: 'custom' # Options: install, publish, custom
+          verbose: true
+          customCommand: publish --tag $(npm_tag)
+          customRegistry: 'useNpmrc'
+          customEndpoint: npmjs-augur-integration
+    condition: |
+      and
+      (
+          succeeded(),
+          startsWith(variables['build.sourceBranch'], 'refs/tags/v')
+      )
+
