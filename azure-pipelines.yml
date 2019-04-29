@@ -34,10 +34,13 @@ jobs:
       displayName: 'lint'
 
     - script: |
-        npx istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min && \
-        #cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && \
-        rm -rf ./coverage
+        npx istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min --report cobertura
       displayName: 'istanbul coverage'
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.json'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 
   - job: tag
