@@ -34,7 +34,7 @@ jobs:
       displayName: 'lint'
 
     - script: |
-        npx istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report lcovonly -- -R min --report cobertura
+        npx istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/unit/ --report cobertura -- -R min
       displayName: 'istanbul coverage'
     - task: PublishCodeCoverageResults@1
       inputs:
