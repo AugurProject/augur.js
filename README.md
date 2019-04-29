@@ -1,7 +1,7 @@
 # Augur JavaScript API
 
-[![Build Status](https://travis-ci.org/AugurProject/augur.js.svg?branch=master)](https://travis-ci.org/AugurProject/augur.js)
-[![Coverage Status](https://coveralls.io/repos/AugurProject/augur.js/badge.svg?branch=master&service=github)](https://coveralls.io/github/AugurProject/augur.js?branch=master)
+[![Build Status](https://img.shields.io/azure-devops/build/augurproject/e938f4d5-69ff-4384-b7b4-4e3d92d0ebef/4.svg)](https://dev.azure.com/augurproject/augur/_build/latest?definitionId=4&branchName=master)
+![Coverage](https://img.shields.io/azure-devops/coverage/augurproject/augur/4.svg)
 [![npm version](https://badge.fury.io/js/augur.js.svg)](http://badge.fury.io/js/augur.js)
 [![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/AugurProject/augur.js.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/AugurProject/augur.js/context:javascript)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/AugurProject/augur.js.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/AugurProject/augur.js/alerts)
