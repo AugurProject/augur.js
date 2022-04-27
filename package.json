@@ -57,7 +57,7 @@
     "prepush": "npm run lint && npm run test -- --reporter min"
   },
   "dependencies": {
-    "async": "1.5.2",
+    "async": "2.6.4",
     "augur-core": "1.1.0",
     "bignumber.js": "6.0.0",
     "clone": "2.1.1",
